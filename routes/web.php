@@ -45,7 +45,7 @@ Route::middleware('auth')->group(function () {
 
 });
 
-Route::middleware('role', 'auth')->group(function (){
+Route::middleware('auth', 'role')->group(function (){
 
     /* ROTTE DI MARCO */
 
