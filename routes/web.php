@@ -26,7 +26,7 @@ Route::get('/errore', function (){
 //Rotta per raggiungere il sito EBBASTA
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('ciao');
 
 //Rotta per raggiungere la propria dashboard questa si occupera di fornire SOLO la dashboard visibile al tipo di utente che la richiede
 Route::get('/dashboard', function () {
