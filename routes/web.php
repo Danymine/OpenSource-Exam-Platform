@@ -3,7 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExerciseController;
-use App\Http\Controllers\EsercitazioneController;
+use App\Http\Controllers\PracticeController;
+
 
 
 //Temporanea
@@ -68,11 +69,12 @@ Route::middleware('auth', 'role')->group(function (){
     });
 
     /* ROTTE DI FEDERICO */
-
-    Route::get('/CreaEsercitazione', [EsercitazioneController::class, 'crea'])->name('crea_esercitazione');
-    Route::post('/GeneraEsercitazione', [EsercitazioneController::class, 'genera'])->name('genera_esercitazione');
-
-
+    Route::prefix('practices')->group(function () {
+        Route::get('/', [PracticeController::class, 'index'])->name('practices.index');
+        Route::get('/create', [PracticeController::class, 'create'])->name('practices.create');
+        Route::get('/new', [PracticeController::class, 'generatePracticeWithFilters'])->name('practices.new'); 
+    });
+    
 });
 
 require __DIR__.'/auth.php';    //Istruzione per includere tutte le rotte definite nel file auth.php
