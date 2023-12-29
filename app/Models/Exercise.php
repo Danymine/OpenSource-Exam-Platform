@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -10,8 +11,8 @@ class Exercise extends Model
         'name', 'question', 'score', 'difficulty', 'subject', 'type','correct_option'
     ];
 
-
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class);
+    }
 }
-
-
-
