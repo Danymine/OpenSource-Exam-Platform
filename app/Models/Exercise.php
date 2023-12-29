@@ -7,7 +7,7 @@ class Exercise extends Model
 {
     public $timestamps = false; // Disabilita il timestamping
     protected $fillable = [
-        'name', 'question', 'score', 'difficulty', 'subject', 'type', 'correct_option'
+        'name', 'question', 'score', 'difficulty', 'subject', 'type','correct_option'
     ];
 
 

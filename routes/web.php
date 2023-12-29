@@ -52,7 +52,7 @@ Route::middleware('auth', 'role')->group(function (){
     // Rotte per gli esercizi
     Route::prefix('exercises')->group(function () {
         // Mostra tutti gli esercizi
-        Route::get('/', [ExerciseController::class, 'showAllExercises'])->name('showAllExercises');
+        Route::get('/esercizi_biblioteca', [ExerciseController::class, 'showAllExercises'])->name('showAllExercises');
         
         // Crea un nuovo esercizio
         Route::get('/create', [ExerciseController::class, 'create']);
@@ -65,6 +65,7 @@ Route::middleware('auth', 'role')->group(function (){
         
         // Elimina un esercizio
         Route::delete('/{exercise}/delete', [ExerciseController::class, 'destroy']);
+
     });
 
     /* ROTTE DI FEDERICO */
