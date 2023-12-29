@@ -7,11 +7,10 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
-            background-color: #f9f9f9;
-            color: #333;
             margin: 0;
             padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
         }
 
         .practice-info {
@@ -40,6 +39,30 @@
         .exercise h3 {
             margin-bottom: 5px;
         }
+
+        .generated-key {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .generated-key button {
+            margin-left: 10px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .generated-key button:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
@@ -62,7 +85,29 @@
                 <!-- Altri dettagli dell'esercizio -->
             </div>
         @endforeach
+
+        @if(isset($key))
+            <div class="generated-key">
+                <strong>Chiave Generata:</strong>
+                <span id="generatedKey">{{ $key }}</span>
+                <button onclick="copyKey()">Copia</button>
+            </div>
+        @endif
     @endif
+
+    <script>
+        function copyKey() {
+            var keyElement = document.getElementById('generatedKey');
+            var tempTextArea = document.createElement('textarea');
+            tempTextArea.value = keyElement.innerText;
+
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            alert('Chiave copiata negli appunti!');
+        }
+    </script>
 </body>
 </html>
-
