@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Biblioteca di Esercizi</title>
-  <style>
-    /* Stili... */
-  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <!-- Altri stili... -->
 </head>
 <body>
 
@@ -21,11 +20,11 @@
   </tr>
   @foreach ($exercises as $exercise)
   <tr>
-    <td>{{ $exercise['nome'] }}</td>
-    <td>{{ $exercise['tipo'] }}</td>
-    <td>{{ $exercise['difficolta'] }}</td>
-    <td><span class="pencil">Matita</span></td>
-    <td><span class="trash">Cestino</span></td>
+    <td>{{ $exercise->name }}</td>
+    <td>{{ $exercise->type }}</td>
+    <td>{{ $exercise->difficulty }}</td>
+    <td><span class="pencil"><i class="fas fa-pencil-alt"></i></span></td>
+    <td><span class="trash"><i class="fas fa-trash-alt"></i></span></td>
   </tr>
   @endforeach
 </table>
