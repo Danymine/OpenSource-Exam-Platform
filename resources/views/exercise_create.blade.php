@@ -37,8 +37,8 @@
 
         <label for="type">Tipo:</label>
         <select id="type" name="type">
-            <option value="risposta_aperta">Risposta aperta</option>
-            <option value="risposta_multipla">Risposta multipla</option>
+            <option value="Risposta Aperta">Risposta Aperta</option>
+            <option value="Risposta Multipla">Risposta Multipla</option>
         </select><br><br>
 
         <div id="multiple_choice" style="display: none;">
@@ -66,7 +66,7 @@
 
     <script>
         document.getElementById('type').addEventListener('change', function() {
-            if (this.value === 'risposta_multipla') {
+            if (this.value === 'Risposta Multipla') {
                 document.getElementById('multiple_choice').style.display = 'block';
             } else {
                 document.getElementById('multiple_choice').style.display = 'none';
