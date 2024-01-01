@@ -5,10 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Practice Form</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
         .practice-form {
             max-width: 400px;
             margin: 0 auto;
-            font-family: Arial, sans-serif;
             background-color: #f9f9f9;
             padding: 20px;
             border-radius: 8px;
@@ -26,20 +32,21 @@
         }
 
         input[type="text"],
-        input[type="number"] {
-            width: 100%;
+        input[type="number"],
+        input[type="submit"] {
+            width: calc(100% - 18px);
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            box-sizing: border-box;
         }
 
         input[type="submit"] {
             background-color: #4caf50;
             color: white;
-            padding: 10px 20px;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         input[type="submit"]:hover {
@@ -49,7 +56,7 @@
 </head>
 <body>
     <form action="{{ route('practices.new') }}" method="GET" class="practice-form">
-    @csrf
+        @csrf
         <div class="form-group">
             <label for="title">Titolo dell'esercitazione:</label>
             <input type="text" id="title" name="title">
