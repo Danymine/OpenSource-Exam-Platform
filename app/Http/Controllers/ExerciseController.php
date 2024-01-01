@@ -54,7 +54,7 @@ class ExerciseController extends Controller
     /*PER CORRECT OPTION HO MESSO IL NUMERO DELL'OPZIONE CORRETTA*/
 
     $exercises->save();
-
+    return redirect()->route('showAllExercises');
     }
 }
     
