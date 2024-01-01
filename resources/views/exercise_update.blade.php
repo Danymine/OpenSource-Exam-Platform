@@ -19,7 +19,7 @@
 
     <form action="{{ route('exercises.update', $exercise->id) }}" method="POST">
     @csrf
-    @method_field('PUT')
+    @method('PUT')
 
 
         <label for="name">Nome:</label>
