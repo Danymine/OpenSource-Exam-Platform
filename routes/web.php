@@ -80,7 +80,12 @@ Route::middleware('auth', 'role')->group(function (){
         Route::delete('/{practice}', [PracticeController::class, 'destroy'])->name('practices.destroy');
 
     });
-    
 });
+
+//Rotte di partecipazione Esame/Esercitazione 2 Possibilità POST o GET da capire qual è il miglior modo
+Route::post('/join', [PracticeController::class, 'join'])->name('pratices.join');
+Route::get('/join/{test}', [PracticeController::class, 'test'])->name('test');
+Route::post('/send', [PracticeController::class, 'send'])->name('pratices.send');
+    
 
 require __DIR__.'/auth.php';    //Istruzione per includere tutte le rotte definite nel file auth.php

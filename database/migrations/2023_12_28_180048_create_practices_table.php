@@ -20,22 +20,10 @@ class CreatePracticesTable extends Migration
                 $table->integer('total_score');
             });
         }
-
-        // Aggiungi la colonna 'practice_id' alla tabella 'exercises'
-        Schema::table('exercises', function (Blueprint $table) {
-            $table->unsignedBigInteger('practice_id')->nullable();
-            $table->foreign('practice_id')->references('id')->on('practices');
-        });
     }
 
     public function down()
     {
-        // Rimuovi la colonna 'practice_id' dalla tabella 'exercises'
-        Schema::table('exercises', function (Blueprint $table) {
-            $table->dropForeign(['practice_id']);
-            $table->dropColumn('practice_id');
-        });
-
         // Rimuovi la tabella 'practices' se esiste
         Schema::dropIfExists('practices');
     }

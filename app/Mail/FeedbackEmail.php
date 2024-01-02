@@ -8,16 +8,17 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Practice;
 use App\Models\User;
 
-class HelloMail extends Mailable
+class FeedbackEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public User $user)
+    public function __construct(public User $user, public Practice $practice, public int $score)
     {
         //
     }
@@ -28,7 +29,7 @@ class HelloMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Benvenuto/a',
+            subject: 'Risultato',
         );
     }
 
@@ -38,9 +39,11 @@ class HelloMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.hello',
+            view: 'mail.feedback',
             with: [
                 'name' => $this->user->name,
+                'practices' => $this->practice->title,
+                'punteggio' => $this->score,
             ]
         );
     }

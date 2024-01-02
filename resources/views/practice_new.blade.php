@@ -86,13 +86,11 @@
             </div>
         @endforeach
 
-        @if(isset($key))
-            <div class="generated-key">
-                <strong>Chiave Generata:</strong>
-                <span id="generatedKey">{{ $key }}</span>
-                <button onclick="copyKey()">Copia</button>
-            </div>
-        @endif
+        <div class="generated-key">
+            <strong>Chiave Generata:</strong>
+            <span id="generatedKey">{{ $newPractice->key }}</span>
+            <button onclick="copyKey()">Copia</button>
+        </div>
     @endif
 
     <script>

@@ -10,6 +10,7 @@ class AddKeyColumnToPracticesTable extends Migration
     {
         Schema::table('practices', function (Blueprint $table) {
             $table->string('key')->unique()->nullable()->after('total_score');
+            $table->foreignId('user_id')->constrained();
         });
     }
 
