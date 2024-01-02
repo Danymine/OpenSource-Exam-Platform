@@ -17,6 +17,7 @@ class Practice extends Model
         'total_score',
         'key',
         'user_id',
+        'allowed',
     ];
 
     public function user() : BelongsTo
@@ -34,6 +35,12 @@ class Practice extends Model
     {
 
         return $this->hasMany(Answer::class);
+    }
+
+    public function userwaiting() : BelongsToMany
+    {
+
+        return $this->belongsToMany(User::class, 'waiting_rooms', 'practice_id', 'user_id',);
     }
 
 

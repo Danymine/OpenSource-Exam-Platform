@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Practice;
 use App\Models\Exercise;
+use App\Models\User;
+use App\Models\WaitingRoom;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Answer;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\FeedbackEmail;
+
 
 class PracticeController extends Controller
 {
@@ -111,7 +114,8 @@ class PracticeController extends Controller
             'subject' => $subject,
             'total_score' => $totalScoreFiltered,
             'key' => $key = $this->generateKey(),
-            'user_id' => Auth::id()
+            'user_id' => Auth::id(),
+            'allowed' => 0
         ]);
         
         //Qui dentro non ci entra affatto
@@ -188,15 +192,47 @@ class PracticeController extends Controller
 
         $test = new Practice;
         $test = Practice::where('key', '=', $request->input('key'))->first();
-        //Gestione nel caso in cui lo stesso utente riprovi ad accedere
-        return redirect()->route('test', ['test' => $test]);
+        if($test == NULL){
+
+            return back()->withErrors(['error' => 'Key not found']);
+        }
+        $date = now()->format('d/m/Y');
+        /*
+        Verifico che il test alla quale l'utente stia provando ad accedere ha come data quella attuale se questo vincolo è soddisfatto continuo 
+        Gestione nel caso in cui lo stesso utente riprovi ad accedere 
+        */
+        $response = Answer::where([
+            ['user_id', '=', Auth::id()],
+            ['practice_id', '=', $test->id],
+        ])->first();
+
+        if($response == NULL){
+            
+            if( $test->allowed == 0 ){
+               
+                Auth::user()->waitingroom()->attach($test->id);
+                $correct = Practice::find($test->id);
+                return redirect()->route('waiting-room', ['id' => $correct->id]);
+            }
+            else{
+
+                $correct = Practice::find($test->id);
+                return redirect()->route('waiting-room', ['id' => $correct->id]);
+            }
+        }
+        else{
+
+            return back()->withErrors(['error' => 'You have already taken part in this test']);
+        }
     }
 
-    public function test(Practice $test){
-        
-        $rand = true; //Logica per la randomizzazione dell'ordine degli esercizi.
-        return view('test', ['test' => $test]);
+    public function showExam($key){
+
+        $practice = Practice::where('key', '=', $key)->first();
+        $exercise = $practice->exercises->toArray();
+        return view('test', ['test' => $practice, 'exercises' => $exercise]);
     }
+
     public function send(Request $request){
 
         $array_id = $request->input('id');
@@ -204,6 +240,7 @@ class PracticeController extends Controller
         $user_id = Auth::id();
         $practice_id = $request->input('id_practices');
         $i = 0;
+        $feedback = false;
         
         /*
         Da capire se oltre alle risposte devo memorizzare anche la partecipazione dello studente a quella esercitazione. Anche perchè per come
@@ -305,15 +342,11 @@ class PracticeController extends Controller
                 }
             }
             
-            if( $feedback == true) {    //Qui al posto di questo va messo quello del test $practice->feedback
+            //Qui al posto di questo va messo quello del test $practice->feedback
+            Mail::to(Auth::user())
+            ->send(new FeedbackEmail(Auth::user(), $practice, $score_user));
 
-                Mail::to(Auth::user())
-                ->send(new FeedbackEmail(Auth::user(), $practice, $score_user));
-            }
-            else{
-                
-                return "Invio riuscito";
-            }
+            //Qui nel caso occorre implementare la gestione del libretto dello studente visto che possediamo già il suo voto.
         }
     }
 }

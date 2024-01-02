@@ -20,6 +20,9 @@
             @if (Route::has('login'))
                 <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10">
                     @auth
+                        @if($errors->any())
+                            <h4 style="color: white">{{$errors->first()}}</h4>
+                        @endif
                         <form action="{{ route('pratices.join') }}" method="post">
                             @csrf
                             <input type="text" placeholder="Chiave di Accesso" style="border-radius: 10px" name="key">

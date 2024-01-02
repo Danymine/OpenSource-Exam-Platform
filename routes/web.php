@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\PracticeController;
+use App\Http\Controllers\WaitingRoomController;
+use App\Http\Middleware\Allowed;
 
 
 
@@ -11,6 +13,11 @@ use App\Http\Controllers\PracticeController;
 Route::get('/errore', function (){
 
     return "Non hai l'account adatto per svolgere questa opzione.";
+});
+
+Route::get('/errore2', function (){
+
+    return "Non puoi accedere a questo test";
 });
 
 /*
@@ -43,6 +50,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    //Rotte di partecipazione Esame/Esercitazione 2 Possibilità POST o GET da capire qual è il miglior modo
+    Route::post('/join', [PracticeController::class, 'join'])->name('pratices.join');
+    Route::get('/join/{key}', [PracticeController::class, 'showExam'])->name('test')->middleware(Allowed::class);
+    Route::post('/send', [PracticeController::class, 'send'])->name('pratices.send');
+    Route::get('/waiting-room/{id}', [WaitingRoomController::class, 'show'])->name('waiting-room');
+    Route::get('/status/{id}', [WaitingRoomController::class, 'status'])->name('status');
 
 });
 
@@ -81,11 +95,6 @@ Route::middleware('auth', 'role')->group(function (){
 
     });
 });
-
-//Rotte di partecipazione Esame/Esercitazione 2 Possibilità POST o GET da capire qual è il miglior modo
-Route::post('/join', [PracticeController::class, 'join'])->name('pratices.join');
-Route::get('/join/{test}', [PracticeController::class, 'test'])->name('test');
-Route::post('/send', [PracticeController::class, 'send'])->name('pratices.send');
     
 
 require __DIR__.'/auth.php';    //Istruzione per includere tutte le rotte definite nel file auth.php

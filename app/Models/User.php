@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -55,5 +56,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
 
         return $this->hasMany(Answer::class);
+    }
+
+    public function waitingroom() : BelongsToMany
+    {
+
+        return $this->belongsToMany(Practice::class, 'waiting_rooms', 'user_id', 'practice_id');
     }
 }
