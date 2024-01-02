@@ -24,7 +24,7 @@ class ExerciseController extends Controller
         'difficulty' => 'required',
         'subject' => 'required',
         'type' => 'required',
-        // Aggiungi ulteriori regole di validazione per le opzioni in base al tipo di esercizio, se necessario
+        
     ]);
    
     $exercises = new Exercise;
@@ -35,7 +35,7 @@ class ExerciseController extends Controller
     $exercises->difficulty = $request->input('difficulty');
     $exercises->subject = $request->input('subject');
     $exercises->type = $request->input('type');
-    if ($exercises->type=='risposta_aperta'){
+    if ($exercises->type=='Risposta Aperta'){
         
         $exercises->save();
     }
@@ -47,13 +47,14 @@ class ExerciseController extends Controller
         $exercises->option_2 = $options[1];
         $exercises->option_3 = $options[2];
         $exercises->option_4 = $options[3];
+        $exercises->explanation = $request->input('explanation');
+        
     }
     
     /*PER CORRECT OPTION HO MESSO IL NUMERO DELL'OPZIONE CORRETTA*/
 
-    
     $exercises->save();
-
+    return redirect()->route('showAllExercises');
     }
 }
     
@@ -65,7 +66,32 @@ public function showAllExercises()
 }
 
 
+public function edit($id)
+{
+    $exercise = Exercise::findOrFail($id);
+    return view('exercise_update', compact('exercise'));
+}
+public function update(Request $request, $id)
+{
+    $exercise = Exercise::findOrFail($id);
+    $exercise->update($request->all());
+    return redirect()->route('showAllExercises');
+}
+
+public function delete($id)
+{
+    $exercise = Exercise::findOrFail($id);
     
+    // Controlla se l'utente è autorizzato a eliminare l'esercizio
+    if (Auth::id() !== $exercise->user_id) {
+        return redirect()->route('showAllExercises')->with('error', 'Non hai l\'autorizzazione per eliminare questo esercizio.');
+    }
+
+    // Elimina l'esercizio dal database
+    $exercise->delete();
+
+    return redirect()->route('showAllExercises')->with('success', 'Esercizio eliminato con successo.');
+}
 }
 
  /* FILE DI MARCO*/

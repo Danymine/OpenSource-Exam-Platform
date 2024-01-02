@@ -60,12 +60,12 @@ Route::middleware('auth', 'role')->group(function (){
 
         Route::post('/create', [ExerciseController::class, 'store'])->name("exercises.store");
 
-        // Modifica un esercizio esistente
-        Route::get('/{exercise}/edit', [ExerciseController::class, 'edit']);
-        Route::put('/{exercise}/edit', [ExerciseController::class, 'update']);
-        
+        //Modifica esercizio
+       Route::get('/edit-exercise/{id}', [ExerciseController::class, 'edit'])->name('editExercise');
+       Route::post('/edit-exercise/{id}', [ExerciseController::class, 'update'])->name('editExercise');
+       Route::put('/edit-exercise/{id}', [ExerciseController::class, 'update'])->name('exercises.update');
         // Elimina un esercizio
-        Route::delete('/{exercise}/delete', [ExerciseController::class, 'destroy']);
+       Route::get('/delete-exercise/{id}', [ExerciseController::class, 'delete'])->name('deleteExercise');
 
     });
 
