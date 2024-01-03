@@ -74,6 +74,19 @@
             <p><strong>Difficoltà:</strong> {{ $newPractice->difficulty }}</p>
             <p><strong>Materia:</strong> {{ $newPractice->subject }}</p>
             <p><strong>Punteggio Totale:</strong> {{ $newPractice->total_score }}</p>
+            
+            <!-- Nuove informazioni sul feedback e randomizzazione -->
+            <p class="checkbox-info">
+                <input type="checkbox" id="feedbackEnabled" disabled {{ $newPractice->feedback_enabled ? 'checked' : '' }}>
+                <label for="feedbackEnabled">Feedback Automatico</label>
+            </p>
+            <p class="checkbox-info">
+                <input type="checkbox" id="randomizeQuestions" disabled {{ $newPractice->randomize_questions ? 'checked' : '' }}>
+                <label for="randomizeQuestions">Randomizzazione Domande</label>
+            </p>
+
+            <!-- Mostra la data di creazione -->
+            <p><strong>Data di Creazione:</strong> {{ $newPractice->created_at }}</p>
         </div>
 
         <h2>Esercizi:</h2>

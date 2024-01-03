@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Practice extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'title',
         'description',
@@ -17,7 +20,10 @@ class Practice extends Model
         'total_score',
         'key',
         'user_id',
-        'allowed',
+        'feedback_enabled',
+        'randomize_questions',
+        'generated_at', // Aggiungi il campo per la data di generazione
+        'allowed'
     ];
 
     public function user() : BelongsTo
@@ -35,12 +41,6 @@ class Practice extends Model
     {
 
         return $this->hasMany(Answer::class);
-    }
-
-    public function userwaiting() : BelongsToMany
-    {
-
-        return $this->belongsToMany(User::class, 'waiting_rooms', 'practice_id', 'user_id',);
     }
 
 
