@@ -33,4 +33,27 @@ class WaitingRoomController extends Controller
         // Restituisci il risultato in formato JSON
         return response()->json(['status' => $allowed]);
     }
+
+    public function participants($key){
+
+        $practice = Practice::where('key', '=', $key)->first();
+
+        $array = [];
+        foreach ($practice->userwaiting as $user) {
+           
+            array_push($array, $user->name);
+        }
+        // Restituisci il risultato in formato JSON
+        return response()->json(['user' => $array]);
+    }
+
+    public function empower($key){
+
+        $practice = Practice::where('key', '=', $key)->first();
+
+        $practice->allowed = 1;
+        $practice->save();
+
+        return redirect()->route('test', ['key' => $key]);
+    }
 }
