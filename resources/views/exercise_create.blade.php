@@ -30,7 +30,11 @@
         <input type="text" id="score" name="score"><br><br>
 
         <label for="difficulty">Difficoltà:</label>
-        <input type="text" id="difficulty" name="difficulty"><br><br>
+        <select id="difficulty" name="difficulty">
+            <option value="Bassa">Bassa</option>
+            <option value="Media">Media</option>
+            <option value="Alta">Alta</option>
+        </select><br><br>
 
         <label for="subject">Materia:</label>
         <input type="text" id="subject" name="subject"><br><br>
@@ -39,6 +43,7 @@
         <select id="type" name="type">
             <option value="Risposta Aperta">Risposta Aperta</option>
             <option value="Risposta Multipla">Risposta Multipla</option>
+            <option value="Vero o Falso">Vero o Falso</option>
         </select><br><br>
 
         <div id="multiple_choice" style="display: none;">
@@ -60,16 +65,44 @@
             <label for="explanation">Spiegazione:</label>
             <textarea id="explanation" name="explanation"></textarea><br><br>
         </div>
+        <div id="true_false" style="display: none;">
+            <label for="answer1">Opzione 1:</label>
+            <input type="text" id="answer1" name="answer1"><br><br>
+
+            <label for="answer2">Opzione 2:</label>
+            <input type="text" id="answer2" name="answer2"><br><br>
+
+            <label for="correct_answer">Opzione corretta:</label>
+            <select id="correct_answer" name="correct_answer">
+                <option value="vero">Vero</option>
+                <option value="falso">Falso</option>
+            </select><br><br>
+
+            <label for="explanation">Spiegazione:</label>
+            <textarea id="explanation" name="explanation"></textarea><br><br>
+        </div>
+
+
+  
+        </body>
+        </html>
 
         <button type="submit">Crea Esercizio</button>
     </form>
 
+  
     <script>
         document.getElementById('type').addEventListener('change', function() {
             if (this.value === 'Risposta Multipla') {
                 document.getElementById('multiple_choice').style.display = 'block';
             } else {
                 document.getElementById('multiple_choice').style.display = 'none';
+            }
+
+            if (this.value === 'Vero o Falso') {
+                document.getElementById('true_false').style.display = 'block';
+            } else {
+                document.getElementById('true_false').style.display = 'none';
             }
         });
     </script>
