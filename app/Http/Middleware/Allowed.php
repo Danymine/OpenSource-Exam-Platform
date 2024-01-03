@@ -18,9 +18,12 @@ class Allowed
     {      
         $practice = Practice::where('key', '=', $request->key)->first();
         //Necessario aggiungere un controllo aggiuntivo sulla data anche qui
-        if($practice->allowed == 1){
+        if( $practice != NULL){
 
-            return $next($request);
+            if($practice->allowed == 1){
+
+                return $next($request);
+            }
         }
         return redirect('/errore2');
     }

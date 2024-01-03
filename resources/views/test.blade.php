@@ -10,16 +10,12 @@
     <body>
         <h1>{{ $test->title }}</h1>
         <div>
+             @if($errors->any())
+                <h4 style="color: white">{{$errors->first()}}</h4>
+            @endif
             <form action="{{ route('pratices.send') }}" method="post">
                 @csrf
                 <input type="text" name="id_practices" value="{{ $test->id }}" style="display: none">
-                @php
-                    $rand = true; //Qui va messo altro
-                    if( $rand == true){
-
-                        shuffle($exercises);
-                    }
-                @endphp
                 @for($i = 0; $i < count($exercises); $i++)
                     <div class="domanda">
                         <input type="text" name="id[]" value="{{ $exercises[$i]['id'] }}" style="display: none"> <!--Da considerare utile in occassione della randomizzazione delle domande -->

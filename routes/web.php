@@ -53,10 +53,13 @@ Route::middleware('auth')->group(function () {
 
     //Rotte di partecipazione Esame/Esercitazione 2 Possibilità POST o GET da capire qual è il miglior modo
     Route::post('/join', [PracticeController::class, 'join'])->name('pratices.join');
+    /*Per motivi legati alla sicurezza questo va migliorato occorre trovare il modo per non permettere ad utenti qualsiasi di accedere ai test di cui si dispone 
+    la key e che sono già partiti (allowed = 1) la data garantisce un livello maggiore di sicurezza dato che potremmo vietare l'accesso ai test la cui data di
+    esecuzione non sia quella attuale. */
     Route::get('/join/{key}', [PracticeController::class, 'showExam'])->name('test')->middleware(Allowed::class);
     Route::post('/send', [PracticeController::class, 'send'])->name('pratices.send');
-    Route::get('/waiting-room/{id}', [WaitingRoomController::class, 'show'])->name('waiting-room');
-    Route::get('/status/{id}', [WaitingRoomController::class, 'status'])->name('status');
+    Route::get('/waiting-room/{key}', [WaitingRoomController::class, 'show'])->name('waiting-room');
+    Route::get('/status/{key}', [WaitingRoomController::class, 'status'])->name('status');
 
 });
 

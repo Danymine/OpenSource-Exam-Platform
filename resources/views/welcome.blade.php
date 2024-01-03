@@ -25,7 +25,7 @@
                         @endif
                         <form action="{{ route('pratices.join') }}" method="post">
                             @csrf
-                            <input type="text" placeholder="Chiave di Accesso" style="border-radius: 10px" name="key">
+                            <input type="text" placeholder="Chiave di Accesso" style="border-radius: 10px" name="key" required maxlength="6" minlength="6" >
                             <input type="submit" value="Partecipa" style="border-radius: 10px; color: white;" class="btn">
                         </form>
                         <a href="{{ route('dashboard') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</a>

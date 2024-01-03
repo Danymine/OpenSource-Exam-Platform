@@ -48,9 +48,9 @@
     <div class="loading-spinner"></div>
 </div>
 <script>
-    // Prima della tua richiesta AJAX
+    
     function fetchStatus() {
-        fetch("{{ route('status', ['id' => $practices->id]) }}", {
+        fetch("{{ route('status', ['key' => $practices->key]) }}", {
             method: 'GET',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -66,7 +66,6 @@
                 window.location.href = "{{ route('test', ['key' => $practices->key]) }}";
             }
             else{
-                console.log("Stato della waiting room:", data.status);
                 // Chiama nuovamente la funzione dopo 5 secondi (5000 millisecondi)
                 setTimeout(fetchStatus, 5000);
             }

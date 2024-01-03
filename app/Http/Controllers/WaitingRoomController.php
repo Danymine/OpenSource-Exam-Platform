@@ -8,42 +8,19 @@ use App\Models\Practice;
 
 class WaitingRoomController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function show($key)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(int $id)
-    {
-        $practice = Practice::find($id);
+        $practice = Practice::where('key', '=', $key)->first();
         return view('waiting-room', ['practices' => $practice]);
     }
 
-    public function status(int $id){
+    public function status($key){
 
-        $practice = Practice::find($id);
+        $practice = Practice::where('key', '=', $key)->first();
 
         if (!$practice) {
             // Se la pratica non esiste, restituisci un errore 404
@@ -55,28 +32,5 @@ class WaitingRoomController extends Controller
 
         // Restituisci il risultato in formato JSON
         return response()->json(['status' => $allowed]);
-    }
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(WaitingRoom $waitingRoom)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, WaitingRoom $waitingRoom)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(WaitingRoom $waitingRoom)
-    {
-        //
     }
 }
