@@ -5,14 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Practice;
 use App\Models\Exercise;
-use App\Models\User;
-use App\Models\WaitingRoom;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Answer;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\FeedbackEmail;
-
+use Carbon\Carbon;
 
 class PracticeController extends Controller
 {
@@ -45,88 +43,73 @@ class PracticeController extends Controller
 
     public function generatePracticeWithFilters(Request $request)
     {
-        $title = $request->input('title');
-        $description = $request->input('description');
-        $difficulty = $request->input('difficulty');
-        $subject = $request->input('subject');
-        $maxQuestions = $request->input('max_questions');
-        $maxScore = $request->input('max_score');
-
-        $exerciseQuery = Exercise::query(); //Questa è deprecata non si usa più.
-        /* Tips:
-            1)La difficoltà di una esercitazione non è la somma della difficoltà degli esercizi che la contengono almeno secondo me.
-            Esempio:
-            Esercitazione Nome: Analisi Difficolta: Difficile Numero Esercizi: 5 esercizi Punteggio: massimo 30
-                1)Media
-                2)Difficile
-                3)Difficile
-                4)Difficile
-                5)Difficile
-            Per me questo è difficile e deve essere possibile. Soprattutto in un discorso più ampio di regolazione.
-            Ricordiamo che il punteggio attribuito all'esercizio lo assegna il docente e così la difficoltà possono esservi esercizi difficili
-            che valgono differtenti punteggi. Se ad esempio il 2 vale 8 il 3 vale 6 il 4 vale 6 e il 5 vale 5 ottengo 25 di punteggio massimo con 
-            questi se ad esempio io non ho un altro esercizio difficile da metterci ma ho uno medio da 5 ci metto quello.
-            2)Sistema la scelta degli esercizi pls vedi tu come fare basta che la fai decente e che consideri parecchie cose. 
-            3)Poi per quale ragione usi il metodo get per inviare così? Secondo me rovina l'url. 
-            4)Una volta terminata la generazione di una esercitazione fai vedere l'esercitazione creata per quale motivo? Quella è una sorta
-            di anteprima? Può essere modificabile da li? Perchè rimandarlo li e non alla lista di tutte le sue esercitazioni?
-            Sarebbe interessante se tu quella vista la utilizzassi per tutte le esercitazione nel senso che se clicco in una esercitazione da
-            quella lista mi facesse vedere tutte le sue caratteristiche e me le facesse modificare ma sarebbe anche interessante il concetto di anteprima
-            che il docente controlla e se viene soddisfatto "l'approva" se non li piace li diamo la possibilità di cancellare esercizi e aggiungerne dei nuovi
-            manualmente.
-            Considerare l'aggiunta di esercitazioni equilibrate (Interessante)
-            Considerare l'aggiunta di una sezione dedicate al come si vogliono gli esercizi (Aperte, Chiuse, Misto)?
-        */
-
+        $validatedData = $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'difficulty' => 'string',
+            'subject' => 'string',
+            'max_questions' => 'nullable|integer|min:1',
+            'max_score' => 'nullable|integer|min:1',
+        ]);
+    
+        $title = $validatedData['title'];
+        $description = $validatedData['description'];
+        $difficulty = $validatedData['difficulty'];
+        $subject = $validatedData['subject'];
+        $maxQuestions = $validatedData['max_questions'];
+        $maxScore = $validatedData['max_score'];
+    
+        $feedbackEnabled = $request->has('feedback');
+        $randomizeQuestions = $request->has('randomize');
+    
+        $exerciseQuery = Exercise::query();
+    
         if ($difficulty) {
             $exerciseQuery->where('difficulty', $difficulty);
         }
-
+    
         if ($subject) {
             $exerciseQuery->where('subject', $subject);
         }
-
+    
+        // Ottieni gli esercizi filtrati
         $filteredExercises = $exerciseQuery->get();
-        /*$totalScore = $filteredExercises->sum('score');
-
-        if ($maxScore && $totalScore > $maxScore) {
-            //return redirect()->back()->with('error', 'La somma dei punteggi supera il massimo consentito.');
-            return "Errore non consentito";
-        }
-        */
-        if ($maxQuestions) {
+    
+        // Limita il numero massimo di domande se specificato
+        if ($maxQuestions && $filteredExercises->count() > $maxQuestions) {
             $filteredExercises = $filteredExercises->take($maxQuestions);
         }
-
-       // Calcola la somma degli score dei filtri e calcola il rapporto per il totale richiesto
+    
+        // Calcola la somma degli score dei filtri
         $totalScoreFiltered = $filteredExercises->sum('score');
-        //$scoreRatio = $totalScore ? $totalScore / $totalScoreFiltered : 1;
-        /*
-        // Proporziona gli score degli esercizi
-        foreach ($filteredExercises as $exercise) {
-            $exercise->score *= $scoreRatio;
-        }
-        */
+    
+        // Otteniamo la data corrente
+        $generatedDate = now();
+    
+        // Genera la chiave (presumo che tu abbia già implementato questa logica)
+        $key = $this->generateKey();
+    
         $newPractice = Practice::create([
             'title' => $title,
             'description' => $description,
             'difficulty' => $difficulty,
             'subject' => $subject,
             'total_score' => $totalScoreFiltered,
-            'key' => $key = $this->generateKey(),
+            'key' => $key,
             'user_id' => Auth::id(),
-            'allowed' => 0
+            'allowed' => 0,
+            'feedback_enabled' => $feedbackEnabled,
+            'randomize_questions' => $randomizeQuestions,
+            'generated_at' => $generatedDate,
         ]);
-        
-        //Qui dentro non ci entra affatto
+    
         foreach ($filteredExercises as $exercise) {
-            
             $newPractice->exercises()->attach($exercise->id);
         }
-
-
+    
         return view('practice_new')->with('newPractice', $newPractice);
     }
+    
 
     public function create()
     {

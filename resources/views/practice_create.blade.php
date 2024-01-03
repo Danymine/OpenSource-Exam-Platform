@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -85,6 +85,16 @@
         <div class="form-group">
             <label for="max_score">Punteggio Massimo:</label>
             <input type="number" id="max_score" name="max_score">
+        </div>
+        
+        <div class="form-group">
+            <label for="feedback">Feedback Automatico:</label>
+            <input type="checkbox" id="feedback" name="feedback">
+        </div>
+
+        <div class="form-group">
+            <label for="randomize">Randomizzazione delle Domande:</label>
+            <input type="checkbox" id="randomize" name="randomize">
         </div>
 
         <input type="submit" value="Genera Pratica">
