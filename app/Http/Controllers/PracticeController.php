@@ -187,66 +187,170 @@ class PracticeController extends Controller
             return redirect()->back()->with('error', 'Error deleting practice');
         }
     }
-    /*Da vedere come far partecipare l'utente quando farò la waiting room */
+
+    // NOTE: Questa funzione si occupa di ricevere dall'utente la Key del test alla quale vuole accedere 
     public function join(Request $request){
 
-        $test = new Practice;
-        $test = Practice::where('key', '=', $request->input('key'))->first();
-        if($test == NULL){
+        if( $request->has('key') ){
 
-            return back()->withErrors(['error' => 'Key not found']);
-        }
-        $date = now()->format('d/m/Y');
-        /*
-        Verifico che il test alla quale l'utente stia provando ad accedere ha come data quella attuale se questo vincolo è soddisfatto continuo 
-        Gestione nel caso in cui lo stesso utente riprovi ad accedere 
-        */
-        $response = Answer::where([
-            ['user_id', '=', Auth::id()],
-            ['practice_id', '=', $test->id],
-        ])->first();
+            $validated = $request->validate([
+                'key' => 'required|max:6|min:6|alpha_num:ascii',
+            ]);
+            $test = new Practice;
+            $test = Practice::where('key', '=', $request->input('key'))->first();   //Vado a repire il test con quella key. (Se Esiste)
+            if($test == NULL){
 
-        if($response == NULL){
+                return back()->withErrors(['error' => 'Key not found']);
+            }
+
+            //Verifico che il test alla quale l'utente stia provando ad accedere ha come data quella attuale se questo vincolo è soddisfatto continuo 
+            $date = now()->format('d/m/Y');
             
-            if( $test->allowed == 0 ){
-               
-                Auth::user()->waitingroom()->attach($test->id);
-                $correct = Practice::find($test->id);
-                return redirect()->route('waiting-room', ['id' => $correct->id]);
+
+            //Verifico che l'utente non abbia già effettuato quel test.
+            $response = Answer::where([
+                ['user_id', '=', Auth::id()],
+                ['practice_id', '=', $test->id],
+            ])->first();
+            
+            if($response == NULL){
+                
+                //Non trovando nulla sono sicuro. Ora verifico che sia già startata o meno. Se non è reinderizzo in waiting-room altrimenti direttamente al test.
+                if( $test->allowed == 0 ){
+                
+                    Auth::user()->waitingroom()->attach($test->id);
+                    return redirect()->route('waiting-room', ['key' => $test->key]);
+                }
+                else{
+
+                    return redirect()->route('test', ['key' => $test->key]);
+                }
             }
             else{
 
-                $correct = Practice::find($test->id);
-                return redirect()->route('waiting-room', ['id' => $correct->id]);
+                return back()->withErrors(['error' => 'You have already taken part in this test']);
             }
         }
         else{
 
-            return back()->withErrors(['error' => 'You have already taken part in this test']);
+            return back()->withErrors(['error' => 'Smettila di giocare con l\'ispeziona']);
         }
     }
 
+    //NOTE: Mostra all'utente il test. Questa verrà richiamata dalla vista WaitingRoom attraverso la chiamata asincrona.
     public function showExam($key){
 
         $practice = Practice::where('key', '=', $key)->first();
         $exercise = $practice->exercises->toArray();
-        return view('test', ['test' => $practice, 'exercises' => $exercise]);
+        $rand = true;
+        if( $rand == true ){    //Qui ci va $practice->rand == true
+
+            shuffle($exercise); //Disordino gli esercizi.
+        }
+
+        return view('test', ['test' => $practice, 'exercises' => $exercise]);   
     }
 
+    //NOTE:: Funzione interna che si occupa della correzione automatica di un test.
+    private function AutoCorrect(int $practice_id, array $array_id, int $user_id){
+
+        $score_user = 0;
+        $practice = Practice::where('id', '=', $practice_id)->first();
+        $feedback = true;  //Logica per l'invio automatico del feeback all'invio dell'esercitazione/esame $practice->feedback == false
+        $score_max = $practice->total_score;
+        $explanation = [];
+        $correct = 0;
+
+        for($i = 0; $i < count($array_id); $i++ ){
+
+            $test = new Answer;
+            $test = Answer::where([
+                    ['exercise_id', '=', $array_id[$i]],
+                    ['practice_id', '=', $practice_id],
+                    ['user_id', '=', $user_id],
+                ])->first();
+            
+            $score_esercizio = $test->exercise->score;
+            $correct_response = $test->exercise->correct_option;
+            
+            switch($correct_response){
+
+                case 'a':
+                    if( $test->response == $test->exercise->option_1 ){
+
+                        $score_user += $score_esercizio;
+                        $correct += 1;
+                    }
+                    else{
+
+                        //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
+                    }
+                break;
+
+                case 'b':
+                    if( $test->response == $test->exercise->option_2 ){
+
+                        $score_user += $score_esercizio;
+                        $correct += 1;
+                    }
+                    else{
+
+                        //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
+                    }
+                break;
+
+                case 'c':
+                    if( $test->response == $test->exercise->option_3 ){
+
+                        $score_user += $score_esercizio;
+                        $correct += 1;
+                    }
+                    else{
+
+                        //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
+                    }
+                break;
+
+                case 'd':
+                    if( $test->response == $test->exercise->option_4 ){
+
+                        $score_user += $score_esercizio;
+                        $correct += 1;
+                    }
+                    else{
+
+                        //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
+                    }
+                break;
+            }
+        }
+            
+        //Qui al posto di questo va messo quello del test $practice->feedback
+        Mail::to(Auth::user())
+        ->send(new FeedbackEmail(Auth::user(), $practice, $score_user));
+
+        //Qui nel caso occorre implementare la gestione del libretto dello studente visto che possediamo già il suo voto.
+    }
+
+    //NOTE: Si occupa di memorizzare gli esercizi compilati. 
     public function send(Request $request){
 
+        $validated = $request->validate([
+            'id' => 'array|required',
+            'id.*' => 'integer',
+            'id_practices' => 'integer|required',
+            'risposte' => 'array|required',
+            'risposte.*' => 'string|max:255'
+        ]);
+
         $array_id = $request->input('id');
-        $array_response = $request->input('risposte');
+        $array_response = array_map('htmlspecialchars', $validated['risposte']);    //Sostituiamo caratteri speciali.
         $user_id = Auth::id();
         $practice_id = $request->input('id_practices');
+        $feedback = true;  //$feedback = Practice::find($practice_id);
         $i = 0;
-        $feedback = false;
-        
-        /*
-        Da capire se oltre alle risposte devo memorizzare anche la partecipazione dello studente a quella esercitazione. Anche perchè per come
-        è strutturato ora il database uno stesso utente può partecipare al test più volte anche dopo averlo già consegnato e le risposte vengono
-        accodate
-        */
+
+        //Inserisco tutte le risposte salvate nel DB
         for($i = 0; $i < count($array_id); $i++){
 
             $test = new Answer;
@@ -258,95 +362,14 @@ class PracticeController extends Controller
             $test->save();
         }
 
+        //Verifico se il test preve l'invio automatico del feedback.
         if( $feedback == false ){
 
             return "Invio avvenuto con successo";
         }
         else{
 
-            //Correzione automatica.
-            /* Devo occuparmi della correzione. In Answer ho l'esercizio id utilizzerò quello per andare a reperire il punteggio standard dell'esercizio
-            e a cui applicherò una variazione in base al tipo di valutazione dell'esercitazione/Esame considererò come se il punteggio espresso sia quello riferito
-            in 30. 
-
-            Bisogna anche repirire le spiegazioni e la correct option e l'email alla quale inviare l'esito. 
-            */
-            $score_user = 0;
-            $practice = Practice::where('id', '=', $practice_id)->first();
-            $feedback = true;  //Logica per l'invio automatico del feeback all'invio dell'esercitazione/esame $practice->feedback == false
-            $score_max = $practice->total_score;
-            $explanation = [];
-            $correct = 0;
-
-            for($i = 0; $i < count($array_id); $i++ ){
-
-                $test = new Answer;
-                $test = Answer::where([
-                        ['exercise_id', '=', $array_id[$i]],
-                        ['practice_id', '=', $practice_id],
-                        ['user_id', '=', $user_id],
-                    ])->first();
-                
-                $score_esercizio = $test->exercise->score;
-                $correct_response = $test->exercise->correct_option;
-                
-                switch($correct_response){
-
-                    case 'a':
-                        if( $test->response == $test->exercise->option_1 ){
-
-                            $score_user += $score_esercizio;
-                            $correct += 1;
-                        }
-                        else{
-
-                            //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
-                        }
-                    break;
-
-                    case 'b':
-                        if( $test->response == $test->exercise->option_2 ){
-
-                            $score_user += $score_esercizio;
-                            $correct += 1;
-                        }
-                        else{
-
-                            //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
-                        }
-                    break;
-
-                    case 'c':
-                        if( $test->response == $test->exercise->option_3 ){
-
-                            $score_user += $score_esercizio;
-                            $correct += 1;
-                        }
-                        else{
-
-                            //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
-                        }
-                    break;
-
-                    case 'd':
-                        if( $test->response == $test->exercise->option_4 ){
-
-                            $score_user += $score_esercizio;
-                            $correct += 1;
-                        }
-                        else{
-
-                            //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
-                        }
-                    break;
-                }
-            }
-            
-            //Qui al posto di questo va messo quello del test $practice->feedback
-            Mail::to(Auth::user())
-            ->send(new FeedbackEmail(Auth::user(), $practice, $score_user));
-
-            //Qui nel caso occorre implementare la gestione del libretto dello studente visto che possediamo già il suo voto.
+            $this->AutoCorrect($test->practice_id, $array_id, $user_id);
         }
     }
 }
