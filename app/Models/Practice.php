@@ -6,12 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class Practice extends Model
 {
-    use SoftDeletes;
-
     protected $fillable = [
         'title',
         'description',
@@ -23,29 +21,28 @@ class Practice extends Model
         'feedback_enabled',
         'randomize_questions',
         'generated_at', // Aggiungi il campo per la data di generazione
-        'allowed'
+        'allowed',
+        'practice_date',
+        'custom_score'
     ];
 
     public function user() : BelongsTo
     {
-
         return $this->belongsTo(User::class);
     }
 
     public function exercises() : BelongsToMany
     {
-        return $this->belongsToMany(Exercise::class);
+        return $this->belongsToMany(Exercise::class)->withPivot('custom_score');
     }
 
     public function answers() : HasMany
     {
-
         return $this->hasMany(Answer::class);
     }
 
     public function userwaiting() : BelongsToMany
     {
-
         return $this->belongsToMany(User::class, 'waiting_rooms', 'practice_id', 'user_id',);
     }
 }

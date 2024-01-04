@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('exercise_practice', function (Blueprint $table) {
-            
             $table->id();
             $table->foreignId('exercise_id')->constrained();
             $table->foreignId('practice_id')->constrained()->onDelete('cascade');
+            $table->decimal('custom_score', 8, 2)->nullable(); // Aggiungi il campo per il punteggio personalizzato
         });
     }
 

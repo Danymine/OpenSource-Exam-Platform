@@ -50,6 +50,7 @@ class PracticeController extends Controller
             'subject' => 'string',
             'max_questions' => 'nullable|integer|min:1',
             'max_score' => 'nullable|integer|min:1',
+            'practice_date' => 'nullable|date',
         ]);
     
         $title = $validatedData['title'];
@@ -58,6 +59,7 @@ class PracticeController extends Controller
         $subject = $validatedData['subject'];
         $maxQuestions = $validatedData['max_questions'];
         $maxScore = $validatedData['max_score'];
+        $practice_date = $validatedData['practice_date'] ?? null;
     
         $feedbackEnabled = $request->has('feedback');
         $randomizeQuestions = $request->has('randomize');
@@ -83,33 +85,47 @@ class PracticeController extends Controller
         // Calcola la somma degli score dei filtri
         $totalScoreFiltered = $filteredExercises->sum('score');
     
-        // Otteniamo la data corrente
+        // Ottieni la data corrente
         $generatedDate = now();
+    
+        // Ottieni il massimo tra max_score e il totale dei punteggi degli esercizi filtrati
+        $maxScore = $maxScore ?? $totalScoreFiltered;
     
         // Genera la chiave (presumo che tu abbia già implementato questa logica)
         $key = $this->generateKey();
     
-        $newPractice = Practice::create([
+        $newPractice = new Practice([
             'title' => $title,
             'description' => $description,
             'difficulty' => $difficulty,
             'subject' => $subject,
-            'total_score' => $totalScoreFiltered,
+            'total_score' => $maxScore, // Imposta il punteggio totale della pratica come max_score
             'key' => $key,
             'user_id' => Auth::id(),
             'allowed' => 0,
             'feedback_enabled' => $feedbackEnabled,
             'randomize_questions' => $randomizeQuestions,
             'generated_at' => $generatedDate,
+            'practice_date' => $practice_date,
         ]);
     
+        $newPractice->save();
+    
+        // Modifica dei punteggi personalizzati degli esercizi nella pratica
         foreach ($filteredExercises as $exercise) {
-            $newPractice->exercises()->attach($exercise->id);
-        }
+            // Calcola il punteggio proporzionato per ciascun esercizio rispetto al max_score
+            $customScore = round(($exercise->score / $totalScoreFiltered) * $maxScore, 2);
+            $newPractice->exercises()->attach($exercise->id, ['custom_score' => $customScore]);
+        }               
     
-        return view('practice_new')->with('newPractice', $newPractice);
-    }
+        // Recupero gli esercizi associati con i loro punteggi personalizzati
+        $filteredExercisesWithCustomScores = $newPractice->exercises()->withPivot('custom_score')->get();
     
+        return view('practice_new', [
+            'newPractice' => $newPractice,
+            'filteredExercises' => $filteredExercisesWithCustomScores,
+        ]);
+    }    
 
     public function create()
     {
@@ -119,14 +135,14 @@ class PracticeController extends Controller
     public function index()
     {
         $practices = Practice::where('user_id', '=', Auth::id())->get();
-
         return view('practices', ['practices' => $practices]);
     }
 
     public function show(Practice $practice)
     {
-        return view('practice_show', ['practice' => $practice]);
-    }
+        $practice = Practice::with('exercises')->findOrFail($practice->id);
+        return view('practice_show', compact('practice'));
+    }    
 
     public function edit(Practice $practice)
     {
@@ -148,29 +164,19 @@ class PracticeController extends Controller
         return redirect()->route('practices.show', $practice->id)->with('success', 'Practice updated successfully');
     }
 
-    public function destroy(Practice $practice)
+    public function destroy($id)
     {
-        // Iniziare una transazione per assicurarsi che l'operazione sia atomica
-        \DB::beginTransaction();
-
-        try {
-            // Elimina gli esercizi associati alla pratica
-            $practice->exercises()->delete();
-
-            // Ora elimina la pratica stessa
-            $practice->delete();
-
-            // Commit della transazione se tutto va bene
-            \DB::commit();
-
-            return redirect()->route('practices.index')->with('success', 'Practice deleted successfully');
-        } catch (\Exception $e) {
-            // Rollback della transazione in caso di errore
-            \DB::rollback();
-            return redirect()->back()->with('error', 'Error deleting practice');
-        }
+        $practice = Practice::findOrFail($id);
+    
+        // Dissocia gli esercizi collegati a questa pratica
+        $practice->exercises()->detach();
+    
+        // Elimina la pratica
+        $practice->delete();
+    
+        return redirect()->route('practices.index')->with('success', 'Pratica eliminata correttamente.');
     }
-
+    
     // NOTE: Questa funzione si occupa di ricevere dall'utente la Key del test alla quale vuole accedere 
     public function join(Request $request){
 
