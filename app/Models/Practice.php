@@ -43,6 +43,10 @@ class Practice extends Model
         return $this->hasMany(Answer::class);
     }
 
+    public function userwaiting() : BelongsToMany
+    {
 
+        return $this->belongsToMany(User::class, 'waiting_rooms', 'practice_id', 'user_id',);
+    }
 }
 

@@ -27,35 +27,40 @@ class ExerciseController extends Controller
                 
             ]);
    
-    $exercises = new Exercise;
-    $exercises->user_id = Auth::id(); // Imposta l'ID dell'utente autenticato
-    $exercises->name = $request->input('name');
-    $exercises->question = $request->input('question');
-    $exercises->score = $request->input('score');
-    $exercises->difficulty = $request->input('difficulty');
-    $exercises->subject = $request->input('subject');
-    $exercises->type = $request->input('type');
-    if ($exercises->type === 'Risposta Aperta') {
-        $exercises->save();
-    } else {
-        $exercises->correct_option = $request->input('correct_option');
+            $exercises = new Exercise;
+            $exercises->user_id = Auth::id(); // Imposta l'ID dell'utente autenticato
+            $exercises->name = $request->input('name');
+            $exercises->question = $request->input('question');
+            $exercises->score = $request->input('score');
+            $exercises->difficulty = $request->input('difficulty');
+            $exercises->subject = $request->input('subject');
+            $exercises->type = $request->input('type');
+            if ($exercises->type === 'Risposta Aperta') {
+                
+                $exercises->save();
+            } 
+            else {
 
-        if ($exercises->type === 'Vero o Falso') {
-            $exercises->explanation = $request->input('explanation');
-        } else {
-            $options = $request->input('options');
-            $exercises->option_1 = $options[0];
-            $exercises->option_2 = $options[1];
-            $exercises->option_3 = $options[2];
-            $exercises->option_4 = $options[3];
-            $exercises->explanation = $request->input('explanation');
-        }
+                $exercises->correct_option = $request->input('correct_option');
 
-        $exercises->save();
+                if ($exercises->type === 'Vero o Falso') {
+
+                    $exercises->explanation = $request->input('explanation');
+                } else {
+                    
+                    $options = $request->input('options');
+                    $exercises->option_1 = $options[0];
+                    $exercises->option_2 = $options[1];
+                    $exercises->option_3 = $options[2];
+                    $exercises->option_4 = $options[3];
+                    $exercises->explanation = $request->input('explanation');
+                }
+
+                $exercises->save();
+            }
+
+        return redirect()->route('showAllExercises');
     }
-
-    return redirect()->route('showAllExercises');
-}
 }
     
 

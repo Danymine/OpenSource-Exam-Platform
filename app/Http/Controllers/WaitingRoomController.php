@@ -36,11 +36,12 @@ class WaitingRoomController extends Controller
 
     public function participants($key){
 
-        $practice = Practice::where('key', '=', $key)->first();
-
+        $practice = Practice::where('key', $key)->with('userwaiting')->firstOrFail();
+        $array = [];
+       
         $array = [];
         foreach ($practice->userwaiting as $user) {
-           
+
             array_push($array, $user->name);
         }
         // Restituisci il risultato in formato JSON
