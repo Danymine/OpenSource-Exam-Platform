@@ -55,6 +55,8 @@ class WaitingRoomController extends Controller
         $practice->allowed = 1;
         $practice->save();
 
-        return redirect()->route('test', ['key' => $key]);
+        $practice->userwaiting()->detach();
+
+        return redirect()->back()->with('success', 'Gli studenti hanno iniziato la prova');  
     }
 }

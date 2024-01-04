@@ -37,6 +37,11 @@
             <div class="waiting-message">Salve docente sei nella gestione della waiting room per il test {{ $practices->title }}</div>
         </div>
         <p id="prova"></p>
+        @if (\Session::has('success'))
+            <div class="alert alert-success">
+                <p><b>{{ \Session::get('success') }}</b></p>
+            </div>
+        @endif
         <div>
             <a href="{{ route('empower', ['key' => $practices->key]) }}">Consenti Accesso</a>
         </div>
