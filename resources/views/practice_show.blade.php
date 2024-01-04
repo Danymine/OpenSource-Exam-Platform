@@ -37,9 +37,16 @@
         <p><strong>Difficoltà:</strong> {{ $practice->difficulty }}</p>
         <p><strong>Materia:</strong> {{ $practice->subject }}</p>
         <p><strong>Punteggio Totale:</strong> {{ $practice->total_score }}</p>
-        @if(isset($key))
-            <p><strong>Chiave Generata:</strong> {{ $key }}</p>
-        @endif
     </div>
+
+    <h2>Esercizi:</h2>
+    @foreach($practice->exercises as $exercise)
+    <div class="exercise">
+        <h3>{{ $exercise->name }}</h3>
+        <p><strong>Domanda:</strong> {{ $exercise->question }}</p>
+        <p><strong>Punteggio:</strong> {{ $exercise->score }}</p>
+        <!-- Altri dettagli dell'esercizio -->
+    </div>
+    @endforeach
 </body>
 </html>

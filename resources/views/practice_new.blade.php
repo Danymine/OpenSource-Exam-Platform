@@ -87,6 +87,10 @@
 
             <!-- Mostra la data di creazione -->
             <p><strong>Data di Creazione:</strong> {{ $newPractice->created_at }}</p>
+            
+            <!-- Mostra la data in cui si terrà l'esercitazione -->
+            <p><strong>Data programmata:</strong> {{ \Carbon\Carbon::parse($newPractice->practice_date)->format('d-m-Y') }}</p>
+
         </div>
 
         <h2>Esercizi:</h2>
@@ -94,10 +98,12 @@
             <div class="exercise">
                 <h3>{{ $exercise->name }}</h3>
                 <p><strong>Domanda:</strong> {{ $exercise->question }}</p>
-                <p><strong>Punteggio:</strong> {{ $exercise->score }}</p>
+                <!-- Accedi al custom_score attraverso la relazione pivot -->
+                <p><strong>Punteggio:</strong> {{ $exercise->pivot->custom_score ?? '' }}</p>
                 <!-- Altri dettagli dell'esercizio -->
             </div>
         @endforeach
+
 
         <div class="generated-key">
             <strong>Chiave Generata:</strong>

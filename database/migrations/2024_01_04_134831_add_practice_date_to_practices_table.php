@@ -4,19 +4,25 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddDeletedAtToPracticesTable extends Migration
+return new class extends Migration
 {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
         Schema::table('practices', function (Blueprint $table) {
-            $table->softDeletes();
+            $table->date('practice_date')->nullable();
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
         Schema::table('practices', function (Blueprint $table) {
-            $table->dropSoftDeletes();
+            $table->dropColumn('practice_date');
         });
     }
-}
+};

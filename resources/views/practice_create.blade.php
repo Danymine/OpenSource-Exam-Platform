@@ -95,9 +95,14 @@
         <div class="form-group">
             <label for="randomize">Randomizzazione delle Domande:</label>
             <input type="checkbox" id="randomize" name="randomize">
+        </div>  
+        
+        <div class="form-group">
+            <label for="practice_date">Data dell'Esame:</label>
+            <input type="date" id="practice_date" name="practice_date">
         </div>
-
         <input type="submit" value="Genera Pratica">
     </form>
+
 </body>
 </html>
