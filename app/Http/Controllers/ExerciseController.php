@@ -24,9 +24,8 @@ class ExerciseController extends Controller
                 'difficulty' => 'required',
                 'subject' => 'required',
                 'type' => 'required',
-                
             ]);
-   
+    
             $exercises = new Exercise;
             $exercises->user_id = Auth::id(); // Imposta l'ID dell'utente autenticato
             $exercises->name = $request->input('name');
@@ -35,19 +34,16 @@ class ExerciseController extends Controller
             $exercises->difficulty = $request->input('difficulty');
             $exercises->subject = $request->input('subject');
             $exercises->type = $request->input('type');
+    
             if ($exercises->type === 'Risposta Aperta') {
-                
                 $exercises->save();
-            } 
-            else {
-
+            } else {
                 $exercises->correct_option = $request->input('correct_option');
-
                 if ($exercises->type === 'Vero o Falso') {
-
+                    $exercises->correct_option = $request->input('correct_answer');
                     $exercises->explanation = $request->input('explanation');
-                } else {
-                    
+                }
+                 else {
                     $options = $request->input('options');
                     $exercises->option_1 = $options[0];
                     $exercises->option_2 = $options[1];
@@ -55,13 +51,12 @@ class ExerciseController extends Controller
                     $exercises->option_4 = $options[3];
                     $exercises->explanation = $request->input('explanation');
                 }
-
                 $exercises->save();
             }
-
+        }
         return redirect()->route('showAllExercises');
     }
-}
+    
     
 
 public function showAllExercises()

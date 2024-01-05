@@ -65,22 +65,17 @@
             <label for="explanation">Spiegazione:</label>
             <textarea id="explanation" name="explanation"></textarea><br><br>
         </div>
+        
         <div id="true_false" style="display: none;">
-            <label for="answer1">Opzione 1:</label>
-            <input type="text" id="answer1" name="answer1"><br><br>
+    <label for="correct_answer">Risposta corretta:</label>
+    <select id="correct_answer" name="correct_answer">
+        <option value="Vero" selected>Vero</option>
+        <option value="Falso">Falso</option>
+    </select><br><br>
 
-            <label for="answer2">Opzione 2:</label>
-            <input type="text" id="answer2" name="answer2"><br><br>
-
-            <label for="correct_answer">Opzione corretta:</label>
-            <select id="correct_answer" name="correct_answer">
-                <option value="vero">Vero</option>
-                <option value="falso">Falso</option>
-            </select><br><br>
-
-            <label for="explanation">Spiegazione:</label>
-            <textarea id="explanation" name="explanation"></textarea><br><br>
-        </div>
+    <label for="explanation">Spiegazione:</label>
+    <textarea id="explanation" name="explanation"></textarea><br><br>
+    </div>
 
 
   
