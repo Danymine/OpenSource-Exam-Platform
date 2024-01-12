@@ -19,7 +19,7 @@
                 @for($i = 0; $i < count($exercises); $i++)
                     <div class="domanda">
                         <input type="text" name="id[]" value="{{ $exercises[$i]['id'] }}" style="display: none"> <!--Da considerare utile in occassione della randomizzazione delle domande -->
-                        <p class="testo-domanda"> {{ $exercises[$i]["question"] }} <span> Score: {{ $exercises[$i]["score"] }}</span> </p>
+                        <p class="testo-domanda"> {{ $exercises[$i]["question"] }} <span> Score: {{ $exercises[$i]["pivot"]['custom_score'] }}</span> </p>
                         @if( $exercises[$i]["type"] == "Risposta Aperta")
                             <textarea name="risposte[{{ $exercises[$i]['id'] }}]" cols="30" rows="2"></textarea>
                         @else

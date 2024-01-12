@@ -192,10 +192,6 @@ class PracticeController extends Controller
                 return back()->withErrors(['error' => 'Key not found']);
             }
 
-            //Verifico che il test alla quale l'utente stia provando ad accedere ha come data quella attuale se questo vincolo è soddisfatto continuo 
-            $date = now()->format('d/m/Y');
-            
-
             //Verifico che l'utente non abbia già effettuato quel test.
             $response = Answer::where([
                 ['user_id', '=', Auth::id()],
@@ -231,8 +227,7 @@ class PracticeController extends Controller
 
         $practice = Practice::where('key', '=', $key)->first();
         $exercise = $practice->exercises->toArray();
-        $rand = true;
-        if( $rand == true ){    //Qui ci va $practice->rand == true
+        if( $practice->randomize_questions == true ){
 
             shuffle($exercise); //Disordino gli esercizi.
         }
@@ -241,25 +236,27 @@ class PracticeController extends Controller
     }
 
     //NOTE:: Funzione interna che si occupa della correzione automatica di un test.
-    private function AutoCorrect(int $practice_id, array $array_id, int $user_id){
+    private function AutoCorrect(int $practice_id, int $user_id){
 
         $score_user = 0;
         $practice = Practice::where('id', '=', $practice_id)->first();
-        $feedback = true;  //Logica per l'invio automatico del feeback all'invio dell'esercitazione/esame $practice->feedback == false
+        $feedback = $practice->feedback_enabled;
+        $exercise = $practice->exercises->toArray();
         $score_max = $practice->total_score;
         $explanation = [];
         $correct = 0;
 
-        for($i = 0; $i < count($array_id); $i++ ){
+        for($i = 0; $i < count($exercise); $i++ ){
 
+            $temporay = $score_user;
             $test = new Answer;
             $test = Answer::where([
-                    ['exercise_id', '=', $array_id[$i]],
+                    ['exercise_id', '=', $exercise[$i]['id']],
                     ['practice_id', '=', $practice_id],
                     ['user_id', '=', $user_id],
                 ])->first();
-            
-            $score_esercizio = $test->exercise->score;
+
+            $score_esercizio = $exercise[$i]["pivot"]["custom_score"];
             $correct_response = $test->exercise->correct_option;
             
             switch($correct_response){
@@ -268,11 +265,10 @@ class PracticeController extends Controller
                     if( $test->response == $test->exercise->option_1 ){
 
                         $score_user += $score_esercizio;
-                        $correct += 1;
                     }
                     else{
 
-                        //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
+                        //Logica relative domande alla quale se sbagli togli uno score.
                     }
                 break;
 
@@ -280,7 +276,6 @@ class PracticeController extends Controller
                     if( $test->response == $test->exercise->option_2 ){
 
                         $score_user += $score_esercizio;
-                        $correct += 1;
                     }
                     else{
 
@@ -292,7 +287,6 @@ class PracticeController extends Controller
                     if( $test->response == $test->exercise->option_3 ){
 
                         $score_user += $score_esercizio;
-                        $correct += 1;
                     }
                     else{
 
@@ -304,7 +298,6 @@ class PracticeController extends Controller
                     if( $test->response == $test->exercise->option_4 ){
 
                         $score_user += $score_esercizio;
-                        $correct += 1;
                     }
                     else{
 
@@ -312,11 +305,19 @@ class PracticeController extends Controller
                     }
                 break;
             }
+
+            if( $feedback == true ){
+
+                if( $temporay <= $score_user ){ //Minore o uguale nel caso in cui togliessimo punti su potenziali domande errate
+
+                    array_push($explanation, [$test->response, $correct_response, $explanation]); 
+                }
+            }
         }
             
         //Qui al posto di questo va messo quello del test $practice->feedback
         Mail::to(Auth::user())
-        ->send(new FeedbackEmail(Auth::user(), $practice, $score_user));
+        ->send(new FeedbackEmail(Auth::user(), $practice, $score_user, $explanation));
 
         //Qui nel caso occorre implementare la gestione del libretto dello studente visto che possediamo già il suo voto.
     }
@@ -336,7 +337,7 @@ class PracticeController extends Controller
         $array_response = array_map('htmlspecialchars', $validated['risposte']);    //Sostituiamo caratteri speciali.
         $user_id = Auth::id();
         $practice_id = $request->input('id_practices');
-        $feedback = true;  //$feedback = Practice::find($practice_id);
+        $feedback = Practice::find($practice_id);
         $i = 0;
 
         //Inserisco tutte le risposte salvate nel DB
@@ -352,13 +353,13 @@ class PracticeController extends Controller
         }
 
         //Verifico se il test preve l'invio automatico del feedback.
-        if( $feedback == false ){
+        if( $feedback->feedback_enabled == false ){
 
             return "Invio avvenuto con successo";
         }
         else{
 
-            $this->AutoCorrect($test->practice_id, $array_id, $user_id);
+            $this->AutoCorrect($test->practice_id, $user_id);
         }
     }
     

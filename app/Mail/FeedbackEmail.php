@@ -18,7 +18,7 @@ class FeedbackEmail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public User $user, public Practice $practice, public int $score)
+    public function __construct(public User $user, public Practice $practice, public int $score, public array $explanation)
     {
         //
     }

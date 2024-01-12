@@ -42,7 +42,9 @@
 </head>
 <body>
     <div class="container">
+        <h2>Esito Esame "{{ $practices }}"</h2>
         <p>Caro, {{ $name }} le comunichiamo che l'esito della prova relativa all'attività didattica "{{ $practices }}", da lei sostenuta in data XX\XX\XXXX, è: {{ $score }}/{{ $practice->total_score }}</p>
+        <h4>Esercizi Sbagliati
 
         <a href="#" class="cta-button">Esplora Ora</a>
     </div>

@@ -5,10 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\Practice;
-use Carbon\Carbon;
 
-class Allowed
+class VerifyUserWait
 {
     /**
      * Handle an incoming request.
@@ -18,8 +16,7 @@ class Allowed
     public function handle(Request $request, Closure $next): Response
     {   
         /*
-        Middleware che verifica che la Key inserita dall'utente in primis esista e in più verifica che la data nella quale l'utente stia cercando di accedere
-        corrisponda effettivamente con la data nella quale il docente ha programmato la prova.
+        Middleware che verifica se un utente ha lasciato una waiting room e quindi sarà rimosso anche dal database
         */
 
         $practice = Practice::where('key', '=', $request->key)->first();

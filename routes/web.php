@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\WaitingRoomController;
-use App\Http\Middleware\Allowed;
 
 
 
@@ -53,7 +52,7 @@ Route::middleware('auth')->group(function () {
 
     //Rotte di partecipazione Esame/Esercitazione
     Route::post('/join', [PracticeController::class, 'join'])->name('pratices.join');
-    Route::get('/join/{key}', [PracticeController::class, 'showExam'])->name('test')->middleware(Allowed::class);
+    Route::get('/join/{key}', [PracticeController::class, 'showExam'])->name('test')->middleware('allowed');
     Route::post('/send', [PracticeController::class, 'send'])->name('pratices.send');
     Route::get('/waiting-room/{key}', [WaitingRoomController::class, 'show'])->name('waiting-room');
     Route::get('/status/{key}', [WaitingRoomController::class, 'status'])->name('status');
