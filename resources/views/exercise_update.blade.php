@@ -69,12 +69,6 @@
             <textarea id="explanation" name="explanation">{{ $exercise->explanation }}</textarea><br><br>
         </div>
         <div id="true_false" style="display: {{ $exercise->type == 'Vero o Falso' ? 'block' : 'none' }};">
-    <label for="answer1">Opzione 1:</label>
-    <input type="text" id="answer1" name="answer1" value="{{ $exercise->answer1 }}"><br><br>
-
-    <label for="answer2">Opzione 2:</label>
-    <input type="text" id="answer2" name="answer2" value="{{ $exercise->answer2 }}"><br><br>
-
     <label for="correct_answer">Opzione corretta:</label>
     <select id="correct_answer" name="correct_answer">
         <option value="vero" {{ $exercise->correct_answer == 'vero' ? 'selected' : '' }}>Vero</option>

@@ -128,10 +128,20 @@
 </table>
 
 <script>
+var sortState = {}; // Oggetto per tenere traccia dello stato di ordinamento per ciascuna colonna
+
 function sortTable(columnIndex) {
   var table, rows, switching, i, x, y, shouldSwitch;
   table = document.getElementById("exercise-table");
   switching = true;
+
+  // Inizializza lo stato di ordinamento per la colonna se non è già presente
+  if (!sortState.hasOwnProperty(columnIndex)) {
+    sortState[columnIndex] = "asc";
+  } else {
+    // Se lo stato di ordinamento esiste, inverti l'ordine
+    sortState[columnIndex] = sortState[columnIndex] === "asc" ? "desc" : "asc";
+  }
 
   while (switching) {
     switching = false;
@@ -145,39 +155,40 @@ function sortTable(columnIndex) {
       var xValue = x.innerHTML.trim();
       var yValue = y.innerHTML.trim();
 
+      // Verifica lo stato di ordinamento e inverti la logica in base a "asc" o "desc"
+      var compareResult;
       switch (columnIndex) {
         case 0: // Sorting by Name
-          if (xValue > yValue) {
-            shouldSwitch = true;
-            break;
-          }
+          compareResult = xValue.localeCompare(yValue);
           break;
         case 1: // Sorting by Type
           var typeOrder = ["Vero o Falso", "Risposta Multipla", "Risposta Aperta"];
           var xIndex = typeOrder.indexOf(xValue);
           var yIndex = typeOrder.indexOf(yValue);
-
-          if (xIndex > yIndex) {
-            shouldSwitch = true;
-            break;
-          }
+          compareResult = xIndex - yIndex;
           break;
         case 2: // Sorting by Difficulty
           var difficultyOrder = ["Bassa", "Media", "Alta"];
           var xIndex = difficultyOrder.indexOf(xValue);
           var yIndex = difficultyOrder.indexOf(yValue);
-
-          if (xIndex > yIndex) {
-            shouldSwitch = true;
-            break;
-          }
+          compareResult = xIndex - yIndex;
           break;
       }
 
-      if (shouldSwitch) {
-        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-        switching = true;
+      // Inverti il risultato se l'ordinamento è "desc"
+      if (sortState[columnIndex] === "desc") {
+        compareResult = -compareResult;
       }
+
+      if (compareResult > 0) {
+        shouldSwitch = true;
+        break;
+      }
+    }
+
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
     }
   }
 }
