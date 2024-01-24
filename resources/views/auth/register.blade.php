@@ -45,12 +45,12 @@
             
             <x-text-input id="choice1"
                             type="radio"
-                            name="role" value="0"/>
+                            name="role" value="Student"/>
 
             <x-input-label for="choice2" value="Professor" />
             <x-text-input id="choice2"
                 type="radio"
-                name="role" value="1"/>
+                name="role" value="Teacher"/>
 
             <x-input-error :messages="$errors->get('choice_role')" class="mt-2" />
         </div>
