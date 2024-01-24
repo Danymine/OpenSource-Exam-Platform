@@ -16,7 +16,7 @@ class RoleIsValid
      */
     public function handle(Request $request, Closure $next): Response
     {   
-        if( Auth::User()->roles == 1){
+        if( Auth::User()->roles == 'Admin' or Auth::User()->roles == 'Teacher'){
 
             return $next($request);
         }

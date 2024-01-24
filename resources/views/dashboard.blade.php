@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    @if (Auth::User()->roles == 0)
+                    @if (Auth::User()->roles == 'Student')
 
                         <h2>Benvenut Studente {{ Auth::User()->name }}</h2>
                         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore ullam, vero, voluptatem nam perferendis animi nesciunt quam ad maiores eligendi expedita maxime, officiis minima delectus necessitatibus. Quas ab ex laboriosam.</p>
@@ -57,7 +57,7 @@
                             </table>
                         </div>
 
-                    @else
+                    @elseif(Auth::User()->roles == 'Teacher')
                     
                         <h2>Benvenut Docente {{ Auth::User()->name }}</h2>
                         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore ullam, vero, voluptatem nam perferendis animi nesciunt quam ad maiores eligendi expedita maxime, officiis minima delectus necessitatibus. Quas ab ex laboriosam.</p>
@@ -104,6 +104,8 @@
                                 </tbody>
                             </table>
                         </div>
+                        @else
+                        <h2>Benvenuto Amministratore {{ Auth::User()->name }}</h2>
                     @endif
                 </div>
             </div>
