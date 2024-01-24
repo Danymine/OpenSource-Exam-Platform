@@ -59,7 +59,7 @@ class PracticeController extends Controller
         $subject = $validatedData['subject'];
         $maxQuestions = $validatedData['max_questions'];
         $maxScore = $validatedData['max_score'];
-        $practice_date = $validatedData['practice_date'] ?? null;
+        $practice_date = $validatedData['practice_date'] ?? null;   //Practice_date deve essere obbligatoria. La utilizzo in seguito per permettere l'accesso.
     
         $feedbackEnabled = $request->has('feedback');
         $randomizeQuestions = $request->has('randomize');
@@ -76,16 +76,21 @@ class PracticeController extends Controller
     
         // Ottieni gli esercizi filtrati
         $filteredExercises = $exerciseQuery->get();
+
+        //Qui hai tutti gli esercizi che rispettano quella query li.
     
         // Limita il numero massimo di domande se specificato
         if ($maxQuestions && $filteredExercises->count() > $maxQuestions) {
             $filteredExercises = $filteredExercises->take($maxQuestions);
         }
+
+        //Qui hai N esercizi che il docente ha inserito e che devono essere presenti nel test. 1,1,2,1,1 5 4 30 / 6 = 5 * 1 = 6 + 6
     
         // Calcola la somma degli score dei filtri
         $totalScoreFiltered = $filteredExercises->sum('score');
-    
-        // Ottieni la data corrente
+     
+        // Ottieni la data corrente per il fuso orario Roma. Questo è da cambiare nel momento in cui aggiuntamo l'internazionale.
+        date_default_timezone_set('Europe/Rome');
         $generatedDate = now();
     
         // Ottieni il massimo tra max_score e il totale dei punteggi degli esercizi filtrati
@@ -185,35 +190,43 @@ class PracticeController extends Controller
             $validated = $request->validate([
                 'key' => 'required|max:6|min:6|alpha_num:ascii',
             ]);
+            //Anche questo da cambiare nel caso in cui utenti cercaressero di cambiare la propria locazione.
+            date_default_timezone_set('Europe/Rome');
             $test = new Practice;
             $test = Practice::where('key', '=', $request->input('key'))->first();   //Vado a repire il test con quella key. (Se Esiste)
             if($test == NULL){
 
                 return back()->withErrors(['error' => 'Key not found']);
             }
+            else if( $test->practice_date != now()->toDateString() ){
 
-            //Verifico che l'utente non abbia già effettuato quel test.
-            $response = Answer::where([
-                ['user_id', '=', Auth::id()],
-                ['practice_id', '=', $test->id],
-            ])->first();
-            
-            if($response == NULL){
-                
-                //Non trovando nulla sono sicuro. Ora verifico che sia già startata o meno. Se non è reinderizzo in waiting-room altrimenti direttamente al test.
-                if( $test->allowed == 0 ){
-                
-                    Auth::user()->waitingroom()->attach($test->id);
-                    return redirect()->route('waiting-room', ['key' => $test->key]);
-                }
-                else{
-
-                    return redirect()->route('test', ['key' => $test->key]);
-                }
+                return back()->withErrors(['error' => "La data di esecuzione dell'esame non è oggi"]);
             }
             else{
 
-                return back()->withErrors(['error' => 'You have already taken part in this test']);
+                //Verifico che l'utente non abbia già effettuato quel test.
+                $response = Answer::where([
+                    ['user_id', '=', Auth::id()],
+                    ['practice_id', '=', $test->id],
+                ])->first();
+                
+                if($response == NULL){
+                    
+                    //Non trovando nulla sono sicuro. Ora verifico che sia già startata o meno. Se non lo è l'utente viene reinderizzo in waiting-room altrimenti direttamente al test.
+                    if( $test->allowed == 0 ){
+                    
+                        Auth::user()->waitingroom()->attach($test->id);
+                        return redirect()->route('waiting-room', ['key' => $test->key]);
+                    }
+                    else{
+
+                        return redirect()->route('test', ['key' => $test->key]);
+                    }
+                }
+                else{
+
+                    return back()->withErrors(['error' => 'You have already taken part in this test']);
+                }
             }
         }
         else{
