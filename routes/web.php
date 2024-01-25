@@ -69,6 +69,7 @@ Route::middleware('auth', 'role')->group(function (){
         // Mostra tutti gli esercizi
         Route::get('/esercizi_biblioteca', [ExerciseController::class, 'showAllExercises'])->name('showAllExercises');
         
+        
         // Crea un nuovo esercizio
         Route::get('/create', [ExerciseController::class, 'create']);
 
@@ -79,7 +80,8 @@ Route::middleware('auth', 'role')->group(function (){
        Route::post('/edit-exercise/{id}', [ExerciseController::class, 'update'])->name('editExercise');
        Route::put('/edit-exercise/{id}', [ExerciseController::class, 'update'])->name('exercises.update');
         // Elimina un esercizio
-       Route::get('/delete-exercise/{id}', [ExerciseController::class, 'delete'])->name('deleteExercise');
+        Route::get('/{id}/delete', [ExerciseController::class, 'deleteExercise'])->name('deleteExercise');
+       
 
     });
 

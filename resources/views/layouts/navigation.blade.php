@@ -35,7 +35,7 @@
 
                     <x-slot name="content">
 
-                        @if( Auth::user()->roles == 1 )
+                        @if( Auth::user()->roles == 'Teacher' )
 
                             <x-dropdown-link href="#">
                                 Esercitazioni

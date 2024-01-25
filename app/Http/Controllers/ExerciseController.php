@@ -72,26 +72,52 @@ public function edit($id)
     return view('exercise_update', compact('exercise'));
 }
 public function update(Request $request, $id)
-{
-    $exercise = Exercise::findOrFail($id);
-    $exercise->update($request->all());
-    return redirect()->route('showAllExercises');
-}
+    {
+        $originalExercise = Exercise::findOrFail($id);
 
-public function delete($id)
+        // Creazione di un nuovo esercizio con le modifiche richieste
+        $newExercise = new Exercise($request->all());
+        $newExercise->user_id = Auth::id(); // Imposta l'ID dell'utente autenticato
+
+        if ($newExercise->type === 'Risposta Aperta') {
+            $newExercise->save();
+        } else {
+            $newExercise->correct_option = $request->input('correct_option');
+            if ($newExercise->type === 'Vero o Falso') {
+                $newExercise->correct_option = $request->input('correct_answer');
+                $newExercise->explanation = $request->input('explanation');
+            } else {
+                $options = $request->input('options');
+                $newExercise->option_1 = $options[0];
+                $newExercise->option_2 = $options[1];
+                $newExercise->option_3 = $options[2];
+                $newExercise->option_4 = $options[3];
+                $newExercise->explanation = $request->input('explanation');
+            }
+            $newExercise->save();
+        }
+
+        // Soft delete dell'esercizio originale
+        $originalExercise->delete();
+
+        // Puoi anche aggiornare le relazioni se necessario
+
+        return redirect()->route('showAllExercises')->with('success', 'Esercizio modificato con successo.');
+    }
+
+
+public function deleteExercise($id)
 {
     $exercise = Exercise::findOrFail($id);
     
-    // Controlla se l'utente è autorizzato a eliminare l'esercizio
-    if (Auth::id() !== $exercise->user_id) {
-        return redirect()->route('showAllExercises')->with('error', 'Non hai l\'autorizzazione per eliminare questo esercizio.');
-    }
-
-    // Elimina l'esercizio dal database
+    // Utilizza soft delete invece di delete
     $exercise->delete();
 
     return redirect()->route('showAllExercises')->with('success', 'Esercizio eliminato con successo.');
 }
+
+
+
 }
 
  /* FILE DI MARCO*/
