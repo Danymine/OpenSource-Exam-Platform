@@ -6,17 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes; 
 
 class Exercise extends Model
 {
+    use SoftDeletes; // USO IL SOFT_DELETE
     public $timestamps = false; // Disabilita il timestamping
     protected $fillable = [
-        'name', 'question', 'score', 'difficulty', 'subject', 'type','correct_option'
+        'name', 'question', 'score', 'difficulty', 'subject', 'type', 'correct_option'
     ];
 
     public function practices() : BelongsToMany //L'esercizio compone practice relazione N a N (Vedi Schema)
     {
-
+        
         return $this->belongsToMany(Practice::class);
     }
 
@@ -25,10 +27,9 @@ class Exercise extends Model
         
         return $this->belongsTo(User::class);
     }
-    
-    public function answers() : HasMany
-    {
 
+    public function answers(): HasMany
+    {
         return $this->hasMany(Answer::class);
     }
 }

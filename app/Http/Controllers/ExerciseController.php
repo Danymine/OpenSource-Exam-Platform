@@ -54,12 +54,13 @@ class ExerciseController extends Controller
         }
         return redirect()->route('showAllExercises');
     }
-    
+
     public function showAllExercises()
     {
         $exercises = Exercise::where('user_id', Auth::id())->get(); // Recupera solo gli esercizi creati dall'utente autenticato
         return view('esercizi_biblioteca', compact('exercises'));
     }
+
 
     public function edit($id)
     {
@@ -70,6 +71,7 @@ class ExerciseController extends Controller
     public function update(Request $request, $id)
     {
         $exercise = Exercise::findOrFail($id);
+        $exercise->update($request->all());
         return redirect()->route('showAllExercises');
     }
 
