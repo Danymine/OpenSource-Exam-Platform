@@ -12,15 +12,24 @@ class Answer extends Model
     use HasFactory;
     public $timestamps = false;
     protected $fillable = [
-        'response'
+        'response',
+        'delivered_id',
+        'exercise_id'
     ];
-
+    
+    public function delivered() : BelongsTo
+    {
+        
+        return $this->belongsTo(Delivered::class);
+    }
+    
     public function exercise() : BelongsTo
     {
 
         return $this->belongsTo(Exercise::class);
     }
 
+    /*
     public function user() : BelongsTo
     {
 
@@ -32,4 +41,5 @@ class Answer extends Model
 
         return $this->belongsTo(Practice::class);
     }
+    */
 }

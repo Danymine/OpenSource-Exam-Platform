@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Practice;
 use App\Models\Exercise;
+use App\Models\Answer;
+use App\Models\Delivered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Answer;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\FeedbackEmail;
 use Carbon\Carbon;
@@ -205,9 +206,9 @@ class PracticeController extends Controller
             else{
 
                 //Verifico che l'utente non abbia già effettuato quel test.
-                $response = Answer::where([
-                    ['user_id', '=', Auth::id()],
-                    ['practice_id', '=', $test->id],
+                $response = Delivered::where([
+                    ['user_id', '=' , Auth::user()->id],
+                    ['practice_id', '=', $test->id]
                 ])->first();
                 
                 if($response == NULL){
@@ -239,7 +240,7 @@ class PracticeController extends Controller
     public function showExam($key){
 
         $practice = Practice::where('key', '=', $key)->first();
-        $exercise = $practice->exercises->toArray();
+        $exercise = $practice->exercises->toArray();    //Questo sarebbe da cambiare non c'è più una relazione diretta.
         if( $practice->randomize_questions == true ){
 
             shuffle($exercise); //Disordino gli esercizi.
@@ -249,82 +250,114 @@ class PracticeController extends Controller
     }
 
     //NOTE:: Funzione interna che si occupa della correzione automatica di un test.
-    private function AutoCorrect(int $practice_id, int $user_id){
+    private function AutoCorrect(int $practice_id){
 
-        $score_user = 0;
+        //Information practice
         $practice = Practice::where('id', '=', $practice_id)->first();
         $feedback = $practice->feedback_enabled;
         $exercise = $practice->exercises->toArray();
         $score_max = $practice->total_score;
+
+        $score_user = 0;
+        $user_id = Auth::user()->id;
+
         $explanation = [];
         $correct = 0;
+
+        //Prendo la consegna dal database
+        $delivere = Delivered::where([
+            ['practice_id','=', $practice_id],
+            ['user_id', '=', $user_id]
+        ])->first();
+
 
         for($i = 0; $i < count($exercise); $i++ ){
 
             $temporay = $score_user;
-            $test = new Answer;
-            $test = Answer::where([
-                    ['exercise_id', '=', $exercise[$i]['id']],
-                    ['practice_id', '=', $practice_id],
-                    ['user_id', '=', $user_id],
-                ])->first();
-
-            $score_esercizio = $exercise[$i]["pivot"]["custom_score"];
-            $correct_response = $test->exercise->correct_option;
             
-            switch($correct_response){
+            $score_esercizio = $exercise[$i]["pivot"]["custom_score"];
+            $correct_response = $exercise[$i]["correct_option"];
+            
+            $answer = Answer::where([
+                ['delivered_id', '=', $delivere->id],
+                ['exercise_id', '=', $exercise[$i]["id"]]
+            ])->first();
 
-                case 'a':
-                    if( $test->response == $test->exercise->option_1 ){
+            /*
+            Arrivati a questo punto ho le risposte che l'utente ha dato ho gli esercizi effettivamente presenti nel test non rimane altro che effettuare la correzione
+            che sarà fatta verificando che il contenuto di $correct_response sia uguale alla risposta che effettiamente ha dato l'utente.
+            */
+            if( $exercise[$i]["type"] == "Risposta Chiusa" ){
 
-                        $score_user += $score_esercizio;
-                    }
-                    else{
+                switch($correct_response){
 
-                        //Logica relative domande alla quale se sbagli togli uno score.
-                    }
-                break;
+                    case 'a':
+                        if( $answer->response == $exercise[$i]["option_1"]){
 
-                case 'b':
-                    if( $test->response == $test->exercise->option_2 ){
+                            $score_user += $score_esercizio;
+                        }
+                        else{
 
-                        $score_user += $score_esercizio;
-                    }
-                    else{
+                            //Logica relative domande alla quale se sbagli togli uno score.
+                        }
+                        $response = $exercise[$i]["option_1"];
+                    break;
 
-                        //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
-                    }
-                break;
+                    case 'b':
+                        if( $answer->response == $exercise[$i]["option_2"]){
 
-                case 'c':
-                    if( $test->response == $test->exercise->option_3 ){
+                            $score_user += $score_esercizio;
+                        }
+                        else{
 
-                        $score_user += $score_esercizio;
-                    }
-                    else{
+                            //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
+                        }
+                        $response = $exercise[$i]["option_2"];
+                    break;
 
-                        //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
-                    }
-                break;
+                    case 'c':
+                        if( $answer->response == $exercise[$i]["option_3"] ){
 
-                case 'd':
-                    if( $test->response == $test->exercise->option_4 ){
+                            $score_user += $score_esercizio;
+                        }
+                        else{
 
-                        $score_user += $score_esercizio;
-                    }
-                    else{
+                            //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
+                        }
+                        $response = $exercise[$i]["option_3"];
+                    break;
 
-                        //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
-                    }
-                break;
+                    case 'd':
+                        if( $answer->response == $exercise[$i]["option_4"] ){
+
+                            $score_user += $score_esercizio;
+                        }
+                        else{
+
+                            //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
+                        }
+                        $response = $exercise[$i]["option_4"];
+                    break;
+                }
+            }
+            else{
+
+                //Risposta vero o falso.
+                if( $correct_response == $answer->response )
+                {
+
+                    $score_user += $score_esercizio;
+                }
+                else{
+
+                    //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
+                }
             }
 
-            if( $feedback == true ){
+            //Temporary memorizza lo score dell'utente sull'iterazione precedente se questo valore è == vuol dire che l'utente ha sbagliato l'esercizio e quindi aggiungo la spiegazione all'email.
+            if( $temporay == $score_user ){ 
 
-                if( $temporay <= $score_user ){ //Minore o uguale nel caso in cui togliessimo punti su potenziali domande errate
-
-                    array_push($explanation, [$test->response, $correct_response, $explanation]); 
-                }
+                array_push($explanation, [$exercise[$i]["question"], $answer->response, $response, $exercise[$i]["explanation"]]); 
             }
         }
             
@@ -353,26 +386,39 @@ class PracticeController extends Controller
         $feedback = Practice::find($practice_id);
         $i = 0;
 
+        date_default_timezone_set('Europe/Rome');
+        $newDelivered = new Delivered([
+            'user_id' => $user_id,
+            'practice_id' => $practice_id,
+        ]);
+
+        $newDelivered->save();
+
         //Inserisco tutte le risposte salvate nel DB
+        $id_delivered = Delivered::where([
+            ['user_id', '=', $user_id],
+            ['practice_id', '=', $practice_id]
+        ])->first();
+        
         for($i = 0; $i < count($array_id); $i++){
 
-            $test = new Answer;
-            $test->response = $array_response[$array_id[$i]];
-            $test->user_id = $user_id;
-            $test->exercise_id = $array_id[$i];
-            $test->practice_id = $practice_id;
-
+            $test = new Answer([
+                'delivered_id' => $id_delivered->id,
+                'response' => $array_response[$array_id[$i]],
+                'exercise_id' => $array_id[$i]
+            ]);
             $test->save();
         }
 
         //Verifico se il test preve l'invio automatico del feedback.
         if( $feedback->feedback_enabled == false ){
 
-            return "Invio avvenuto con successo";
+            return redirect()->route('ciao');   //Vorrei fornire un feedback all'utente sul corretto invio del test
         }
         else{
 
-            $this->AutoCorrect($test->practice_id, $user_id);
+            $this->AutoCorrect($practice_id);
+            return redirect()->route('ciao');
         }
     }
     

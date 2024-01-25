@@ -12,8 +12,6 @@ class ExerciseController extends Controller
         return view('exercise_create');
     }
 
-
-
     public function store(Request $request)
     {
         if (Auth::check()) {
@@ -57,41 +55,38 @@ class ExerciseController extends Controller
         return redirect()->route('showAllExercises');
     }
     
-    
-
-public function showAllExercises()
-{
-    $exercises = Exercise::where('user_id', Auth::id())->get(); // Recupera solo gli esercizi creati dall'utente autenticato
-    return view('esercizi_biblioteca', compact('exercises'));
-}
-
-
-public function edit($id)
-{
-    $exercise = Exercise::findOrFail($id);
-    return view('exercise_update', compact('exercise'));
-}
-public function update(Request $request, $id)
-{
-    $exercise = Exercise::findOrFail($id);
-    $exercise->update($request->all());
-    return redirect()->route('showAllExercises');
-}
-
-public function delete($id)
-{
-    $exercise = Exercise::findOrFail($id);
-    
-    // Controlla se l'utente è autorizzato a eliminare l'esercizio
-    if (Auth::id() !== $exercise->user_id) {
-        return redirect()->route('showAllExercises')->with('error', 'Non hai l\'autorizzazione per eliminare questo esercizio.');
+    public function showAllExercises()
+    {
+        $exercises = Exercise::where('user_id', Auth::id())->get(); // Recupera solo gli esercizi creati dall'utente autenticato
+        return view('esercizi_biblioteca', compact('exercises'));
     }
 
-    // Elimina l'esercizio dal database
-    $exercise->delete();
+    public function edit($id)
+    {
+        $exercise = Exercise::findOrFail($id);
+        return view('exercise_update', compact('exercise'));
+    }
 
-    return redirect()->route('showAllExercises')->with('success', 'Esercizio eliminato con successo.');
-}
+    public function update(Request $request, $id)
+    {
+        $exercise = Exercise::findOrFail($id);
+        return redirect()->route('showAllExercises');
+    }
+
+    public function delete($id)
+    {
+        $exercise = Exercise::findOrFail($id);
+        
+        // Controlla se l'utente è autorizzato a eliminare l'esercizio
+        if (Auth::id() !== $exercise->user_id) {
+            return redirect()->route('showAllExercises')->with('error', 'Non hai l\'autorizzazione per eliminare questo esercizio.');
+        }
+
+        // Elimina l'esercizio dal database
+        $exercise->delete();
+
+        return redirect()->route('showAllExercises')->with('success', 'Esercizio eliminato con successo.');
+    }
 }
 
  /* FILE DI MARCO*/
