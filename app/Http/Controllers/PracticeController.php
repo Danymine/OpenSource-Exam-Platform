@@ -132,6 +132,95 @@ class PracticeController extends Controller
         return view('practice_create');
     }
 
+    public function exerciseList()
+    {
+        $exercises = Exercise::all();
+        
+        // Ottieni la lista delle materie uniche dagli esercizi
+        $subjects = Exercise::distinct('subject')->pluck('subject');
+    
+        return view('exercise_list', ['exercises' => $exercises, 'subjects' => $subjects]);
+    }
+    
+    public function createExerciseSet(Request $request)
+    {
+        // Validazione del form, se necessario
+        $validatedData = $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'selected_exercises' => 'required|array',
+            'max_score' => 'nullable|integer|min:1',
+            'practice_date' => 'nullable|date',
+        ]);
+    
+        $title = $validatedData['title'];
+        $description = $validatedData['description'];
+        $maxScore = $validatedData['max_score'];
+        $practice_date = $validatedData['practice_date'] ?? null;
+    
+        $feedbackEnabled = $request->has('feedback');
+        $randomizeQuestions = $request->has('randomize');
+    
+        // Ottieni gli ID degli esercizi selezionati dal form
+        $selectedExerciseIds = $request->input('selected_exercises');
+    
+        // Ottieni la data corrente
+        $generatedDate = now();
+    
+        // Ottieni gli esercizi selezionati dal database
+        $selectedExercises = Exercise::whereIn('id', $selectedExerciseIds)->get();
+
+        // Ottieni la difficoltà da ciascun esercizio e stampala
+        foreach ($selectedExercises as $exercise) {
+            $difficulty = $exercise->difficulty;
+            // Ora puoi utilizzare $difficulty come stringa
+        }
+        
+        // Calcola la somma degli score dei filtri
+        $totalScoreSelected = $selectedExercises->sum('score');
+
+        // Ottieni il massimo tra max_score e il totale dei punteggi degli esercizi selezionati
+        $maxScore = $maxScore ?? $totalScoreSelected;
+    
+        // Assegna la materia comune a tutti gli esercizi selezionati
+        $commonSubject = $selectedExercises->first()->subject;
+    
+        // Genera la chiave (presumo che tu abbia già implementato questa logica)
+        $key = $this->generateKey();
+    
+        $newPractice = new Practice([
+            'title' => $title,
+            'description' => $description,
+            'difficulty' => $difficulty,
+            'subject' => $commonSubject,
+            'total_score' => $maxScore,
+            'key' => $key,
+            'user_id' => Auth::id(), // Utilizza Auth::id() per ottenere l'ID dell'utente autenticato
+            'allowed' => 0,
+            'feedback_enabled' => $feedbackEnabled,
+            'randomize_questions' => $randomizeQuestions,
+            'generated_at' => $generatedDate,
+            'practice_date' => $practice_date,
+        ]);
+    
+        $newPractice->save();
+    
+        // Modifica dei punteggi personalizzati degli esercizi nella pratica
+        foreach ($selectedExercises as $exercise) {
+            // Calcola il punteggio proporzionato per ciascun esercizio rispetto al max_score
+            $customScore = round(($exercise->score / $totalScoreSelected) * $maxScore, 2);
+            $newPractice->exercises()->attach($exercise->id, ['custom_score' => $customScore]);
+        }
+
+        // Recupero gli esercizi associati con i loro punteggi personalizzati
+        $selectedExercisesWithCustomScores = $newPractice->exercises()->withPivot('custom_score')->get();
+
+        return view('practice_new', [
+            'newPractice' => $newPractice,
+            'selectedExercises' => $selectedExercisesWithCustomScores,
+        ]);
+    }
+
     public function index()
     {
         $practices = Practice::where('user_id', '=', Auth::id())->get();

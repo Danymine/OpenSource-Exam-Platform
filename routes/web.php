@@ -86,14 +86,20 @@ Route::middleware('auth', 'role')->group(function (){
     /* ROTTE DI FEDERICO */
     Route::prefix('practices')->group(function () {
         Route::get('/', [PracticeController::class, 'index'])->name('practices.index');
+
         Route::get('/create', [PracticeController::class, 'create'])->name('practices.create');
         Route::get('/new', [PracticeController::class, 'generatePracticeWithFilters'])->name('practices.new');
+
+        Route::get('/exercise-list', [PracticeController::class, 'exerciseList'])->name('exercise.list');
+        Route::post('/create-exercise-set', [PracticeController::class, 'createExerciseSet'])->name('createExerciseSet');
+
+
         Route::get('/{practice}', [PracticeController::class, 'show'])->name('practices.show');
         Route::get('/{practice}/edit', [PracticeController::class, 'edit'])->name('practices.edit');
         Route::put('/{practice}', [PracticeController::class, 'update'])->name('practices.update');
         Route::delete('/{practice}', [PracticeController::class, 'destroy'])->name('practices.destroy');
-
     });
+    
 });
     
 

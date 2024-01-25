@@ -73,7 +73,95 @@
         .new-practice-button:hover {
             background-color: #2980b9;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            text-align: center; /* Allinea il testo al centro */
+        }
+
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Aggiorna il layout dei bottoni */
+        button:nth-child(2) {
+            margin-left: 20px; /* Aggiunge uno spazio tra i bottoni */
+        }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var modal = document.getElementById('myModal');
+            var btn = document.getElementById('newPracticeBtn');
+            var span = document.getElementsByClassName('close')[0];
+
+            btn.onclick = function () {
+                modal.style.display = 'block';
+            }
+
+            span.onclick = function () {
+                modal.style.display = 'none';
+            }
+
+            window.onclick = function (event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        });
+
+        function generateAutomatically() {
+            // Chiudi la finestra modale
+            document.getElementById('myModal').style.display = 'none';
+
+            // Esegui una richiesta di reindirizzamento al server
+            window.location.href = '{{ route("practices.create") }}';
+        }
+
+
+        function createManually() {
+            // Chiudi la finestra modale
+            document.getElementById('myModal').style.display = 'none';
+
+            // Reindirizza alla vista per la creazione manuale
+            window.location.href = '{{ route("exercise.list") }}';
+        }
+    </script>
 </head>
 <body>
     <h1>Elenco delle Esercitazioni</h1>
@@ -105,6 +193,15 @@
         </ul>
     @endif
 
-    <a href="{{ route('practices.create') }}" class="new-practice-button">Crea una nuova esercitazione</a>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Scegli come creare la nuova esercitazione:</p>
+            <button onclick="generateAutomatically()">Genera automaticamente</button>
+            <button onclick="createManually()">Crea manualmente</button>
+        </div>
+    </div>
+
+    <a href="#" id="newPracticeBtn" class="new-practice-button">Crea una nuova esercitazione</a>
 </body>
 </html>
