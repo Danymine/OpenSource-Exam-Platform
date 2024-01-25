@@ -25,11 +25,11 @@ return new class extends Migration
             $table->string('option_3')->nullable();
             $table->string('option_4')->nullable();
             $table->string('explanation')->nullable();
-            
-
+            $table->softDeletes(); // Aggiunto il supporto per il soft delete
 
         });
     }
+
     // 'name', 'question', 'score', 'difficulty', 'subject', 'type', 'correct_option'
 
     /**

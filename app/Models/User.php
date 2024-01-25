@@ -46,21 +46,30 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
     ];
     
-    public function practices() : HasMany
+    public function practices() : HasMany   //Crea una practices (Vedi schema)
     {
 
         return $this->hasMany(Practice::class);
     }
 
+    public function waitingroom() : BelongsToMany   //Partecipare vedi schema
+    {
+
+        return $this->belongsToMany(Practice::class, 'waiting_rooms', 'user_id', 'practice_id');
+    }
+
+    public function delivereds() : HasMany  // Relazione fra User e Consegna vedi schema
+    {
+        
+        return $this->hasMany(Delivered::class);
+    }
+
+    /* Non vi è più la necessità
     public function answers() : HasMany
     {
 
         return $this->hasMany(Answer::class);
     }
+    */
 
-    public function waitingroom() : BelongsToMany
-    {
-
-        return $this->belongsToMany(Practice::class, 'waiting_rooms', 'user_id', 'practice_id');
-    }
 }

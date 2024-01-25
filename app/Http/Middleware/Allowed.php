@@ -23,7 +23,8 @@ class Allowed
         */
 
         $practice = Practice::where('key', '=', $request->key)->first();
-        if( $practice != NULL and $practice->practice_date == now()){
+        date_default_timezone_set('Europe/Rome');
+        if( $practice != NULL and $practice->practice_date == now()->toDateString()){
 
             if($practice->allowed == 1){
 

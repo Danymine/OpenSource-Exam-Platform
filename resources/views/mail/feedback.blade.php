@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Risultato Prova</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,10 +42,13 @@
 <body>
     <div class="container">
         <h2>Esito Esame "{{ $practices }}"</h2>
-        <p>Caro, {{ $name }} le comunichiamo che l'esito della prova relativa all'attività didattica "{{ $practices }}", da lei sostenuta in data XX\XX\XXXX, è: {{ $score }}/{{ $practice->total_score }}</p>
-        <h4>Esercizi Sbagliati
+        <p>Caro, {{ $name }} le comunichiamo che l'esito della prova relativa all'attività didattica "{{ $practices }}", da lei sostenuta in data "{{ $practice->practice_date }}" è: {{ $score }}/{{ $practice->total_score }}</p>
+        <h4>Esercizi Sbagliati</h4>
+        @for( $i = 0; $i < count($explanation); $i++ )
+            <div>All'esercizio con domanda: "{{ $explanation[$i][0] }}" <br/> hai risposto: "{{ $explanation[$i][1] }}" <br/> ma quella giusta era: "{{ $explanation[$i][2] }}" <br/> Spiegazione: "{{ $explanation[$i][3] }}"</div>
+        @endfor
 
-        <a href="#" class="cta-button">Esplora Ora</a>
+        <a href="#" class="cta-button">Vai al Libretto</a>
     </div>
 </body>
 </html>

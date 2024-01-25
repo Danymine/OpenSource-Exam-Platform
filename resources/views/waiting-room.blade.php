@@ -32,7 +32,7 @@
     </style>
 </head>
 <body>
-    @if(Auth::user()->roles == 1 and $practices->user_id == Auth::user()->id)
+    @if(Auth::user()->roles == "Teacher" and $practices->user_id == Auth::user()->id)
         <div class="waiting-container">
             <div class="waiting-message">Salve docente sei nella gestione della waiting room per il test {{ $practices->title }}</div>
         </div>
@@ -54,7 +54,7 @@
 <script>
     
     // Avvia il processo di aggiornamento
-    @if( Auth::user()->roles != 1 or Auth::user()->id != $practices->user_id)
+    @if( Auth::user()->roles != "Teacher" or Auth::user()->id != $practices->user_id)
         function fetchStatus() {
             fetch("{{ route('status', ['key' => $practices->key]) }}", {
                 method: 'GET',

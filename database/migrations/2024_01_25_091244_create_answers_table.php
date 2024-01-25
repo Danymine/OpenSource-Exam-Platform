@@ -9,20 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void{
-
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('roles');
+    public function up(): void
+    {
+        Schema::create('answers', function (Blueprint $table) {
+            $table->id();
+            $table->string('response');
+            $table->foreignId('delivered_id')->constrained();
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table){
-
-            $table->dropColumn('roles');
-        });
+        Schema::dropIfExists('answers');
     }
 };

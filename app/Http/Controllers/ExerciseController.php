@@ -12,8 +12,6 @@ class ExerciseController extends Controller
         return view('exercise_create');
     }
 
-
-
     public function store(Request $request)
     {
         if (Auth::check()) {
@@ -56,42 +54,67 @@ class ExerciseController extends Controller
         }
         return redirect()->route('showAllExercises');
     }
-    
-    
 
-public function showAllExercises()
-{
-    $exercises = Exercise::where('user_id', Auth::id())->get(); // Recupera solo gli esercizi creati dall'utente autenticato
-    return view('esercizi_biblioteca', compact('exercises'));
-}
-
-
-public function edit($id)
-{
-    $exercise = Exercise::findOrFail($id);
-    return view('exercise_update', compact('exercise'));
-}
-public function update(Request $request, $id)
-{
-    $exercise = Exercise::findOrFail($id);
-    $exercise->update($request->all());
-    return redirect()->route('showAllExercises');
-}
-
-public function delete($id)
-{
-    $exercise = Exercise::findOrFail($id);
-    
-    // Controlla se l'utente è autorizzato a eliminare l'esercizio
-    if (Auth::id() !== $exercise->user_id) {
-        return redirect()->route('showAllExercises')->with('error', 'Non hai l\'autorizzazione per eliminare questo esercizio.');
+    public function showAllExercises()
+    {
+        $exercises = Exercise::where('user_id', Auth::id())->get(); // Recupera solo gli esercizi creati dall'utente autenticato
+        return view('esercizi_biblioteca', compact('exercises'));
     }
 
-    // Elimina l'esercizio dal database
+
+    public function edit($id)
+    {
+        $exercise = Exercise::findOrFail($id);
+        return view('exercise_update', compact('exercise'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $originalExercise = Exercise::findOrFail($id);
+
+        // Creazione di un nuovo esercizio con le modifiche richieste
+        $newExercise = new Exercise($request->all());
+        $newExercise->user_id = Auth::id(); // Imposta l'ID dell'utente autenticato
+
+        if ($newExercise->type === 'Risposta Aperta') {
+            $newExercise->save();
+        } else {
+            $newExercise->correct_option = $request->input('correct_option');
+            if ($newExercise->type === 'Vero o Falso') {
+                $newExercise->correct_option = $request->input('correct_answer');
+                $newExercise->explanation = $request->input('explanation');
+            } else {
+                $options = $request->input('options');
+                $newExercise->option_1 = $options[0];
+                $newExercise->option_2 = $options[1];
+                $newExercise->option_3 = $options[2];
+                $newExercise->option_4 = $options[3];
+                $newExercise->explanation = $request->input('explanation');
+            }
+            $newExercise->save();
+        }
+
+        // Soft delete dell'esercizio originale
+        $originalExercise->delete();
+
+        // Puoi anche aggiornare le relazioni se necessario
+
+        return redirect()->route('showAllExercises')->with('success', 'Esercizio modificato con successo.');
+    }
+
+
+public function deleteExercise($id)
+{
+    $exercise = Exercise::findOrFail($id);
+
+    // Utilizza soft delete invece di delete
     $exercise->delete();
 
     return redirect()->route('showAllExercises')->with('success', 'Esercizio eliminato con successo.');
 }
+
+
+
 }
 
  /* FILE DI MARCO*/

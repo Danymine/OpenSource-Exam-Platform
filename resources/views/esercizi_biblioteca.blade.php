@@ -110,6 +110,10 @@
       Difficoltà
       <button class="sort-button" id="sort-difficulty-button" tabindex="2" onclick="sortTable(2)">Ordinamento Difficoltà</button>
     </th>
+    <th>
+      Materia
+      <button class="sort-button" id="sort-difficulty-button" tabindex="2" onclick="sortTable(3)">Ordinamento Materia</button>
+    </th>
     <th>Modifica</th>
     <th>Elimina</th>
   </tr>
@@ -120,6 +124,7 @@
         <td>{{ $exercise->name }}</td>
         <td>{{ $exercise->type }}</td>
         <td>{{ $exercise->difficulty }}</td>
+        <td>{{ $exercise->subject }}</td>
         <td><a href="{{ route('editExercise', ['id' => $exercise->id]) }}"><i class="fas fa-pencil-alt"></i></a></td>
         <td><a href="{{ route('deleteExercise', ['id' => $exercise->id]) }}" onclick="return confirm('Sei sicuro di voler eliminare questo esercizio?');"><i class="fas fa-trash-alt"></i></a></td>
       </tr>
@@ -172,6 +177,9 @@ function sortTable(columnIndex) {
           var xIndex = difficultyOrder.indexOf(xValue);
           var yIndex = difficultyOrder.indexOf(yValue);
           compareResult = xIndex - yIndex;
+          break;
+          case 3: // Sorting by subject
+          compareResult = xValue.localeCompare(yValue);
           break;
       }
 
