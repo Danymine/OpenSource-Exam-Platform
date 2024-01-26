@@ -21,8 +21,10 @@ class ExerciseController extends Controller
                 'score' => 'required|numeric',
                 'difficulty' => 'required',
                 'subject' => 'required',
-                'type' => 'required',
+                'type' => 'required', 
+                'explanation' => 'nullable',
             ]);
+           
     
             $exercises = new Exercise;
             $exercises->user_id = Auth::id(); // Imposta l'ID dell'utente autenticato
