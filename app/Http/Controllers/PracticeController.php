@@ -376,7 +376,7 @@ class PracticeController extends Controller
             Arrivati a questo punto ho le risposte che l'utente ha dato ho gli esercizi effettivamente presenti nel test non rimane altro che effettuare la correzione
             che sarà fatta verificando che il contenuto di $correct_response sia uguale alla risposta che effettiamente ha dato l'utente.
             */
-            if( $exercise[$i]["type"] == "Risposta Multipla" ){
+            if( $exercise[$i]["type"] == "Risposta Chiusa" ){
 
                 switch($correct_response){
 
