@@ -13,7 +13,7 @@
 
                         <h2>Benvenut Studente {{ Auth::User()->name }}</h2>
                         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore ullam, vero, voluptatem nam perferendis animi nesciunt quam ad maiores eligendi expedita maxime, officiis minima delectus necessitatibus. Quas ab ex laboriosam.</p>
-                       
+
 
                         <div class="relative overflow-x-auto">
                         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -44,7 +44,7 @@
                                     </tr>
                                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                           Architettura degli Elaboratori
+                                        Architettura degli Elaboratori
                                         </th>
                                         <td class="px-6 py-4">
                                             05/01/2024
@@ -58,10 +58,10 @@
                         </div>
 
                     @elseif(Auth::User()->roles == 'Teacher')
-                    
+
                         <h2>Benvenut Docente {{ Auth::User()->name }}</h2>
                         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore ullam, vero, voluptatem nam perferendis animi nesciunt quam ad maiores eligendi expedita maxime, officiis minima delectus necessitatibus. Quas ab ex laboriosam.</p>
-                       
+
 
                         <div class="relative overflow-x-auto" style="margin-top: 2em">
                             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -92,7 +92,7 @@
                                     </tr>
                                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                           Architettura degli Elaboratori
+                                        Architettura degli Elaboratori
                                         </th>
                                         <td class="px-6 py-4">
                                             05/01/2024
@@ -104,7 +104,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        @else
+                    @else
                         <h2>Benvenuto Amministratore {{ Auth::User()->name }}</h2>
                     @endif
                 </div>
