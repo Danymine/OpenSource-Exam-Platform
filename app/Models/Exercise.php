@@ -13,7 +13,7 @@ class Exercise extends Model
     use SoftDeletes; // USO IL SOFT_DELETE
     public $timestamps = false; // Disabilita il timestamping
     protected $fillable = [
-        'name', 'question', 'score', 'difficulty', 'subject', 'type', 'correct_option'
+        'name', 'question', 'score', 'difficulty', 'subject', 'type', 'correct_option', 'explanation'
     ];
 
     public function practices() : BelongsToMany //L'esercizio compone practice relazione N a N (Vedi Schema)
