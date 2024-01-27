@@ -28,8 +28,8 @@
             margin-bottom: 10px;
             padding: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex; /* Utilizzo Flexbox per allineare gli elementi */
-            align-items: center; /* Allineo verticalmente gli elementi */
+            display: flex; 
+            align-items: center; 
         }
 
         a {
@@ -42,22 +42,22 @@
         }
 
         .actions {
-            margin-left: auto; /* Sposta gli elementi a destra */
+            margin-left: auto;
         }
 
         form {
-            display: inline; /* Permette di visualizzare i bottoni in linea */
-            margin-right: 10px; /* Spazio tra i bottoni */
+            display: inline; 
+            margin-right: 10px; 
         }
 
         button {
-            background: none; /* Rimuove lo sfondo del bottone */
+            background: none; 
             border: none;
             cursor: pointer;
         }
 
         button:hover {
-            text-decoration: underline; /* Effetto di sottolineatura al passaggio del mouse */
+            text-decoration: underline; 
         }
 
         .new-practice-button {
@@ -92,7 +92,7 @@
             padding: 20px;
             border: 1px solid #888;
             width: 50%;
-            text-align: center; /* Allinea il testo al centro */
+            text-align: center; 
         }
 
         .close {
@@ -119,9 +119,8 @@
             cursor: pointer;
         }
 
-        /* Aggiorna il layout dei bottoni */
         button:nth-child(2) {
-            margin-left: 20px; /* Aggiunge uno spazio tra i bottoni */
+            margin-left: 20px; 
         }
     </style>
     <script>
@@ -177,6 +176,11 @@
                         </a>
                     </div>
                     <div class="actions">
+                        <form method="POST" action="{{ route('practices.duplicate', $practice->id) }}">
+                            @csrf
+                            @method('GET')
+                            <button type="submit"><i class="">Duplica</i></button>
+                        </form>
                         <form method="POST" action="{{ route('practices.edit', $practice->id) }}">
                             @csrf
                             @method('GET')

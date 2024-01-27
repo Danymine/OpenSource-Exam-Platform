@@ -100,6 +100,7 @@ Route::middleware('auth', 'role')->group(function (){
         Route::get('/{practice}/edit', [PracticeController::class, 'edit'])->name('practices.edit');
         Route::put('/{practice}', [PracticeController::class, 'update'])->name('practices.update');
         Route::delete('/{practice}', [PracticeController::class, 'destroy'])->name('practices.destroy');
+        Route::get('/{practice}/duplicate', [PracticeController::class, 'duplicate'])->name('practices.duplicate');
     });
     
 });

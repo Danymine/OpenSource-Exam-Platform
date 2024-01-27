@@ -13,7 +13,7 @@
         }
 
         .practice-form {
-            max-width: 400px;
+            max-width: none;
             margin: 0 auto;
             background-color: #f9f9f9;
             padding: 20px;

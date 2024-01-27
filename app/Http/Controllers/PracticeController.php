@@ -259,6 +259,23 @@ class PracticeController extends Controller
         return redirect()->route('practices.show', $practice->id)->with('success', 'Practice updated successfully');
     }
 
+    public function duplicate(Practice $practice)
+    {
+        // Duplica la pratica
+        $newPractice = $practice->replicate();
+        $newPractice->title = $practice->title . ' (Copia)';
+        $newPractice->key = $this->generateKey();
+        $newPractice->save();
+
+        // Duplica gli esercizi associati con i loro punteggi personalizzati
+        foreach ($practice->exercises as $exercise) {
+            $customScore = $exercise->pivot->custom_score ?? $exercise->score; // Usa il punteggio personalizzato se presente
+            $newPractice->exercises()->attach($exercise->id, ['custom_score' => $customScore]);
+        }
+
+        return redirect()->route('practices.show', $newPractice->id)->with('success', 'Pratica duplicata con successo.');
+    }
+
     public function destroy($id)
     {
         $practice = Practice::findOrFail($id);
