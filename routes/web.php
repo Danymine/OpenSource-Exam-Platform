@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\WaitingRoomController;
-
+use App\Http\Controllers\DeliveredController;
 
 
 //Temporanea
@@ -58,6 +58,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/status/{key}', [WaitingRoomController::class, 'status'])->name('status');
     Route::get('/user/{key}', [WaitingRoomController::class, 'participants'])->name('user');
     Route::get('/authorize/{key}', [WaitingRoomController::class, 'empower'])->name('empower');
+
+    Route::get('/view/{id}', [DeliveredController::class, 'show'])->name('view-test');  //Vietare l'accesso a esami che non sia il suo attraverso un middleware
 });
 
 Route::middleware('auth', 'role')->group(function (){

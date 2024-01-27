@@ -63,19 +63,19 @@
             <input type="text" id="correct_option" name="correct_option"><br><br>
 
             <label for="explanation">Spiegazione:</label>
-            <textarea id="explanation" name="explanation"></textarea><br><br>
+            <input id="explanation" name="explanation"></input><br><br>
         </div>
         
         <div id="true_false" style="display: none;">
-    <label for="correct_answer">Risposta corretta:</label>
-    <select id="correct_answer" name="correct_answer">
-        <option value="Vero" selected>Vero</option>
-        <option value="Falso">Falso</option>
-    </select><br><br>
+            <label for="correct_answer">Risposta corretta:</label>
+            <select id="correct_answer" name="correct_answer">
+                <option value="Vero" selected>Vero</option>
+                <option value="Falso">Falso</option>
+            </select><br><br>
 
-    <label for="explanation">Spiegazione:</label>
-    <textarea id="explanation" name="explanation"></textarea><br><br>
-    </div>
+            <label for="explanation">Spiegazione:</label>
+            <textarea id="explanation" name="explanation"></textarea><br><br>
+        </div>
 
 
   

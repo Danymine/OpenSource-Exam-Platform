@@ -140,7 +140,7 @@ class ExerciceCloseSeeder extends Seeder
                 'score' => rand(1,10),
                 'difficulty' => $diff[rand(0,2)],
                 'subject' => $domande[$i]["materia"],
-                'type' => 'Risposta Chiusa',
+                'type' => 'Risposta Multipla',
                 'correct_option' => $domande[$i]["risposta_corretta"],
                 'option_1' => $domande[$i]["opzioni"]['a'],
                 'option_2' => $domande[$i]["opzioni"]['b'],
