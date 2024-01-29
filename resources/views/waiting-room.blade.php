@@ -43,7 +43,7 @@
             </div>
         @endif
         <div>
-            <a href="{{ route('empower', ['key' => $practices->key]) }}">Consenti Accesso</a>
+            <a href="{{ route('empower', ['test' => $practices]) }}">Consenti Accesso</a>
         </div>
     @else
         <div class="waiting-container">
@@ -56,7 +56,7 @@
     // Avvia il processo di aggiornamento
     @if( Auth::user()->roles != "Teacher" or Auth::user()->id != $practices->user_id)
         function fetchStatus() {
-            fetch("{{ route('status', ['key' => $practices->key]) }}", {
+            fetch("{{ route('status', ['test' => $practices]) }}", {
                 method: 'GET',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -69,7 +69,7 @@
                 // Aggiorna la pagina o apporta altre modifiche in base alla risposta del server
                 if (data.status === 1) {
                     // Reindirizza l'utente alla view test
-                    window.location.href = "{{ route('test', ['key' => $practices->key]) }}";
+                    window.location.href = "{{ route('view-test', ['key' => $practices->key]) }}";
                 }
                 else{
                     // Chiama nuovamente la funzione dopo 5 secondi (5000 millisecondi)
@@ -83,7 +83,7 @@
     @else
 
     function fetchUser() {
-            fetch("{{ route('user', ['key' => $practices->key]) }}", {
+            fetch("{{ route('user', ['test' => $practices]) }}", {
                 method: 'GET',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
