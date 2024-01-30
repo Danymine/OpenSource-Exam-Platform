@@ -72,13 +72,22 @@
                 var rows = document.querySelectorAll(".row-type");
                 if( type == "exame" ){
 
-                    var chart = document.getElementById("Chartexame").style.display = "block";
-                    var chart = document.getElementById("Chartpractice").style.display = "none";
+                   
+                    var chart = document.getElementById("Chartexame");
+                    if( chart !== null ){
+
+                        chart.style.display = "block";
+                        chart = document.getElementById("Chartpractice").style.display = "none";
+                    }
                 }
                 else{
 
-                    var chart = document.getElementById("Chartexame").style.display = "none";
-                    var chart = document.getElementById("Chartpractice").style.display = "block";
+                    var chart = document.getElementById("Chartexame");
+                    if( chart !== null ){
+
+                        chart.style.display = "none";
+                        chart = document.getElementById("Chartpractice").style.display = "block";
+                    }
                 }
                 
                 rows.forEach(function(row) {

@@ -21,7 +21,7 @@ class Allowed
         Middleware che verifica che la Key inserita dall'utente in primis esista e in più verifica che la data nella quale l'utente stia cercando di accedere
         corrisponda effettivamente con la data nella quale il docente ha programmato la prova.
         */
-
+        
         $practice = Practice::where('key', '=', $request->key)->first();
         date_default_timezone_set('Europe/Rome');
         if( $practice != NULL and $practice->practice_date == now()->toDateString()){
