@@ -6,6 +6,9 @@ use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\WaitingRoomController;
 use App\Http\Controllers\DeliveredController;
+use App\Http\Controllers\RichiestaAssistenzaController;
+use App\Http\Controllers\UserController;
+
 
 
 //Temporanea
@@ -60,7 +63,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/authorize/{key}', [WaitingRoomController::class, 'empower'])->name('empower');
 
     Route::get('/view/{id}', [DeliveredController::class, 'show'])->name('view-test');  //Vietare l'accesso a esami che non sia il suo attraverso un middleware
-});
+    Route::get('/aggiungi-utente', [UserController::class, 'showAddUserForm'])->name('show-add-user-form');
+    Route::post('/aggiungi-utente', [UserController::class, 'aggiungiUtente'])->name('aggiungi-utente');
+    Route::get('/user-list', [UserController::class, 'showUserList'])->name('user-list');
+    Route::delete('/utenti/{id}', [UserController::class, 'deleteUser'])->name('delete-user');
+
+    Route::get('/lista-utenti', [UserController::class, 'showUserListFromDb'])->name('users-list');
+
+    Route::get('/modifica-utente/{id}', [UserController::class, 'editUserForm'])->name('edit-user-form');
+
+
+    Route::post('/aggiorna-utente/{id}', [UserController::class, 'updateUser'])->name('update-user');
+
+    Route::get('/annulla-modifiche', [UserController::class, 'cancelEdit'])->name('cancel-edit');
+
+
+
+ });
 
 Route::middleware('auth', 'role')->group(function (){
 
@@ -103,7 +122,12 @@ Route::middleware('auth', 'role')->group(function (){
         Route::put('/{practice}', [PracticeController::class, 'update'])->name('practices.update');
         Route::delete('/{practice}', [PracticeController::class, 'destroy'])->name('practices.destroy');
     });
-    
+    Route::prefix('admin')->group(function () {
+        Route::get('/richiesta-assistenza', [RichiestaAssistenzaController::class, 'createForm'])->name('richiesta-assistenza.create');
+        Route::post('/richiesta-assistenza', [RichiestaAssistenzaController::class, 'store'])->name('richiesta-assistenza.store');
+        
+    });
+
 });
     
 
