@@ -20,10 +20,11 @@ class Practice extends Model
         'user_id',
         'feedback_enabled',
         'randomize_questions',
-        'generated_at', // Aggiungi il campo per la data di generazione
+        'generated_at', 
         'allowed',
         'practice_date',
-        'custom_score'
+        'custom_score',
+        'type',
     ];
 
     public function user() : BelongsTo  //Relazione crea fra user e practice 

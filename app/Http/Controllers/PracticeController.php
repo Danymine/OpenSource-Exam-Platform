@@ -51,7 +51,11 @@ class PracticeController extends Controller
             'subject' => 'string',
             'max_questions' => 'nullable|integer|min:1',
             'max_score' => 'nullable|integer|min:1',
-            'practice_date' => 'nullable|date',
+            'practice_date' => [
+                'nullable',
+                'date',
+                'after_or_equal:' . now()->toDateString(),
+            ],
         ]);
     
         $title = $validatedData['title'];
@@ -60,11 +64,14 @@ class PracticeController extends Controller
         $subject = $validatedData['subject'];
         $maxQuestions = $validatedData['max_questions'];
         $maxScore = $validatedData['max_score'];
-        $practice_date = $validatedData['practice_date'] ?? null;   //Practice_date deve essere obbligatoria. La utilizzo in seguito per permettere l'accesso.
-    
+        $practice_date = $validatedData['practice_date'] ?? null;
+
         $feedbackEnabled = $request->has('feedback');
         $randomizeQuestions = $request->has('randomize');
-    
+
+        // Impostiamo la data di pratica come la data odierna se non specificata
+        $practice_date = $validatedData['practice_date'] ?? now()->toDateString();
+
         $exerciseQuery = Exercise::query();
     
         if ($difficulty) {
@@ -78,15 +85,11 @@ class PracticeController extends Controller
         // Ottieni gli esercizi filtrati
         $filteredExercises = $exerciseQuery->get();
 
-        //Qui hai tutti gli esercizi che rispettano quella query li.
-    
         // Limita il numero massimo di domande se specificato
         if ($maxQuestions && $filteredExercises->count() > $maxQuestions) {
             $filteredExercises = $filteredExercises->take($maxQuestions);
         }
 
-        //Qui hai N esercizi che il docente ha inserito e che devono essere presenti nel test. 1,1,2,1,1 5 4 30 / 6 = 5 * 1 = 6 + 6
-    
         // Calcola la somma degli score dei filtri
         $totalScoreFiltered = $filteredExercises->sum('score');
      
@@ -105,7 +108,7 @@ class PracticeController extends Controller
             'description' => $description,
             'difficulty' => $difficulty,
             'subject' => $subject,
-            'total_score' => $maxScore, // Imposta il punteggio totale della pratica come max_score
+            'total_score' => $maxScore,
             'key' => $key,
             'user_id' => Auth::id(),
             'allowed' => 0,
@@ -156,7 +159,11 @@ class PracticeController extends Controller
             'description' => 'required|string',
             'selected_exercises' => 'required|array',
             'max_score' => 'nullable|integer|min:1',
-            'practice_date' => 'nullable|date',
+            'practice_date' => [
+                'nullable',
+                'date',
+                'after_or_equal:' . now()->toDateString(),
+            ],
         ]);
     
         $title = $validatedData['title'];
@@ -166,11 +173,15 @@ class PracticeController extends Controller
     
         $feedbackEnabled = $request->has('feedback');
         $randomizeQuestions = $request->has('randomize');
+
+        // Impostiamo la data di pratica come la data odierna se non specificata
+        $practice_date = $validatedData['practice_date'] ?? now()->toDateString();
     
         // Ottieni gli ID degli esercizi selezionati dal form
         $selectedExerciseIds = $request->input('selected_exercises');
     
-        // Ottieni la data corrente
+        // Ottieni la data corrente per il fuso orario Roma. Questo è da cambiare nel momento in cui aggiuntamo l'internazionale.
+        date_default_timezone_set('Europe/Rome');
         $generatedDate = now();
     
         // Ottieni gli esercizi selezionati dal database

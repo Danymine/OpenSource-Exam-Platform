@@ -99,7 +99,6 @@
                 
                 <!-- Mostra la data in cui si terrà l'esercitazione -->
                 <p><strong>Data programmata:</strong> {{ \Carbon\Carbon::parse($newPractice->practice_date)->format('d-m-Y') }}</p>
-
             </div>
 
             <h2>Esercizi:</h2>
