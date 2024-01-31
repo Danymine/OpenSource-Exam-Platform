@@ -310,7 +310,6 @@ class PracticeController extends Controller
             ]);
             //Anche questo da cambiare nel caso in cui utenti cercaressero di cambiare la propria locazione.
             date_default_timezone_set('Europe/Rome');
-            $test = new Practice;
             $test = Practice::where('key', '=', $request->input('key'))->first();   //Vado a repire il test con quella key. (Se Esiste)
             if($test == NULL){
 
@@ -338,7 +337,7 @@ class PracticeController extends Controller
                     }
                     else{
 
-                        return redirect()->route('test', ['key' => $test->key]);
+                        return redirect()->route('view-test', ['key' => $test->key]);
                     }
                 }
                 else{
@@ -354,7 +353,7 @@ class PracticeController extends Controller
     }
 
     //NOTE: Mostra all'utente il test. Questa verrà richiamata dalla vista WaitingRoom attraverso la chiamata asincrona.
-    public function showExam($key){
+    public function showExam(string $key){
 
         $practice = Practice::where('key', '=', $key)->first();
         $exercise = $practice->exercises->toArray();    //Questo sarebbe da cambiare non c'è più una relazione diretta.
@@ -371,7 +370,6 @@ class PracticeController extends Controller
 
         //Information practice
         $practice = Practice::where('id', '=', $practice_id)->first();
-        $feedback = $practice->feedback_enabled;
         $exercise = $practice->exercises->toArray();
         $score_max = $practice->total_score;
 
@@ -404,7 +402,7 @@ class PracticeController extends Controller
             Arrivati a questo punto ho le risposte che l'utente ha dato ho gli esercizi effettivamente presenti nel test non rimane altro che effettuare la correzione
             che sarà fatta verificando che il contenuto di $correct_response sia uguale alla risposta che effettiamente ha dato l'utente.
             */
-            if( $exercise[$i]["type"] == "Risposta Chiusa" ){
+            if( $exercise[$i]["type"] == "Risposta Multipla" ){ //Da cambiare nel caso in cui sia Risposta Chiusa
 
                 switch($correct_response){
 
@@ -483,6 +481,8 @@ class PracticeController extends Controller
         ->send(new FeedbackEmail(Auth::user(), $practice, $score_user, $explanation));
 
         //Qui nel caso occorre implementare la gestione del libretto dello studente visto che possediamo già il suo voto.
+        
+        return $score_user;
     }
 
     //NOTE: Si occupa di memorizzare gli esercizi compilati. 
@@ -502,7 +502,7 @@ class PracticeController extends Controller
         $practice_id = $request->input('id_practices');
         $feedback = Practice::find($practice_id);
         $i = 0;
-
+        
         date_default_timezone_set('Europe/Rome');
         $newDelivered = new Delivered([
             'user_id' => $user_id,
@@ -511,31 +511,27 @@ class PracticeController extends Controller
 
         $newDelivered->save();
 
-        //Inserisco tutte le risposte salvate nel DB
-        $id_delivered = Delivered::where([
-            ['user_id', '=', $user_id],
-            ['practice_id', '=', $practice_id]
-        ])->first();
-        
         for($i = 0; $i < count($array_id); $i++){
 
             $test = new Answer([
-                'delivered_id' => $id_delivered->id,
+                'delivered_id' => $newDelivered->id,
                 'response' => $array_response[$array_id[$i]],
                 'exercise_id' => $array_id[$i]
             ]);
             $test->save();
         }
+        
 
         //Verifico se il test preve l'invio automatico del feedback.
         if( $feedback->feedback_enabled == false ){
 
-            return redirect()->route('ciao');   //Vorrei fornire un feedback all'utente sul corretto invio del test
+            return redirect()->route('ciao')->withErrors(['error' => 'Invio avvenuto con successo']);
         }
         else{
 
-            $this->AutoCorrect($practice_id);
-            return redirect()->route('ciao');
+            $newDelivered->valutation = $this->AutoCorrect($practice_id);
+            $newDelivered->save();
+            return redirect()->route('ciao')->withErrors(['error' => 'Invio avvenuto con successo']);
         }
     }
     

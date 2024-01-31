@@ -12,35 +12,30 @@ class WaitingRoomController extends Controller
     {
         
     }
-    public function show($key)
+    public function show(string $key)
     {
         $practice = Practice::where('key', '=', $key)->first();
         return view('waiting-room', ['practices' => $practice]);
     }
 
-    public function status($key){
+    public function status(Practice $test){
 
-        $practice = Practice::where('key', '=', $key)->first();
-
-        if (!$practice) {
+        if (!$test) {
             // Se la pratica non esiste, restituisci un errore 404
             return response()->json(['error' => 'Pratica non trovata'], 404);
         }
 
         // Ottieni il valore di 'allowed'
-        $allowed = $practice->allowed;
+        $allowed = $test->allowed;
 
         // Restituisci il risultato in formato JSON
         return response()->json(['status' => $allowed]);
     }
 
-    public function participants($key){
+    public function participants(Practice $test){
 
-        $practice = Practice::where('key', '=', $key)->with('userwaiting')->firstOrFail();
         $array = [];
-       
-        $array = [];
-        foreach ($practice->userwaiting as $user) {
+        foreach ($test->userwaiting as $user) {
 
             array_push($array, $user->name);
         }
@@ -48,14 +43,12 @@ class WaitingRoomController extends Controller
         return response()->json(['user' => $array]);
     }
 
-    public function empower($key){
+    public function empower(Practice $test){
 
-        $practice = Practice::where('key', '=', $key)->first();
+        $test->allowed = 1;
+        $test->save();
 
-        $practice->allowed = 1;
-        $practice->save();
-
-        $practice->userwaiting()->detach();
+        $test->userwaiting()->detach();
 
         return redirect()->back()->with('success', 'Gli studenti hanno iniziato la prova');  
     }

@@ -52,18 +52,36 @@ Route::middleware('auth')->group(function () {
 
     //Rotte di partecipazione Esame/Esercitazione
     Route::post('/join', [PracticeController::class, 'join'])->name('pratices.join');
-    Route::get('/join/{key}', [PracticeController::class, 'showExam'])->name('test')->middleware('allowed');
-    Route::post('/send', [PracticeController::class, 'send'])->name('pratices.send');
-    Route::get('/waiting-room/{key}', [WaitingRoomController::class, 'show'])->name('waiting-room');
-    Route::get('/status/{key}', [WaitingRoomController::class, 'status'])->name('status');
-    Route::get('/user/{key}', [WaitingRoomController::class, 'participants'])->name('user');
-    Route::get('/authorize/{key}', [WaitingRoomController::class, 'empower'])->name('empower');
+    Route::get('/view-test/{key}', [PracticeController::class, 'showExam'])->name('view-test')->middleware('allowed');
 
-    Route::get('/view/{id}', [DeliveredController::class, 'show'])->name('view-test');  //Vietare l'accesso a esami che non sia il suo attraverso un middleware
+
+    Route::post('/send', [PracticeController::class, 'send'])->name('pratices.send');
+    //Forse questo non dovrebbe essere relativo alla Practice ma al Delivered in quanto lui consegna la consegna non una practice.
+
+    Route::get('/waiting-room/{key}', [WaitingRoomController::class, 'show'])->name('waiting-room');
+
+    /* Utilizzerò la key qui perchè non voglio fornire ulteriori informazioni all'utente sulla struttura del nostro dabatase e sull'utilizzo delle rotte. Chiariamoci meglio:
+        http://127.0.0.1/waiting-room/10 Questo è il risultato di questa route troppo semplice da comprendere. L'utente potrebbe tranquillamente cambiare il 10 con il 9 per entrare in una nuova waiting-room
+        e se presente accedervi.
+
+        http://127.0.0.1/waiting-room/jM1r54 questo è quello che otteniamo utilizzando questo metodo l'utente quindi può si cambiare un numero a quel codice nella speranza che ve ne sia uno simile
+        ma la probabilità si riduce.
+    */
+
+    Route::get('/status/{test}', [WaitingRoomController::class, 'status'])->name('status');
+    Route::get('/user/{test}', [WaitingRoomController::class, 'participants'])->name('user');
+    Route::get('/authorize/{test}', [WaitingRoomController::class, 'empower'])->name('empower');
+
+    Route::get('/view-details-delivered/{delivered}', [DeliveredController::class, 'show'])->name('view-details-delivered')->middleware('control'); //Il middleware permette di vedere i dettagli della consegna solo per gli utenti che l'hanno consegnata o per il docente che ha creato la practice alla quale si riferisce
+    Route::get('/download-details-delivered/{delivered}', [DeliveredController::class, 'print'])->name('download-details-delivered')->middleware('control');
+    Route::get('/download-correct-delivered/{delivered}', [DeliveredController::class, 'printCorrect'])->name('download-correct-delivered');
 });
 
 Route::middleware('auth', 'role')->group(function (){
 
+
+    Route::get('/view-delivered/{practice}', [DeliveredController::class, 'index'])->name('view-delivered');
+    Route::post('/save', [DeliveredController::class, 'save'])->name('store-valutation');
     /* ROTTE DI MARCO */
 
     // Rotte per gli esercizi
@@ -82,8 +100,7 @@ Route::middleware('auth', 'role')->group(function (){
        Route::post('/edit-exercise/{id}', [ExerciseController::class, 'update'])->name('editExercise');
        Route::put('/edit-exercise/{id}', [ExerciseController::class, 'update'])->name('exercises.update');
         // Elimina un esercizio
-        Route::get('/{id}/delete', [ExerciseController::class, 'deleteExercise'])->name('deleteExercise');
-       
+       Route::get('/{id}/delete', [ExerciseController::class, 'deleteExercise'])->name('deleteExercise');
 
     });
 
