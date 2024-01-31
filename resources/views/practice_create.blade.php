@@ -97,7 +97,7 @@
         </div>
     @endif
 
-    <form action="{{ route('practices.new') }}" method="POST" class="practice-form">
+    <form action="{{ route('practices.new', ['type' => $type]) }}" method="POST" class="practice-form">
         @csrf
 
         <div class="form-group">

@@ -106,20 +106,21 @@ Route::middleware('auth', 'role')->group(function (){
 
     //rotte per le esercitazioni 
     Route::prefix('practices')->group(function () {
-        Route::get('/', [PracticeController::class, 'index'])->name('practices.index');
-    
-        Route::get('/create', [PracticeController::class, 'create'])->name('practices.create');
-        Route::post('/new', [PracticeController::class, 'generatePracticeWithFilters'])->name('practices.new');
-    
-        Route::get('/exercise-list', [PracticeController::class, 'exerciseList'])->name('exercise.list');
-        Route::post('/create-exercise-set', [PracticeController::class, 'createExerciseSet'])->name('createExerciseSet');
-    
-        Route::get('/{practice}', [PracticeController::class, 'show'])->name('practices.show');
-        Route::get('/{practice}/edit', [PracticeController::class, 'edit'])->name('practices.edit');
-        Route::put('/{practice}', [PracticeController::class, 'update'])->name('practices.update');
-        Route::delete('/{practice}', [PracticeController::class, 'destroy'])->name('practices.destroy');
-        Route::get('/{practice}/duplicate', [PracticeController::class, 'duplicate'])->name('practices.duplicate');
+        Route::get('/{type}', [PracticeController::class, 'index'])->name('practices.index');
+        
+        Route::get('/create/{type}', [PracticeController::class, 'create'])->name('practices.create');
+        Route::post('/new/{type}', [PracticeController::class, 'generatePracticeWithFilters'])->name('practices.new');
+        
+        Route::get('/exercise-list/{type}', [PracticeController::class, 'exerciseList'])->name('exercise.list');
+        Route::post('/create-exercise-set/{type}', [PracticeController::class, 'createExerciseSet'])->name('createExerciseSet');
+        
+        Route::get('/{type}/{practice}', [PracticeController::class, 'show'])->name('practices.show');
+        Route::get('/{type}/{practice}/edit', [PracticeController::class, 'edit'])->name('practices.edit');
+        Route::put('/{type}/{practice}', [PracticeController::class, 'update'])->name('practices.update');
+        Route::delete('/{type}/{practice}', [PracticeController::class, 'destroy'])->name('practices.destroy');
+        Route::get('/{type}/{practice}/duplicate', [PracticeController::class, 'duplicate'])->name('practices.duplicate');
     });
+    
     
 });
     

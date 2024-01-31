@@ -37,11 +37,11 @@
 
                         @if( Auth::user()->roles == "Teacher" )
 
-                            <x-dropdown-link href="#">
+                            <x-dropdown-link :href="route('practices.index', ['type' => 'esercitazione'])">
                                 Esercitazioni
                             </x-dropdown-link>
 
-                            <x-dropdown-link href="#">
+                            <x-dropdown-link :href="route('practices.index', ['type' => 'esame'])">
                                 Esami
                             </x-dropdown-link>
 

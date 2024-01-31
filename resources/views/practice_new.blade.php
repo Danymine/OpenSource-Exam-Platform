@@ -120,7 +120,7 @@
 
             <!-- Bottone per tornare alla lista delle esercitazioni -->
             <div class="back-button">
-                <a href="{{ route('practices.index') }}">
+                <a href="{{ route('practices.index', ['type' => $type]) }}">
                     <button>Torna alla lista delle esercitazioni</button>
                 </a>
             </div>

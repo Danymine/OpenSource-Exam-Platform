@@ -156,7 +156,7 @@
         </div>
     @endif
 
-    <form action="{{ route('createExerciseSet') }}" method="POST" class="practice-form">
+    <form action="{{ route('createExerciseSet', ['type' => $type]) }}" method="POST" class="practice-form">
         @csrf
 
         <div class="practice-form">

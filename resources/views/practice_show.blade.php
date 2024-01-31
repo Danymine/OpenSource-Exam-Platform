@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Esercitazione: {{ $practice->title }}</title>
+    <title>{{ ucfirst($type) }}: {{ $practice->title }}</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -17,7 +17,7 @@
         }
 
         .container {
-            max-width: none; /* o puoi anche rimuoverlo del tutto */
+            max-width: none;
             width: 100%;
         }
         
@@ -111,8 +111,8 @@
 
         <!-- Bottone per tornare alla lista delle esercitazioni -->
         <div class="back-button">
-            <a href="{{ route('practices.index') }}">
-                <button>Torna alla lista delle esercitazioni</button>
+            <a href="{{ route('practices.index', ['type' => $type]) }}">
+                <button>Torna alla lista delle {{ $type }}</button>
             </a>
         </div>
     </div>
