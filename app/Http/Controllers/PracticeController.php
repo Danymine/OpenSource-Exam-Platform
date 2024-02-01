@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\FeedbackEmail;
 use Carbon\Carbon;
 
-
 class PracticeController extends Controller
 {
     private function generateKey()
@@ -144,13 +143,13 @@ class PracticeController extends Controller
         return view('practice_create', ['type' => $type]);
     }
     
-    public function exerciseList()
+    public function exerciseList($type)
     {
         $exercises = Exercise::all();
         $subjects = Exercise::distinct('subject')->pluck('subject');
-        $type = 'esercitazione'; // Sostituisci con il valore appropriato
         return view('exercise_list', ['exercises' => $exercises, 'subjects' => $subjects, 'type' => $type]);
-    }    
+    }
+       
     
     public function createExerciseSet(Request $request, $type)
     {
@@ -240,7 +239,6 @@ class PracticeController extends Controller
             'type' => $type,
         ]);
     }
-    
 
     public function index(Request $request, $type) 
     {

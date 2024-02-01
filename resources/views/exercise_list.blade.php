@@ -145,6 +145,8 @@
     </style>
 </head>
 <body>
+
+    <div class="container">
     @if($errors->any())
         <div class="alert alert-danger">
             <span class="alert-symbol">&#9888;</span>
@@ -162,14 +164,14 @@
         <div class="practice-form">
             <div class="side-column">
                 <div class="section">
-                    <h2>Caratteristiche dell'esercitazione</h2>
+                    <h2>Caratteristiche dell'{{ $type }}</h2>
                     <div class="form-group">
-                        <label for="title">Titolo dell'esercitazione:</label>
+                        <label for="title">Titolo dell'{{ $type }}:</label>
                         <input type="text" id="title" name="title" value="{{ old('title') }}" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="description">Descrizione dell'esercitazione:</label>
+                        <label for="description">Descrizione dell'{{ $type }}:</label>
                         <input type="text" id="description" name="description" value="{{ old('description') }}" required>
                     </div>
 
@@ -189,7 +191,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="practice_date">Data dell'Esame:</label>
+                        <label for="practice_date">Data dell'{{ $type }}:</label>
                         <input type="date" id="practice_date" name="practice_date" value="{{ old('practice_date') }}">
                     </div>
                 </div>
@@ -227,7 +229,7 @@
                 </div>
 
                 <!-- Bottone di invio del form -->
-                <button type="submit" style="width: 100%;">Crea Esercitazione</button>
+                <button type="submit" style="width: 100%;">Crea {{ $type }}</button>
             </div>
 
             <div class="list-section">

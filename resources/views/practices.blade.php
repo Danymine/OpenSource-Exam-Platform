@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,15 +24,12 @@
         }
 
         li {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             background-color: #fff;
             border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-bottom: 10px;
             padding: 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: relative; 
+            position: relative;
         }
 
         a {
@@ -46,10 +44,10 @@
         .actions {
             display: flex;
             gap: 10px;
-            position: absolute; 
-            right: 15px; 
-            top: 50%; 
-            transform: translateY(-50%); 
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         form {
@@ -77,7 +75,7 @@
             transition: background-color 0.3s ease;
             margin-top: 20px;
             display: block;
-            max-width: 200px;
+            max-width: 150px;
         }
 
         .new-practice-button:hover {
@@ -130,6 +128,27 @@
         }
 
         button.modal-button:hover {
+            background-color: #3498db;
+        }
+
+        .dashboard-button {
+            display: inline-block;
+            padding: 10px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+            max-width: 40px;
+            text-align: center;
+        }
+
+        .dashboard-button i {
+            color: #fff;
+        }
+
+        .dashboard-button:hover {
             background-color: #2980b9;
         }
 
@@ -172,59 +191,66 @@
         }
     </script>
 </head>
+
 <body>
+    <a href="{{ route('dashboard') }}" class="dashboard-button">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
     <h1>
         @if ($type === 'esame')
-            Elenco degli Esami
+        Elenco degli Esami
         @elseif ($type === 'esercitazione')
-            Elenco delle Esercitazioni
+        Elenco delle Esercitazioni
         @endif
     </h1>
-
+    
     @if ($practices->where('type', $type)->isEmpty())
-        <p>Non sono state ancora create @if ($type === 'esercitazione') esercitazioni @elseif ($type === 'esame') esami @endif.</p>
+    <p>Nessun @if ($type === 'esercitazione') esercitazione @elseif ($type === 'esame') esame trovato @endif.</p>
     @else
-        <ul>
-            @foreach($practices->where('type', $type) as $practice)
-                <li>
-                    <div class="title-section">
-                        <a href="{{ route('practices.show', ['type' => $type, 'practice' => $practice->id]) }}">
-                            <strong>{{ $practice->title }}</strong> - {{ $practice->description }}
-                        </a>
-                        <div class="actions">
-                            <form method="POST" action="{{ route('practices.duplicate', ['type' => $type, 'practice' => $practice->id]) }}">
-                                @csrf
-                                @method('GET')
-                                <button type="submit"><i class="">Duplica</i></button>
-                            </form>
-                            <form method="POST" action="{{ route('practices.edit', ['type' => $type, 'practice' => $practice->id]) }}">
-                                @csrf
-                                @method('GET')
-                                <button type="submit"><i class="fas fa-pencil-alt"></i></button>
-                            </form>
-                            <form method="POST" action="{{ route('practices.destroy', ['type' => $type, 'practice' => $practice->id]) }}">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"><i class="fas fa-trash-alt"></i></button>
-                            </form>
-                        </div>
-                    </div>
-                </li>
-            @endforeach
-        </ul>
+    <ul>
+        @foreach($practices->where('type', $type) as $practice)
+        <li>
+            <div class="title-section">
+                <a href="{{ route('practices.show', ['type' => $type, 'practice' => $practice->id]) }}">
+                    <strong>{{ $practice->title }}</strong> - {{ $practice->description }}
+                </a>
+                <div class="actions">
+                    <form method="POST"
+                        action="{{ route('practices.duplicate', ['type' => $type, 'practice' => $practice->id]) }}">
+                        @csrf
+                        @method('GET')
+                        <button type="submit"><i class="">Duplica</i></button>
+                    </form>
+                    <form method="POST"
+                        action="{{ route('practices.edit', ['type' => $type, 'practice' => $practice->id]) }}">
+                        @csrf
+                        @method('GET')
+                        <button type="submit"><i class="fas fa-pencil-alt"></i></button>
+                    </form>
+                    <form method="POST"
+                        action="{{ route('practices.destroy', ['type' => $type, 'practice' => $practice->id]) }}">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"><i class="fas fa-trash-alt"></i></button>
+                    </form>
+                </div>
+            </div>
+        </li>
+        @endforeach
+    </ul>
     @endif
-
 
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <p>Scegli come creare la nuova pratica:</p>
+            <p>Scegli come creare l'{{ $type }}:</p>
             <button onclick="generateAutomatically()">Genera automaticamente</button>
             <button onclick="createManually()">Crea manualmente</button>
         </div>
     </div>
 
-    <a href="#" id="newPracticeBtn" class="new-practice-button">Crea una nuova pratica</a>
+    <a href="#" id="newPracticeBtn" class="new-practice-button">Crea l'{{ $type }}</a>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -262,6 +288,8 @@
             // Reindirizza alla vista per la creazione manuale
             window.location.href = '{{ route("exercise.list", ['type' => $type]) }}';
         }
+
     </script>
 </body>
+
 </html>
