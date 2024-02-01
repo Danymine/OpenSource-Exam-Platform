@@ -68,43 +68,95 @@
                         <canvas id="ChartStudent{{ $delivered->user_id }}" style="width:100%;max-width:600px"></canvas>
 
                         <script>
-                            // Ottieni le valutazioni delle consegne dell'utente su cui ha cliccato il docente 
+                            
                             var deliveredsData = {!! json_encode($delivered->user->delivereds->toArray()) !!};
-
+                            var practiceProf = {!! json_encode(Auth::user()->practices()->withTrashed()->get()) !!};
+                           
                             // Ottieni il nome dei test considerazione: Faccio vedere solo esami o anche esercitazioni?
                             var xDate = [];
                             var yValutation = [];
+                            var practice = [];
 
-                            for( var i = 0; i < deliveredsData.length; i++ ){
-                                
-                                if( deliveredsData[i].valutation !== null ){
+                            for ( var i = 0; i < deliveredsData.length; i++ ) {
 
-                                    yValutation.push(deliveredsData[i].valutation);
-                                    var dataOra = new Date(deliveredsData[i].created_at);
-                                    xDate.push(dataOra.toISOString().split('T')[0]);
-                                }
-                            }
-                            
-                            new Chart("ChartStudent{{ $delivered->user_id }}", {
-                                    type: "line",
-                                    data: {
-                                        labels: xDate,
-                                        datasets: [{
-                                            fill: false,
-                                            lineTension: 0,
-                                            backgroundColor: "rgba(255, 255, 255, 0.2)", // Sfondo bianco con opacità
-                                            borderColor: "rgba(0, 128, 0, 1.0)", // Colore verde dei pallini
-                                            pointBackgroundColor: "rgba(0, 128, 0, 1.0)", // Colore dei pallini
-                                            data: yValutation,
-                                            label: 'Valutazioni' // Etichetta per il dataset
-                                        }]
-                                    },
-                                    options: {
-                                        scales: {
-                                            yAxes: [{ticks: {min: 18, max:30}}],
+                                for ( var y = 0; y < practiceProf.length; y++ ) {
+
+                                    if (deliveredsData[i].practice_id == practiceProf[y].id) {
+
+                                        if ( (practiceProf[y].type == "esame" && deliveredsData[i].valutation != null && deliveredsData[i].valutation >= practiceProf[y].total_score * 0.6) || (practiceProf[y].type == "esercitazione" && deliveredsData[i].valutation != null)) {
+                                            
+                                            yValutation.push(deliveredsData[i].valutation);
+                                            var dataOra = new Date(deliveredsData[i].created_at);
+                                            xDate.push(dataOra.toISOString().split('T')[0]);
+                                            practice.push({ title: practiceProf[y].title, type: practiceProf[y].type }); // Salva il titolo e il tipo del test
                                         }
                                     }
-                                });
+                                }
+                            }
+                            var colors = {
+                                'esame': 'rgba(255, 99, 132, 1)',
+                                'esercitazione': 'rgba(54, 162, 235, 1)'
+                            };
+
+                            var ctx = document.getElementById('ChartStudent{{ $delivered->user_id }}').getContext('2d');
+                            var myChart = new Chart(ctx, {
+                                type: "line",
+                                data: {
+                                    labels: xDate,
+                                    datasets: [{
+                                        fill: false,
+                                        lineTension: 0,
+                                        backgroundColor: "rgba(255, 255, 255, 0.2)", // Sfondo bianco con opacità
+                                        borderColor: "rgba(0, 128, 0, 1.0)", // Colore verde della linea
+                                        pointBackgroundColor: practice.map(item => colors[item.type]),
+                                        data: yValutation,
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        yAxes: [{
+                                            ticks: {
+                                                min: 0,
+                                                max: 100
+                                            }
+                                        }]
+                                    },
+                                    tooltips: {
+                                        callbacks: {
+                                            title: function (tooltipItem, data) {
+                                                var index = tooltipItem[0].index;
+                                                return practice[index].title + ' (' + practice[index].type + ')';
+                                            },
+                                            label: function (tooltipItem, data) {
+                                                var value = tooltipItem.yLabel;
+                                                return "Valutazione: " + value;
+                                            }
+                                        }
+                                    },
+                                    legend: {
+                                        display: true,
+                                        labels: {
+                                            generateLabels: function (chart) {
+                                                var labels = [];
+                                                chart.data.datasets.forEach(function (dataset, datasetIndex) {
+
+                                                    for (var type in colors) {
+                                                        labels.push({
+                                                            text: type,
+                                                            fillStyle: colors[type]
+                                                        });
+                                                    }
+                                                });
+                                                return labels;
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+
+
+
+
 
                         </script>
 
