@@ -86,6 +86,7 @@
     </style>
 </head>
 <body>
+
     @if($errors->any())
         <div class="alert alert-danger">
             <span class="alert-symbol">&#9888;</span>

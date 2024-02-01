@@ -84,6 +84,7 @@
 </head>
 
 <body>
+
     <div class="container">
         <div class="practice-details">
             <h1>{{ $practice->title }}</h1>
