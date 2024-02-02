@@ -38,20 +38,38 @@ class UserController extends Controller
     public function showUserList()
     {
         $users = User::all();
-        return view('user_list', compact('users'));
+        return view('user-list', compact('users'));
     }
 
-    public function deleteUser($id)
+    public function destroy($id)
     {
         $user = User::find($id);
+    
         if ($user) {
             $user->delete();
-            return redirect()->back()->with('success', 'Utente eliminato con successo!');
+            return redirect()->back()->with('success', 'Utente eliminato con successo.');
         } else {
-            return redirect()->back()->with('error', 'Utente non trovato!');
+            return redirect()->back()->with('error', 'Utente non trovato.');
         }
     }
-
+    public function updateUser(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'roles' => 'required|in:Studente,Amministratore,Professore',
+        ]);
+    
+        $user = User::findOrFail($id);
+    
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->roles = $request->input('roles');
+    
+        $user->save();
+    
+        return redirect()->route('user-list')->with('success', 'Utente aggiornato con successo.');
+    }
 
     public function editUserForm($id)
     {
@@ -59,16 +77,6 @@ class UserController extends Controller
         return view('edit', compact('user'));
     }
 
-    public function updateUser(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        // Altre eventuali modifiche ai campi dell'utente
-        $user->save();
-
-        return redirect()->route('users-list')->with('success', 'Profilo aggiornato con successo.');
-    }
 
     public function cancelEdit()
     {
@@ -78,6 +86,14 @@ class UserController extends Controller
 {
     $users = User::all();
     return view('user-list', compact('users'));
+}
+
+public function search(Request $request)
+{
+    $email = $request->input('email');
+    $users = User::where('email', 'like', "%$email%")->get();
+
+    return view('user-list', ['users' => $users]);
 }
 
 }

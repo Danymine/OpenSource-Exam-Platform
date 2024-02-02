@@ -272,8 +272,8 @@
                         
                         <div>
                             <a href="{{ route('show-add-user-form') }}" class="button">Aggiungi Utente</a>
-                            <a href="{{ route('user-list') }}" class="button">Elimina Utente</a>
-                            <a href="{{ route('users-list') }}" class="button">Modifica Dati Utente</a>
+                            <a href="{{ route('user-list') }}" class="button">Gestione Utenti</a>
+
                         </div>
                         
             

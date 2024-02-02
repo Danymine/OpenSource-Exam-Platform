@@ -6,9 +6,9 @@ use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\WaitingRoomController;
 use App\Http\Controllers\DeliveredController;
-use App\Http\Controllers\RichiestaAssistenzaController;
+use App\Http\Controllers\AdminRequestController;
 use App\Http\Controllers\UserController;
-
+use App\Http\Controllers\RequestController;
 
 
 //Temporanea
@@ -74,7 +74,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/aggiungi-utente', [UserController::class, 'showAddUserForm'])->name('show-add-user-form');
     Route::post('/aggiungi-utente', [UserController::class, 'aggiungiUtente'])->name('aggiungi-utente');
     Route::get('/user-list', [UserController::class, 'showUserList'])->name('user-list');
-    Route::delete('/utenti/{id}', [UserController::class, 'deleteUser'])->name('delete-user');
+    Route::delete('/utenti/{id}', [UserController::class, 'destroy'])->name('delete-user');
 
     Route::get('/lista-utenti', [UserController::class, 'showUserListFromDb'])->name('users-list');
 
@@ -84,6 +84,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/aggiorna-utente/{id}', [UserController::class, 'updateUser'])->name('update-user');
 
     Route::get('/annulla-modifiche', [UserController::class, 'cancelEdit'])->name('cancel-edit');
+
+    Route::get('/search-user', [UserController::class, 'search'])->name('search-user');
+
+
+
 
 
 
@@ -133,11 +138,10 @@ Route::middleware('auth', 'role')->group(function (){
         Route::delete('/{practice}', [PracticeController::class, 'destroy'])->name('practices.destroy');
     });
     Route::prefix('admin')->group(function () {
-        Route::get('/richiesta-assistenza', [RichiestaAssistenzaController::class, 'createForm'])->name('richiesta-assistenza.create');
-        Route::post('/richiesta-assistenza', [RichiestaAssistenzaController::class, 'store'])->name('richiesta-assistenza.store');
-        
+    Route::get('/richiedi-assistenza', [RequestController::class, 'showAssistanceRequestForm'])->name('createAssistanceRequest');
+    Route::post('/richiedi-assistenza', [RequestController::class, 'createAssistanceRequest'])->name('storeAssistanceRequest'); 
+    Route::get('/admin/requests', [AdminRequestController::class, 'index'])->name('admin.requests.index');
     });
-
 });
     
 

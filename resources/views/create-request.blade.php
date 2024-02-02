@@ -16,20 +16,20 @@
         <div style="color: green;">{{ session('success') }}</div>
     @endif
 
-    <form method="POST" action="{{ route('richiesta-assistenza.store') }}">
+    <form method="POST" action="{{ route('createAssistanceRequest') }}">
         @csrf
 
-        <label for="nome">Nome:</label>
-        <input type="text" name="nome" required>
+        <label for="name">Nome:</label>
+        <input type="text" name="name" required>
 
-        <label for="ruolo">Ruolo:</label>
-        <select name="ruolo" required>
-            <option value="professore">Professore</option>
-            <option value="studente">Studente</option>
+        <label for="roles">Ruolo:</label>
+        <select name="roles" required>
+            <option value="Teacher">Professore</option>
+            <option value="Student">Studente</option>
         </select>
 
-        <label for="problema">Problema:</label>
-        <textarea name="problema" required></textarea>
+        <label for="description">Problema:</label>
+        <textarea name="description" required></textarea>
 
         <button type="submit">Invia Richiesta</button>
     </form>

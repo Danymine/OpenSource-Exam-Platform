@@ -44,7 +44,14 @@
                     <label for="email" class="block text-gray-700 text-sm font-bold mb-2 dark:text-white">Email:</label>
                     <input type="email" id="email" name="email" value="{{ $user->email }}" class="form-input w-full">
                 </div>
-                <!-- Aggiungi altri campi se necessario -->
+                <div class="mb-4">
+                <label for="roles" class="block text-sm font-medium text-gray-700">Ruolo</label>
+                <select name="roles" id="roles" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <option value="Studente" {{ $user->roles === 'Studente' ? 'selected' : '' }}>Studente</option>
+                    <option value="Amministratore" {{ $user->roles === 'Amministratore' ? 'selected' : '' }}>Amministratore</option>
+                    <option value="Professore" {{ $user->roles === 'Professore' ? 'selected' : '' }}>Professore</option>
+                </select>
+            </div>
 
                 <div class="flex items-center justify-between">
                     <button type="submit" class="custom-button custom-button-green">Aggiorna Profilo</button>

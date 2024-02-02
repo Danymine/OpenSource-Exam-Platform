@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class RichiestaAssistenza extends Model
+class AssistanceRequest extends Model
 {
     use HasFactory;
-
+    protected $table = 'requests';
+   
     protected $fillable = [
-        'nome',
-        'ruolo',
-        'problema',
+        'name',
+        'roles',
+        'description',
     ];
 }
