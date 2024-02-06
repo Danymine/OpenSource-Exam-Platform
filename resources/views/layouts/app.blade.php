@@ -61,35 +61,55 @@
         </div>
         <script>
             function showExams() {
-                showRows("exame");
+
+                @if ( Auth::user()->roles == "Teacher" || Auth::user()->roles == "Admin")
+
+                    var story = document.getElementById('StoricoEsercitazioni');
+                    if( story != null ){
+
+                        story.style.display = "none";
+                        story = document.getElementById('StoricoEsami').style.display = "block";
+                    }
+                    showRows("exame");
+                @else
+
+                    var chart = document.getElementById("Chartpractice");
+                    if( chart != null ){
+
+                        chart.style.display = "none";
+                        chart = document.getElementById("Chartexame").style.display = "block";
+                    }
+                    showRows("exame");
+        
+                @endif
             }
 
             function showPractices() {
-                showRows("practice");
-            }
 
-            function showRows(type) {
-                var rows = document.querySelectorAll(".row-type");
-                if( type == "exame" ){
+                @if ( Auth::user()->roles == "Teacher" || Auth::user()->roles == "Admin")
 
-                   
-                    var chart = document.getElementById("Chartexame");
-                    if( chart !== null ){
+                    var story = document.getElementById('StoricoEsami');
+                    if( story != null ){
 
-                        chart.style.display = "block";
-                        chart = document.getElementById("Chartpractice").style.display = "none";
+                        story.style.display = "none";
+                        story = document.getElementById('StoricoEsercitazioni').style.display = "block";
                     }
-                }
-                else{
+                    showRows("practice");
+                @else
 
                     var chart = document.getElementById("Chartexame");
-                    if( chart !== null ){
+                    if( chart != null ){
 
                         chart.style.display = "none";
                         chart = document.getElementById("Chartpractice").style.display = "block";
                     }
-                }
-                
+                    showRows("practice");
+                @endif
+            }
+
+            function showRows(type) {
+                var rows = document.querySelectorAll(".row-type");
+
                 rows.forEach(function(row) {
 
                     if (row.classList.contains("row-" + type)) {

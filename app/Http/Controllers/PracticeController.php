@@ -219,7 +219,8 @@ class PracticeController extends Controller
             'generated_at' => $generatedDate,
             'practice_date' => $practice_date,
             'type' => $type,
-        ]);
+            'public' => 0,
+        ]); 
     
         $newPractice->save();
     
@@ -543,4 +544,37 @@ class PracticeController extends Controller
         }
     }
     
+
+    public function showHistoryExame(){
+
+        //Mostriamo gli esami che hanno qualcuno che ha consegnato, anche quelli cancellati quindi, solo dell'utente che fa la richiesta.   
+        $exames = Practice::where([
+            ['type',"=",'esame'],
+            ['user_id', '=', Auth::user()->id],
+            ['public', '=', 1]
+            ])->simplePaginate(15);
+
+        
+        return view('showHistory', ['tests' => $exames]);
+    }
+
+    public function showHistoryPractice(){
+
+        $practices = Practice::where([
+            ['type',"=",'esercitazione'],
+            ['user_id', '=', Auth::user()->id],
+            ['public', '=', 1]
+            ])->simplePaginate(15);
+
+        
+        return view('showHistory', ['tests' => $practices]);
+
+    }
+
+    public function stats( Practice $practice ){
+        
+        //Servono tutte le consegne con i rispettivi utenti che hanno consegnato
+        $delivereds = $practice->delivereds()->with('user')->get();
+        return view('stats', ['practice' => $practice, 'delivereds' => $delivereds]);
+    }
 }

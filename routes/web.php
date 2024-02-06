@@ -81,6 +81,11 @@ Route::middleware('auth', 'role')->group(function (){
 
 
     Route::get('/view-delivered/{practice}', [DeliveredController::class, 'index'])->name('view-delivered');
+    Route::get('/public/{practice}', [DeliveredController::class, 'public'])->name('public');
+    Route::get('/view-exame-passed', [PracticeController::class, 'showHistoryExame'])->name('exame-passed');
+    Route::get('/view-practice-passed', [PracticeController::class, 'showHistoryPractice'])->name('practice-passed');
+    Route::get('/stats-practice/{practice}', [PracticeController::class, 'stats'])->name('stats');
+
     Route::post('/save', [DeliveredController::class, 'save'])->name('store-valutation');
     /* ROTTE DI MARCO */
 

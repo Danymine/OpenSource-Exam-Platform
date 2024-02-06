@@ -53,7 +53,7 @@
                     <th>Utente</th>
                     <th>Data Pratica</th>
                     <th>Valutazione</th>
-                    <th>Correggi</th>
+                    <th>Dettagli</th>
                 </tr>
             </thead>
             <tbody>
@@ -176,8 +176,18 @@
             </tbody>
         </table>
         <div>
+            
+            @if ( $delivered->practice->public == 0 )
 
-            <button class="btn btn-primary">Pubblica</button>
+                <a href="{{ route('public', ['practice' => $delivered->practice]) }}">Pubblica</a>
+            @else
+                <a href="{{ route('stats', ['practice' => $delivered->practice]) }}">Statistiche</a>
+            @endif
+
+            @if($errors->any())
+                <h4 style="color: black">{{$errors->first()}}</h4>
+            @endif
+            
         </div>
     </div>
 
