@@ -120,8 +120,10 @@ Route::middleware('auth', 'role')->group(function (){
         Route::post('/create-exercise-set/{type}', [PracticeController::class, 'createExerciseSet'])->name('createExerciseSet');
         
         Route::get('/{type}/{practice}', [PracticeController::class, 'show'])->name('practices.show');
+
         Route::get('/{type}/{practice}/edit', [PracticeController::class, 'edit'])->name('practices.edit');
-        Route::put('/{type}/{practice}', [PracticeController::class, 'update'])->name('practices.update');
+        Route::put('/{type}/{practice}/updated', [PracticeController::class, 'update'])->name('practices.update');
+
         Route::delete('/{type}/{practice}', [PracticeController::class, 'destroy'])->name('practices.destroy');
         Route::get('/{type}/{practice}/duplicate', [PracticeController::class, 'duplicate'])->name('practices.duplicate');
     });
