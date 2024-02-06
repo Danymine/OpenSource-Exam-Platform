@@ -9,29 +9,39 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f4;
         }
 
         h2 {
             color: #333;
         }
 
+        .container {
+            max-width: 1600px;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
         .practice-form {
             display: flex;
-            justify-content: space-between;
-            margin: 20px;
         }
 
         .side-column {
-            width: 30%;
+            width: 400px;
             padding: 20px;
             box-sizing: border-box;
             background-color: #f7f7f7;
         }
 
         .list-section {
-            width: 70%;
+            width: 1200px; 
             padding: 20px;
             box-sizing: border-box;
+            height: calc(100vh - 40px);
+            overflow-y: auto; 
         }
 
         .section {
@@ -49,12 +59,14 @@
         }
 
         .form-group input,
-        .form-group select {
+        .form-group select,
+        .form-group textarea {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             box-sizing: border-box;
             border: 1px solid #ccc;
             border-radius: 4px;
+            font-size: 14px;
         }
 
         .form-group input[type="checkbox"] {
@@ -71,10 +83,12 @@
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 4px;
-            padding: 15px;
+            padding: 5px;
             margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
+            height: 100%; /* Fissa l'altezza dei riquadri */
+            width:100%;
         }
 
         .exercise div {
@@ -105,7 +119,7 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            padding: 10px;
+            padding: 12px;
             font-size: 16px;
         }
 
@@ -141,7 +155,6 @@
             font-size: 18px;
             color: #721c24;
         }
-
     </style>
 </head>
 <body>
@@ -172,12 +185,16 @@
 
                     <div class="form-group">
                         <label for="description">Descrizione dell'{{ $type }}:</label>
-                        <input type="text" id="description" name="description" value="{{ old('description') }}" required>
+                        <textarea id="description" name="description" rows="4" required>{{ old('description') }}</textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="max_score">Punteggio Massimo:</label>
-                        <input type="number" id="max_score" name="max_score" value="{{ old('max_score') }}" required>
+                        <select id="max_score" name="max_score" value="{{ old('max_score') }}" required>
+                            <option value="10">10</option>
+                            <option value="30">30</option>
+                            <option value="100">100</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -220,6 +237,18 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label for="typeFilter">Filtra per Tipo di Esercizio:</label>
+                        <select id="typeFilter" name="typeFilter">
+                            <option value="">Tutti i Tipi</option>
+                            @foreach($exerciseTypes as $exerciseType)
+                                <option value="{{ $exerciseType }}" {{ old('typeFilter') == $exerciseType ? 'selected' : '' }}>
+                                    {{ $exerciseType }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <div class="form-group score-filter">
                         <label for="minScore">Punteggio Minimo:</label>
                         <input type="number" id="minScore" name="minScore" min="0" value="{{ old('minScore') }}">
@@ -258,8 +287,28 @@
     </form>
 
     <script>
+        function toggleSelectedExercise(id) {
+            let selectedExerciseIds = []; // Inizializza la variabile per memorizzare gli ID degli esercizi selezionati
+
+            // Inizializza gli ID degli esercizi selezionati
+            document.querySelectorAll("input[name='selected_exercises[]']").forEach(input => {
+                selectedExerciseIds.push(input.value);
+            });
+
+            const index = selectedExerciseIds.indexOf(id);
+            if (index === -1) {
+                selectedExerciseIds.push(id);
+            } else {
+                selectedExerciseIds.splice(index, 1);
+            }
+
+            // Aggiorna gli input nascosti con gli ID degli esercizi selezionati
+            document.querySelector("input[name='selected_exercises[]'][value='" + id + "']").checked = (index === -1);
+        }
+
         const subjectFilter = document.getElementById("subjectFilter");
         const difficultyFilter = document.getElementById("difficultyFilter");
+        const typeFilter = document.getElementById("typeFilter");
         const minScoreInput = document.getElementById("minScore");
         const maxScoreInput = document.getElementById("maxScore");
         const exerciseList = document.getElementById("exerciseList");
@@ -267,12 +316,14 @@
         difficultyFilter.addEventListener("change", filterExercises);
         minScoreInput.addEventListener("input", filterExercises);
         maxScoreInput.addEventListener("input", filterExercises);
+        typeFilter.addEventListener("change", filterExercises);
 
         const exercises = @json($exercises);
 
         function filterExercises() {
             const subjectFilterValue = subjectFilter.value || "";
             const difficultyFilterValue = difficultyFilter.value || "";
+            const typeFilterValue = typeFilter.value || "";
             const minScoreValue = minScoreInput.value || 0;
             const maxScoreValue = maxScoreInput.value || Infinity;
 
@@ -280,6 +331,7 @@
                 return (
                     exercise.subject.toLowerCase().includes(subjectFilterValue.toLowerCase()) &&
                     (difficultyFilterValue === "" || exercise.difficulty.toLowerCase() === difficultyFilterValue.toLowerCase()) &&
+                    (typeFilterValue === "" || exercise.type.toLowerCase() === typeFilterValue.toLowerCase()) &&
                     (exercise.score >= minScoreValue && exercise.score <= maxScoreValue)
                 );
             });
@@ -305,7 +357,7 @@
                         <input type="hidden" name="exercise_ids[]" value="${exercise.id}">
                     </div>
                     <div>
-                        <input type="checkbox" name="selected_exercises[]" value="${exercise.id}">
+                        <input type="checkbox" name="selected_exercises[]" value="${exercise.id}" ${document.querySelector("input[name='selected_exercises[]'][value='" + exercise.id + "']") ? 'checked' : ''} onchange="toggleSelectedExercise(${exercise.id})">
                     </div>
                 `;
                 exerciseList.appendChild(li);
@@ -321,5 +373,6 @@
         minScoreInput.addEventListener("input", filterExercises);
         maxScoreInput.addEventListener("input", filterExercises);
     </script>
+
 </body>
 </html>

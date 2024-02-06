@@ -140,17 +140,26 @@ class PracticeController extends Controller
 
     public function create($type = 'default')
     {
-        return view('practice_create', ['type' => $type]);
+        $exercises = Exercise::all();
+        $subjects = Exercise::distinct('subject')->pluck('subject');
+
+        return view('practice_create', ['exercises' => $exercises, 'subjects' => $subjects, 'type' => $type]);
     }
     
     public function exerciseList($type)
     {
         $exercises = Exercise::all();
         $subjects = Exercise::distinct('subject')->pluck('subject');
-        return view('exercise_list', ['exercises' => $exercises, 'subjects' => $subjects, 'type' => $type]);
+        $exerciseTypes = Exercise::distinct('type')->pluck('type');
+        
+        return view('exercise_list', [
+            'exercises' => $exercises,
+            'subjects' => $subjects,
+            'exerciseTypes' => $exerciseTypes,
+            'type' => $type
+        ]);
     }
-       
-    
+
     public function createExerciseSet(Request $request, $type)
     {
         // Validazione del form, se necessario
@@ -242,43 +251,145 @@ class PracticeController extends Controller
 
     public function index(Request $request, $type) 
     {
-        $practices = Practice::where('user_id', '=', Auth::id())->get();
-        return view('practices', ['practices' => $practices, 'type' => $type]);
-    }
+        $query = Practice::where('user_id', Auth::id())->where('type', $type);
+    
+        // Applica i filtri se sono stati inviati tramite la richiesta
+        if ($request->has('subjectFilter')) {
+            $query->where('subject', $request->input('subjectFilter'));
+        }
+    
+        if ($request->has('difficultyFilter')) {
+            $query->where('difficulty', $request->input('difficultyFilter'));
+        }
+    
+        $practices = $query->paginate(10);
+    
+        // Recupera le materie distinte per popolare il menu a tendina dei filtri
+        $subjects = Practice::distinct('subject')->pluck('subject');
+    
+        return view('practices', [
+            'practices' => $practices, 
+            'type' => $type,
+            'subjects' => $subjects, 
+        ]);
+    }       
 
     public function show($type, $id)
     {
         $practice = Practice::with('exercises')->findOrFail($id);
         return view('practice_show', ['practice' => $practice, 'type' => $type]);
     }
-    
 
     public function edit($type, Practice $practice)
     {
-        return view('practice_edit', ['practice' => $practice, 'type' => $type]);
-    }
+        // Genera una nuova chiave univoca
+        $newKey = $this->generateKey();
+    
+        // Duplica la pratica e assegna la nuova chiave
+        $newPractice = $practice->replicate();
+        $newPractice->key = $newKey;
+    
+        // Salva la nuova pratica con gli stessi esercizi della pratica originale
+        $newPractice->save();
+        $newPractice->exercises()->sync($practice->exercises);
+    
+        // Otteni gli ID degli esercizi presenti nella nuova pratica
+        $newPracticeExerciseIds = $newPractice->exercises->pluck('id')->toArray();
+    
+        // Otteni tutte le subject dagli esercizi presenti nel database
+        $allSubjects = Exercise::distinct()->pluck('subject')->toArray();
+        $allTypes = Exercise::distinct()->pluck('type')->toArray();
+
+        // Softdelete la pratica originale
+        $practice->delete();
+    
+        // Passa la nuova pratica, la lista completa degli esercizi, gli ID degli esercizi e tutte le subject alla vista
+        return view('practice_edit', [
+            'practice' => $newPractice,
+            'allExercises' => Exercise::all(),
+            'newPracticeExerciseIds' => $newPracticeExerciseIds,
+            'type' => $type,
+            'subjects' => $allSubjects,
+            'exerciseType' => $allTypes,
+        ]);
+    }   
     
     public function update(Request $request, $type, Practice $practice)
     {
+        // Validate form data, adjust if necessary
         $validatedData = $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'difficulty' => 'required',
-            'subject' => 'required',
-            'total_score' => 'required',
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'difficulty' => 'string',
+            'subject' => 'string',
+            'total_score' => 'nullable|integer|min:1',
+            'practice_date' => [
+                'nullable',
+                'date',
+                'after_or_equal:' . now()->toDateString(),
+            ],
         ]);
     
-        $practice->update($validatedData);
+        $title = $validatedData['title'];
+        $description = $validatedData['description'];
+        $difficulty = $validatedData['difficulty'];
+        $subject = $validatedData['subject'];
+        $total_score = $validatedData['total_score'];
+        $practice_date = $validatedData['practice_date'] ?? null;
     
-        return redirect()->route('practices.show', ['type' => $type, 'practice' => $practice->id])->with('success', 'Practice updated successfully');
+        $feedbackEnabled = $request->has('feedback');
+        $randomizeQuestions = $request->has('randomize');
+    
+        // Update practice attributes
+        $updateData = [
+            'title' => $title,
+            'description' => $description,
+            'difficulty' => $difficulty,
+            'subject' => $subject,
+            'total_score' => $total_score,
+            'practice_date' => $practice_date,
+            // ... (other existing update fields)
+        ];
+    
+        $practice->update($updateData);
+    
+        // Update exercises for the practice
+        $practice->exercises()->sync($request->input('exercise_ids', []));
+    
+        // Get selected exercises from the JSON array
+        $selectedExercises = $request->input('selected_exercises', []);
+    
+        // Update selected exercises for the practice
+        $practice->exercises()->sync($selectedExercises);
+    
+        // Assign custom scores to selected exercises
+        $totalScoreSelected = $practice->exercises->sum('score');
+        foreach ($practice->exercises as $exercise) {
+            $customScore = round(($exercise->score / $totalScoreSelected) * $total_score, 2);
+            $practice->exercises()->updateExistingPivot($exercise->id, ['custom_score' => $customScore]);
+        }
+    
+        // Retrieve exercises associated with their custom scores
+        $exercisesWithCustomScores = $practice->exercises()->withPivot('custom_score')->get();
+        
+        // Ricrea $newPractice dopo l'aggiornamento
+        $newPractice = Practice::with('exercises')->find($practice->id);
+    
+        // Return the practice_new view with updated practice details
+        return view('practice_new', [
+            'newPractice' => $newPractice,
+            'exercisesWithCustomScores' => $exercisesWithCustomScores,
+            'type' => $type,
+        ])->with('success', 'Pratica aggiornata con successo.');
     }
-    
+       
     public function duplicate(Request $request, $type, Practice $practice)
     {
         // Duplica la pratica
         $newPractice = $practice->replicate();
         $newPractice->title = $practice->title . ' (Copia)';
         $newPractice->key = $this->generateKey();
+        $newPractice->allowed = 0; // Imposta allowed a 0
         $newPractice->save();
     
         // Duplica gli esercizi associati con i loro punteggi personalizzati
