@@ -42,6 +42,32 @@ class PracticeController extends Controller
         return $key;
     }
 
+    public function index($type) 
+    {
+        // Recupera tutte le pratiche associate all'utente autenticato di tipo specificato
+        $practices = Practice::where('user_id', Auth::id())
+                             ->where('type', $type)
+                             ->paginate(10);
+    
+        // Recupera le materie distinte per popolare il menu a tendina dei filtri
+        $subjects = Practice::distinct('subject')->pluck('subject');
+    
+        return view('practices', [
+            'practices' => $practices, 
+            'type' => $type,
+            'subjects' => $subjects, 
+        ]);
+    } 
+
+    public function create($type = 'default')
+    {
+        $user = Auth::user(); // Supponendo che tu abbia un sistema di autenticazione e che stia utilizzando Laravel
+        $exercises = $user->exercises()->get();
+        $subjects = $user->exercises()->distinct('subject')->pluck('subject');
+    
+        return view('practice_create', ['exercises' => $exercises, 'subjects' => $subjects, 'type' => $type]);
+    } 
+    
     public function generatePracticeWithFilters(Request $request, $type)
     {
         $validatedData = $request->validate([
@@ -72,16 +98,16 @@ class PracticeController extends Controller
         // Impostiamo la data di pratica come la data odierna se non specificata
         $practice_date = $validatedData['practice_date'] ?? now()->toDateString();
     
-        $exerciseQuery = Exercise::query();
-    
+        $exerciseQuery = Auth::user()->exercises(); // Ottiene gli esercizi dell'utente corrente
+
         if ($difficulty) {
             $exerciseQuery->where('difficulty', $difficulty);
         }
-    
+        
         if ($subject) {
             $exerciseQuery->where('subject', $subject);
         }
-    
+        
         // Ottieni gli esercizi filtrati
         $filteredExercises = $exerciseQuery->get();
     
@@ -117,6 +143,7 @@ class PracticeController extends Controller
             'generated_at' => $generatedDate,
             'practice_date' => $practice_date,
             'type' => $type,
+            'public' => 0,
         ]);
     
         $newPractice->save();
@@ -137,20 +164,19 @@ class PracticeController extends Controller
             'type' => $type, // Passa il parametro $type alla vista
         ]);
     }       
-
-    public function create($type = 'default')
-    {
-        $exercises = Exercise::all();
-        $subjects = Exercise::distinct('subject')->pluck('subject');
-
-        return view('practice_create', ['exercises' => $exercises, 'subjects' => $subjects, 'type' => $type]);
-    }
     
     public function exerciseList($type)
     {
-        $exercises = Exercise::all();
-        $subjects = Exercise::distinct('subject')->pluck('subject');
-        $exerciseTypes = Exercise::distinct('type')->pluck('type');
+        $user = Auth::user(); // Ottiene l'utente corrente
+    
+        // Ottiene solo gli esercizi dell'utente corrente
+        $exercises = $user->exercises()->get();
+        
+        // Ottiene le materie degli esercizi
+        $subjects = $user->exercises()->distinct('subject')->pluck('subject');
+        
+        // Ottiene i tipi di esercizi 
+        $exerciseTypes = $user->exercises()->distinct('type')->pluck('type');
         
         return view('exercise_list', [
             'exercises' => $exercises,
@@ -250,39 +276,16 @@ class PracticeController extends Controller
         ]);
     }
 
-    public function index(Request $request, $type) 
+    public function show($type, Practice $practice)
     {
-        $query = Practice::where('user_id', Auth::id())->where('type', $type);
-    
-        // Applica i filtri se sono stati inviati tramite la richiesta
-        if ($request->has('subjectFilter')) {
-            $query->where('subject', $request->input('subjectFilter'));
-        }
-    
-        if ($request->has('difficultyFilter')) {
-            $query->where('difficulty', $request->input('difficultyFilter'));
-        }
-    
-        $practices = $query->paginate(10);
-    
-        // Recupera le materie distinte per popolare il menu a tendina dei filtri
-        $subjects = Practice::distinct('subject')->pluck('subject');
-    
-        return view('practices', [
-            'practices' => $practices, 
-            'type' => $type,
-            'subjects' => $subjects, 
-        ]);
-    }       
-
-    public function show($type, $id)
-    {
-        $practice = Practice::with('exercises')->findOrFail($id);
+        $practice->load('exercises'); // Carica gli esercizi associati alla pratica
         return view('practice_show', ['practice' => $practice, 'type' => $type]);
     }
 
     public function edit($type, Practice $practice)
     {
+        $user = Auth::user(); // Ottieni l'utente corrente
+    
         // Genera una nuova chiave univoca
         $newKey = $this->generateKey();
     
@@ -297,24 +300,28 @@ class PracticeController extends Controller
         // Otteni gli ID degli esercizi presenti nella nuova pratica
         $newPracticeExerciseIds = $newPractice->exercises->pluck('id')->toArray();
     
-        // Otteni tutte le subject dagli esercizi presenti nel database
-        $allSubjects = Exercise::distinct()->pluck('subject')->toArray();
-        $allTypes = Exercise::distinct()->pluck('type')->toArray();
-
+        // Ottieni solo gli esercizi creati dall'utente corrente
+        $allExercises = $user->exercises()->get();
+    
+        // Ottieni solo le subject degli esercizi creati dall'utente corrente
+        $allSubjects = $user->exercises()->distinct()->pluck('subject')->toArray();
+        
+        // Ottieni solo i tipi di esercizi creati dall'utente corrente
+        $allTypes = $user->exercises()->distinct()->pluck('type')->toArray();
+    
         // Softdelete la pratica originale
         $practice->delete();
     
-        // Passa la nuova pratica, la lista completa degli esercizi, gli ID degli esercizi e tutte le subject alla vista
         return view('practice_edit', [
             'practice' => $newPractice,
-            'allExercises' => Exercise::all(),
+            'allExercises' => $allExercises,
             'newPracticeExerciseIds' => $newPracticeExerciseIds,
             'type' => $type,
             'subjects' => $allSubjects,
             'exerciseType' => $allTypes,
         ]);
-    }   
-    
+    }
+
     public function update(Request $request, $type, Practice $practice)
     {
         // Validate form data, adjust if necessary
@@ -655,7 +662,6 @@ class PracticeController extends Controller
         }
     }
     
-
     public function showHistoryExame(){
 
         //Mostriamo gli esami che hanno qualcuno che ha consegnato, anche quelli cancellati quindi, solo dell'utente che fa la richiesta.   

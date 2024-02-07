@@ -1,30 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ ucfirst($type) }}: {{ $practice->title }}</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
             background-color: #f9f9f9;
             color: #333;
-            display: flex;
-            justify-content: center;
         }
 
         .container {
-            max-width: none;
-            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
         }
-        
-        .practice-details,
-        .exercise,
-        .key-section,
-        .back-button {
+
+        .practice-details, .exercise, .key-section, .back-button {
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -32,9 +26,7 @@
             margin-bottom: 20px;
         }
 
-        h1,
-        h2,
-        h3 {
+        h1, h2, h3 {
             margin-bottom: 10px;
         }
 
@@ -82,7 +74,6 @@
         }
     </style>
 </head>
-
 <body>
 
     <div class="container">
@@ -92,16 +83,29 @@
             <p><strong>Difficoltà:</strong> {{ $practice->difficulty }}</p>
             <p><strong>Materia:</strong> {{ $practice->subject }}</p>
             <p><strong>Punteggio Totale:</strong> {{ $practice->total_score }}</p>
+            <p class="checkbox-info">
+                <input type="checkbox" id="feedbackEnabled" disabled {{ $practice->feedback_enabled ? 'checked' : '' }}>
+                <label for="feedbackEnabled">Feedback Automatico</label>
+            </p>
+            <p class="checkbox-info">
+                <input type="checkbox" id="randomizeQuestions" disabled {{ $practice->randomize_questions ? 'checked' : '' }}>
+                <label for="randomizeQuestions">Randomizzazione Domande</label>
+            </p>
+
+            <!-- Mostra la data di creazione -->
+            <p><strong>Data di Creazione:</strong> {{ $practice->created_at }}</p>
+            
+            <!-- Mostra la data in cui si terrà l'esercitazione -->
+            <p><strong>Data programmata:</strong> {{ \Carbon\Carbon::parse($practice->practice_date)->format('d-m-Y') }}</p>
         </div>
 
         <h2>Esercizi:</h2>
         @foreach($practice->exercises as $exercise)
-        <div class="exercise">
-            <h3>{{ $exercise->name }}</h3>
-            <p><strong>Domanda:</strong> {{ $exercise->question }}</p>
-            <p><strong>Punteggio:</strong> {{ $exercise->pivot->custom_score ?? '' }}</p>
-            <!-- Altri dettagli dell'esercizio -->
-        </div>
+            <div class="exercise">
+                <h3>{{ $exercise->name }}</h3>
+                <p><strong>Domanda:</strong> {{ $exercise->question }}</p>
+                <p><strong>Punteggio:</strong> {{ $exercise->pivot->custom_score }}</p>
+            </div>
         @endforeach
 
         <div class="key-section">
@@ -133,5 +137,4 @@
         }
     </script>
 </body>
-
 </html>

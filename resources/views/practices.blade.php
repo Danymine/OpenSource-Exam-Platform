@@ -109,7 +109,7 @@
             border-radius: 8px;
         }
 
-        .close {
+        .closeM {
             color: #aaaaaa;
             float: right;
             font-size: 28px;
@@ -117,8 +117,8 @@
             cursor: pointer;
         }
 
-        .close:hover,
-        .close:focus {
+        .closeM:hover,
+        .closeM:focus {
             color: #000;
             text-decoration: none;
         }
@@ -209,29 +209,93 @@
             color: #333;
         }
 
-        /* Nuovi stili per la finestra modale dei filtri */
-        .filter-modal {
-            display: none;
+        .sidenav {
+            height: 100%;
+            width: 0;
             position: fixed;
             z-index: 2;
-            left: 0;
             top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .filter-modal-content {
+            right: 0;
             background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 50%;
-            text-align: center;
-            border-radius: 8px;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
         }
 
+        .sidenav-content {
+            padding: 20px;
+        }
+
+        .sidenav .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 28px;
+            margin-left: 50px;
+        }
+
+        .sidenav h2 {
+            margin-bottom: 20px;
+        }
+
+        .sidenav .form-group {
+            margin-bottom: 15px;
+        }
+
+        .sidenav select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .sidenav button {
+            width: calc(50% - 5px); 
+            margin-top: 10px;
+        }
+
+        .openSidenav {
+            width: 300px;
+        }
+
+        .closeSidenav {
+            width: 0;
+            transition: width 0s; 
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group select {
+            width: 100%; 
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .reset-button {
+            background-color: #ccc;
+            color: #333;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            padding: 8px 12px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .reset-button:hover {
+            background-color: #bbb;
+        }
     </style>
 </head>
 <body>
@@ -243,22 +307,20 @@
         @endif
     </h1>
 
-    <button id="filterBtn" class="filter-button">
-        <i class="fas fa-filter"></i>
-    </button>
+    <button class="filter-button" onclick="openNav()"><i class="fas fa-filter"></i></button> <!-- Bottone con icona dei filtri -->
 
-    <div id="filterModal" class="filter-modal">
-        <div class="filter-modal-content">
-            <span class="close">&times;</span>
+    <div class="sidenav" id="filterSidenav">
+        <div class="sidenav-content">
+            <span class="close" onclick="closeNav()">&times;</span>
             <h2>Filtri</h2>
 
             <div class="form-group">
                 <label for="subjectFilter">Filtra per Materia:</label>
                 <select id="subjectFilter" name="subjectFilter">
                     <option value="">Tutte le Materie</option>
-                    @foreach($subjects as $subject)
-                        <option value="{{ $subject }}">{{ $subject }}</option>
-                    @endforeach
+                        @foreach($subjects as $subject)
+                            <option value="{{ $subject }}">{{ $subject }}</option>
+                        @endforeach
                 </select>
             </div>
 
@@ -272,6 +334,7 @@
                 </select>
             </div>
             <button id="applyFiltersBtn" class="button-primary">Applica Filtri</button>
+            <button id="resetFiltersBtn" class="reset-button">Resetta Filtri</button>
         </div>
     </div>
 
@@ -312,17 +375,17 @@
                         </button>
                     </form>
                 </div>
-            </div>
-            <span class="difficulty" style="display: none;">{{ $practice->difficulty }}</span>
-        </li>
-        @endforeach
-    </ul>
-    {{ $practices->links() }} <!-- Aggiunta della paginazione -->
+                <span class="difficulty" style="display: none;">{{ $practice->difficulty }}</span>
+                <span class="subject" style="display: none;">{{ $practice->subject }}</span>
+            </li>
+            @endforeach
+        </ul>
+        {{ $practices->links() }} <!-- Aggiunta della paginazione -->
     @endif
 
     <div id="myModal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <span class="closeM" onclick="closeModal()">&times;</span>
             <p>Scegli come creare l'{{ $type }}:</p>
             <button onclick="generateAutomatically()" class="modal-button">Genera automaticamente</button>
             <button onclick="createManually()" class="modal-button">Crea manualmente</button>
@@ -331,12 +394,65 @@
 
     <a href="#" id="newPracticeBtn" class="new-practice-button">Crea l'{{ $type }}</a>
     
+    <!--script apertura e chiusura sidenav-->
+    <script>
+        function openNav() {
+            document.getElementById("filterSidenav").classList.add("openSidenav");
+        }
+
+        function closeNav() {
+            document.getElementById("filterSidenav").classList.remove("openSidenav");
+        }
+    </script>
+
+    <!-- Script per il filtraggio delle pratiche e il reset dei filtri -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var modal = document.getElementById('filterModal');
+            var applyBtn = document.getElementById('applyFiltersBtn');
+            var resetBtn = document.getElementById('resetFiltersBtn'); // Seleziona il pulsante di reset
+
+            // Funzione per applicare i filtri
+            applyBtn.onclick = function () {
+                applyFilters();
+            }
+
+            // Funzione per il reset dei filtri
+            resetBtn.onclick = function () {
+                // Resetta il valore dei filtri a vuoto
+                document.getElementById('subjectFilter').value = '';
+                document.getElementById('difficultyFilter').value = '';
+                // Applica i filtri per visualizzare tutte le pratiche
+                applyFilters();
+            }
+
+            // Funzione per il filtraggio delle pratiche
+            function applyFilters() {
+                var subjectFilter = document.getElementById('subjectFilter').value;
+                var difficultyFilter = document.getElementById('difficultyFilter').value;
+
+                var practices = document.querySelectorAll('ul li');
+
+                practices.forEach(function (practice) {
+                    var subject = practice.querySelector('.subject').textContent.trim();
+
+                    if ((subjectFilter === '' || subject === subjectFilter) &&
+                        (difficultyFilter === '' || practice.querySelector('.difficulty').textContent.trim() === difficultyFilter)) {
+                        practice.style.display = 'block';
+                    } else {
+                        practice.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+
     <!--script per il bottone di creazione-->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var modal = document.getElementById('myModal');
             var btn = document.getElementById('newPracticeBtn');
-            var span = document.getElementsByClassName('close')[0];
+            var span = document.getElementsByClassName('closeM')[0];
 
             btn.onclick = function () {
                 modal.style.display = 'block';
@@ -363,75 +479,5 @@
             window.location.href = '{{ route("exercise.list", ['type' => $type]) }}';
         }
     </script>
-
-    <!--script per il bottone di filtraggio-->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var modal = document.getElementById('filterModal');
-            var btn = document.getElementById('filterBtn');
-            var span = document.getElementsByClassName('close')[0];
-
-            btn.onclick = function () {
-                modal.style.display = 'block';
-            }
-
-            span.onclick = function () {
-                modal.style.display = 'none';
-            }
-
-            window.onclick = function (event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            }
-        });
-    </script>
-
-    <!-- script per il filtraggio delle pratiche -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var modal = document.getElementById('filterModal');
-            var btn = document.getElementById('filterBtn');
-            var span = document.getElementsByClassName('close')[0];
-
-            btn.onclick = function () {
-                modal.style.display = 'block';
-            }
-
-            span.onclick = function () {
-                modal.style.display = 'none';
-            }
-
-            window.onclick = function (event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            }
-
-            var applyBtn = document.getElementById('applyFiltersBtn');
-
-            applyBtn.onclick = function () {
-                var subjectFilter = document.getElementById('subjectFilter').value;
-                var difficultyFilter = document.getElementById('difficultyFilter').value;
-
-                var exercises = document.querySelectorAll('ul li');
-
-                exercises.forEach(function (exercise) {
-                    var subject = exercise.querySelector('.title-section strong').textContent.trim();
-                    var difficulty = exercise.querySelector('.difficulty').textContent.trim();
-
-                    if ((subjectFilter === '' || subject === subjectFilter) &&
-                        (difficultyFilter === '' || difficulty === difficultyFilter)) {
-                        exercise.style.display = 'block';
-                    } else {
-                        exercise.style.display = 'none';
-                    }
-                });
-
-                modal.style.display = 'none';
-            }
-        });
-    </script>
-
 </body>
 </html>
