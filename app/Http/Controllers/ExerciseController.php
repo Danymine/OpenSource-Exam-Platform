@@ -59,8 +59,8 @@ class ExerciseController extends Controller
 
     public function showAllExercises()
     {
-        $exercises = Exercise::where('user_id', Auth::id())->get(); // Recupera solo gli esercizi creati dall'utente autenticato
-        return view('esercizi_biblioteca', compact('exercises'));
+        $exercises = Exercise::where('user_id', Auth::user()->id)->get(); // Recupera solo gli esercizi creati dall'utente autenticato
+        return view('esercizi_biblioteca', ['exercises' => $exercises]);
     }
 
 
