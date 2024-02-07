@@ -17,7 +17,10 @@ class AddKeyColumnToPracticesTable extends Migration
     public function down()
     {
         Schema::table('practices', function (Blueprint $table) {
-            $table->dropColumn('key');
+            $table->dropColumn('key'); 
+            $table->dropForeign(['user_id']);
+            $table->dropColumn('user_id');
+
         });
     }
 }

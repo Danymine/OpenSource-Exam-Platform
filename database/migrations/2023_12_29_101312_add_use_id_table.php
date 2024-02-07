@@ -14,10 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('exercises', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->after('id'); // Aggiungi la colonna 'user_id' dopo 'id'
-
-            // Aggiungi una foreign key constraint
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+           
+            $table->foreignId('user_id')->constrained();
         });
     }
 
@@ -29,8 +27,9 @@ return new class extends Migration
     public function down()
     {
         Schema::table('exercises', function (Blueprint $table) {
-            $table->dropForeign(['user_id']); // Rimuovi la foreign key constraint
-            $table->dropColumn('user_id'); // Rimuovi la colonna 'user_id'
+
+            $table->dropForeign(['user_id']);
+            $table->dropColumn('user_id');
         });
     }
 };
