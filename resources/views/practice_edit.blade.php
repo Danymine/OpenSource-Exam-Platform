@@ -152,7 +152,7 @@
 
             <!-- Sezione per la modifica dei campi della pratica -->
             <div class="column left">
-                <h2>Modifica Campi Pratica</h2>
+            <h2>Modifica Campi Pratica</h2>
 
                 <label for="title">Titolo</label>
                 <input type="text" name="title" value="{{ old('title', $practice->title) }}" required>
@@ -189,7 +189,7 @@
 
                 <label for="practice_date">Data dell'{{ $type }}:</label>
                 <input type="date" id="practice_date" name="practice_date" value="{{ $practice->practice_date }}">
-                
+
                 <!-- pulsante di aggiornamento -->
                 <button type="submit">Aggiorna</button>
             </div>
@@ -265,14 +265,14 @@
                         <label for="maxScore">Punteggio Massimo:</label>
                         <input type="number" id="maxScore" name="maxScore" min="0" value="{{ old('maxScore') }}">
                     </div>
+
                 </div>
 
                 <!-- Lista degli esercizi -->
                 <div class="exercise-list-wrapper">
                     <ul id="exerciseList">
-                        @foreach($allExercises as $exercise)
-                            {{-- Aggiungi questa condizione per evitare che gli esercizi già presenti vengano visualizzati nella lista --}}
-                            @if (!in_array($exercise->id, $newPracticeExerciseIds))
+                        @foreach ($practice->exercises as $exercise)
+                            @if (in_array($exercise->id, $newPracticeExerciseIds))
                                 <li class="exercise" data-subject="{{ $exercise->subject }}" data-difficulty="{{ $exercise->difficulty }}" data-score="{{ $exercise->score }}">
                                     <div>
                                         <h3>{{ $exercise->name }}</h3>
@@ -283,7 +283,8 @@
                                         <input type="hidden" name="exercise_ids[]" value="{{ $exercise->id }}">
                                     </div>
                                     <div>
-                                        <input type="checkbox" name="selected_exercises[]" value="{{ $exercise->id }}">
+                                        <!-- Aggiungi l'attributo "checked" se l'esercizio è presente -->
+                                        <input type="checkbox" name="selected_exercises[]" value="{{ $exercise->id }}" checked>
                                     </div>
                                 </li>
                             @endif
@@ -296,6 +297,9 @@
 
     <!-- script per i filtri e aggiornamento della lista di esercizi disponibili --> 
     <script>
+        // Dichiarazione dell'array selectedExerciseIds
+        const selectedExerciseIds = @json($selectedExerciseIds);
+
         const subjectFilter = document.getElementById("subjectFilter");
         const difficultyFilter = document.getElementById("difficultyFilter");
         const typeFilter = document.getElementById("typeFilter");
@@ -331,32 +335,71 @@
 
         function displayExercises(exercises) {
             exerciseList.innerHTML = "";
-            const middleColumnExerciseIds = Array.from(document.querySelectorAll("#selectedExerciseList [name='exercise_ids[]']"))
-                .map(input => input.value);
 
             exercises.forEach(exercise => {
-                if (!middleColumnExerciseIds.includes(exercise.id.toString())) {
-                    const li = document.createElement("li");
-                    li.classList.add("exercise");
-                    li.dataset.subject = exercise.subject;
-                    li.dataset.difficulty = exercise.difficulty;
-                    li.dataset.score = exercise.score;
-                    li.innerHTML = `
-                        <div>
-                            <h3>${exercise.name}</h3>
-                            <strong>Domanda:</strong> ${exercise.question}<br>
-                            <strong>Materia:</strong> ${exercise.subject}<br>
-                            <strong>Difficoltà:</strong> ${exercise.difficulty}<br>
-                            <strong>Punteggio:</strong> ${exercise.score}<br>
-                            <input type="hidden" name="exercise_ids[]" value="${exercise.id}">
-                        </div>
-                        <div>
-                            <input type="checkbox" name="selected_exercises[]" value="${exercise.id}">
-                        </div>
-                    `;
-                    exerciseList.appendChild(li);
-                }
+                const li = document.createElement("li");
+                li.classList.add("exercise");
+                li.dataset.subject = exercise.subject;
+                li.dataset.difficulty = exercise.difficulty;
+                li.dataset.score = exercise.score;
+                li.innerHTML = `
+                    <div>
+                        <h3>${exercise.name}</h3>
+                        <strong>Domanda:</strong> ${exercise.question}<br>
+                        <strong>Materia:</strong> ${exercise.subject}<br>
+                        <strong>Difficoltà:</strong> ${exercise.difficulty}<br>
+                        <strong>Punteggio:</strong> ${exercise.score}<br>
+                        <input type="hidden" name="exercise_ids[]" value="${exercise.id}">
+                    </div>
+                    <div>
+                        <button type="button" class="add-exercise-btn" data-exercise-id="${exercise.id}">Aggiungi</button>
+                    </div>
+                `;
+                exerciseList.appendChild(li);
             });
+
+            // Aggiungi event listener ai bottoni "Aggiungi"
+            document.querySelectorAll('.add-exercise-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const exerciseId = this.dataset.exerciseId;
+                    addExerciseToList(exerciseId);
+                    this.parentNode.parentNode.remove(); // Rimuovi l'esercizio dalla lista degli esercizi disponibili
+                });
+            });
+        }
+
+        // Funzione per aggiungere l'esercizio alla lista degli esercizi presenti
+        function addExerciseToList(exerciseId) {
+            // Aggiungi l'ID dell'esercizio all'array degli esercizi presenti
+            selectedExerciseIds.push(exerciseId);
+            // Aggiungi l'esercizio alla lista degli esercizi presenti
+            const exercise = exercises.find(exercise => exercise.id === parseInt(exerciseId));
+            appendExerciseToSelectedList(exercise);
+        }
+
+        // Funzione per aggiungere l'esercizio alla lista degli esercizi presenti
+        function appendExerciseToSelectedList(exercise) {
+            // Crea l'elemento della lista per l'esercizio
+            const li = document.createElement("li");
+            li.classList.add("exercise");
+            li.dataset.subject = exercise.subject;
+            li.dataset.difficulty = exercise.difficulty;
+            li.dataset.score = exercise.score;
+            li.innerHTML = `
+                <div>
+                    <h3>${exercise.name}</h3>
+                    <strong>Domanda:</strong> ${exercise.question}<br>
+                    <strong>Materia:</strong> ${exercise.subject}<br>
+                    <strong>Difficoltà:</strong> ${exercise.difficulty}<br>
+                    <strong>Punteggio:</strong> ${exercise.score}<br>
+                    <input type="hidden" name="exercise_ids[]" value="${exercise.id}">
+                </div>
+                <div>
+                    <!-- Aggiungi qui eventuali altri elementi necessari -->
+                </div>
+            `;
+            // Aggiungi l'elemento alla lista degli esercizi presenti
+            document.getElementById('selectedExerciseList').appendChild(li);
         }
 
         // Applica i filtri iniziali
@@ -368,5 +411,6 @@
         minScoreInput.addEventListener("input", filterExercises);
         maxScoreInput.addEventListener("input", filterExercises);
     </script>
+
 </body>
 </html>

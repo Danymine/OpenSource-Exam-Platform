@@ -64,6 +64,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Delivered::class);
     }
 
+    public function exercises() : HasMany //Relazione tra esercizi di un utente
+    {
+        return $this->hasMany(Exercise::class);
+    }
+
     /* Non vi è più la necessità
     public function answers() : HasMany
     {
