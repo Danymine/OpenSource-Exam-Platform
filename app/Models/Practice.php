@@ -26,7 +26,6 @@ class Practice extends Model
         'generated_at', 
         'allowed',
         'practice_date',
-        'custom_score',
         'type',
         'public',
     ];
