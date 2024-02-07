@@ -22,12 +22,6 @@
         <label for="name">Nome:</label>
         <input type="text" name="name" required>
 
-        <label for="roles">Ruolo:</label>
-        <select name="roles" required>
-            <option value="Teacher">Professore</option>
-            <option value="Student">Studente</option>
-        </select>
-
         <label for="description">Problema:</label>
         <textarea name="description" required></textarea>
 

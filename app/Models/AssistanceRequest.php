@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class AssistanceRequest extends Model
 {
     use HasFactory;
-    protected $table = 'requests';
+
    
     protected $fillable = [
         'name',

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AssistanceRequest;
-
+use Illuminate\Support\Facades\Auth;
 
 class RequestController extends Controller
 {
@@ -21,14 +21,13 @@ class RequestController extends Controller
         // Validazione dei dati del form
         $request->validate([
             'name' => 'required|string',
-            'roles' => 'required',
             'description' => 'required',
         ]);
 
         // Creazione della richiesta di assistenza
         AssistanceRequest::create([
             'name' => $request->input('name'),
-            'roles' => $request->input('roles'),
+            'roles'=> Auth::user()->roles,
             'description' => $request->input('description'),
         ]);
 
