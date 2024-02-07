@@ -312,6 +312,7 @@ class PracticeController extends Controller
         // Softdelete la pratica originale
         $practice->delete();
     
+        // Passiamo tutti i dati alla vista
         return view('practice_edit', [
             'practice' => $newPractice,
             'allExercises' => $allExercises,
@@ -320,7 +321,7 @@ class PracticeController extends Controller
             'subjects' => $allSubjects,
             'exerciseType' => $allTypes,
         ]);
-    }
+    }    
 
     public function update(Request $request, $type, Practice $practice)
     {

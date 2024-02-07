@@ -44,74 +44,28 @@ class TestSeeder extends Seeder
 
     public function run(): void
     {
-
-        $titoli_esami = [
-            'Analisi 1',
-            'Analisi 2',
-            'Discreta',
-            'Algebra Lineare',
-            'Geometria Differenziale',
-            'Calcolo Numerico',
-            'Fisica Matematica',
-            'Teoria dei Numeri',
-            'Probabilità e Statistica',
-            'Equazioni Differenziali Ordinarie',
-            'Analisi Funzionale',
-            'Ottimizzazione Matematica',
-            'Teoria dei Grafi',
-            'Geometria Algebrica',
-            'Logica Matematica',
-            'Topologia',
-            'Teoria delle Funzioni Complesse',
-            'Combinatoria',
-            'Teoria dei Codici',
-            'Teoria dei Gruppi'
-        ];
+        $possibleTotalScores = [10, 30, 100];
+        $difficulties = ['Alta', 'Media', 'Bassa'];
+        $type = ['esame', 'esercitazione'];
     
-        $difficolty = [
-            'Alta',
-            'Media',
-            'Bassa'
-        ];
-
-        $materie = [
-            'Storia dell\'Arte',
-            'Letteratura Italiana',
-            'Chimica Organica',
-            'Fisica Quantistica',
-            'Economia Politica',
-            'Filosofia Morale',
-            'Storia Antica',
-            'Scienze della Terra',
-            'Psicologia Sociale',
-            'Antropologia Culturale',
-            'Biologia Molecolare',
-            'Diritto Civile',
-            'Educazione Fisica',
-            'Informatica Avanzata',
-            'Marketing Strategico',
-            'Lingue Straniere',
-            'Musica e Composizione',
-            'Geopolitica Mondiale',
-            'Architettura Moderna',
-            'Medicina Interna'
-        ];
-
-        $type = [
-            'Esame',
-            'Esercitazione'
-        ];
-
-        for( $i = 0; $i < 50; $i++ ){
-
+        // Ottenere un elenco di materie uniche dalla tabella exercises
+        $subjects = Exercise::pluck('subject')->unique()->toArray();
+    
+        for ($i = 0; $i < 50; $i++) {
             $key = $this->generateKey();
-            $total_score = rand(10, 100);
+            $totalScore = $possibleTotalScores[array_rand($possibleTotalScores)];
+            $difficulty = $difficulties[array_rand($difficulties)];
+            $typeIndex = array_rand($type);
+    
+            // Seleziona casualmente una materia tra quelle presenti nel database
+            $subject = $subjects[array_rand($subjects)];
+    
             $practice = new Practice([
-                'title' => $titoli_esami[rand(0, count($titoli_esami)-1)],
-                'description' => Str::random(15),
-                'difficulty' => $difficolty[rand(0, count($difficolty)-1)],
-                'subject' => $materie[rand(0, count($materie)-1)],
-                'total_score' => $total_score,
+                'title' => 'Titolo prova', // Puoi inserire un titolo statico o generare casualmente un titolo
+                'description' => $subject, // Imposta la descrizione come il nome della materia
+                'difficulty' => $difficulty,
+                'subject' => $subject,
+                'total_score' => $totalScore,
                 'key' => $key,
                 'user_id' => 1,
                 'feedback_enabled' => rand(0, 1),
@@ -119,29 +73,37 @@ class TestSeeder extends Seeder
                 'generated_at' => Carbon::now(),
                 'allowed' => 0,
                 'practice_date' => Carbon::now()->addDay(),
-                'type' => $type[rand(0, 1)],
+                'type' => $type[$typeIndex],
                 'public' => 0
             ]);
-
+    
             $practice->save();
-
-            $result = DB::table('practices')->where('key', $key)->first();
-            $exercises = Exercise::where('user_id', '=', 1)->get();
-
+    
             // Modifica dei punteggi personalizzati degli esercizi nella pratica
             $sumScore = 0;
-
+            $exerciseCount = 0;
+    
+            // Ottenere gli esercizi corrispondenti alla materia selezionata
+            $exercises = Exercise::where('subject', $subject)->get();
+    
             foreach ($exercises as $exercise) {
-
+                // Assicurati di non aggiungere troppi esercizi alla pratica
+                if ($exerciseCount >= 10) {
+                    break;
+                }
+    
                 // Calcola il punteggio proporzionato per ciascun esercizio rispetto al max_score
-                $customScore = round(($exercise->score / $total_score) * $total_score, 2);
+                $customScore = round(($exercise->score / $totalScore) * $totalScore, 2);
                 $sumScore += $customScore;
                 $practice->exercises()->attach($exercise->id, ['custom_score' => $customScore]);
-                if( $sumScore > $total_score ){
-
+                
+                // Incrementa il contatore degli esercizi aggiunti
+                $exerciseCount++;
+    
+                if ($sumScore > $totalScore) {
                     break;
                 }
             }      
         }
-    }
+    }    
 }
