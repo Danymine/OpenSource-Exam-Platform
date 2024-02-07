@@ -52,7 +52,7 @@
                 type="radio"
                 name="role" value="Teacher"/>
 
-            <x-input-error :messages="$errors->get('choice_role')" class="mt-2" />
+            <x-input-error :messages="$errors->get('role')" class="mt-2" />
         </div>
 
         <div class="flex items-center justify-end mt-4">

@@ -67,15 +67,23 @@
 
                                             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 row-type row-exame clickable" onclick="window.location='{{ route('view-details-delivered', ['delivered' =>  $delivered ] ) }}'">
                                                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                    <span class="exame_titple"> {{ $practice->title }} </span>
+                                                    <span class="exame_title"> {{ $practice->title }} </span>
                                                 </th>
-                                                @if( $delivered->valutation != NULL )
+                                                @if( $delivered->valutation != NULL and $practice->public == 1)
                                                     <td class="px-6 py-4">
                                                         <span class="exame_date"> {{ $practice->practice_date }} </span>
                                                     </td>
-                                                    <td class="px-6 py-4">
-                                                        <span class="exame_valutation" > {{ $delivered->valutation }} </span>
-                                                    </td>
+
+                                                    @if( $delivered->valutation >= $practice->total_score * 0.6)
+
+                                                        <td class="px-6 py-4">
+                                                            <span class="exame_valutation" > {{ $delivered->valutation }} </span>
+                                                        </td>
+                                                    @else
+                                                        <td class="px-6 py-4">
+                                                            <span> Insufficiente </span>
+                                                        </td>
+                                                    @endif
                                                 @else
                                                     <td class="px-6 py-4">
                                                         <span> {{ $practice->practice_date }} </span>
@@ -95,30 +103,24 @@
 
                             <script>
 
-                                // Ottieni i titoli e le valutazioni dal DOM
-                                var titles = document.querySelectorAll(".exame_title");
-                                var valutation = document.querySelectorAll(".exame_valutation");
-                                var date = document.querySelectorAll(".exame_date");
-                                
-                                // Estrai i dati dalle variabili fornite
-                                var titlesArray = Array.from(titles).map(title => title.textContent);
-                                var valutationArray = Array.from(valutation).map(val => parseFloat(val.textContent));
-                                var dateArray = Array.from(date).map(date => date.textContent);
+                                var exameTitles = document.querySelectorAll(".exame_title");
+                                var exameValutation = document.querySelectorAll(".exame_valutation");
+                                var exameDate = document.querySelectorAll(".exame_date");
 
-                                // Definisci l'ID del canvas
-                                var canvasId = 'Chartexame';
+                                var exameTitlesArray = Array.from(exameTitles).map(title => title.textContent);
+                                var exameValutationArray = Array.from(exameValutation).map(val => parseFloat(val.textContent));
+                                var exameDateArray = Array.from(exameDate).map(date => date.textContent);
 
-                                // Ottieni il contesto del canvas
-                                var ctx = document.getElementById(canvasId).getContext('2d');
+                                var exameCanvasId = 'Chartexame';
+                                var exameCtx = document.getElementById(exameCanvasId).getContext('2d');
 
-                                // Crea il grafico
-                                var myChart = new Chart(ctx, {
+                                var exameChart = new Chart(exameCtx, {
                                     type: 'line',
                                     data: {
-                                        labels: dateArray,
+                                        labels: exameDateArray,
                                         datasets: [{
                                             label: 'Valutazioni',
-                                            data: valutationArray,
+                                            data: exameValutationArray,
                                             backgroundColor: 'rgba(255, 255, 255)', // Sfondo bianco con opacità
                                             borderColor: 'rgba(255, 99, 132, 1)', // Colore verde della linea
                                             pointBackgroundColor: 'rgba(255, 99, 132, 1)', // Colore dei pallini per tutte le esercitazioni
@@ -139,7 +141,7 @@
                                             callbacks: {
                                                 title: function(tooltipItem, data) {
                                                     var index = tooltipItem[0].index;
-                                                    return titlesArray[index];
+                                                    return exameTitlesArray[index];
                                                 },
                                                 label: function(tooltipItem, data) {
                                                     return "Valutazione: " + tooltipItem.yLabel;
@@ -148,6 +150,7 @@
                                         }
                                     }
                                 });
+
 
                             </script>
 
@@ -221,6 +224,8 @@
 
                         <button id="esamiButton" class="button" style="display: inline-block" onclick="showExams()">Esami</button>
                         <button id="esercitazioniButton" class="button" style="display: inline-block" onclick="showPractices()">Esercitazioni</button>
+                        <a href="{{ route('exame-passed') }}" id="StoricoEsami" >Storico Esami</a>
+                        <a href="{{ route('practice-passed') }}" style="display: none;" id="StoricoEsercitazioni">Storico Esercitazioni</a>
 
                         <div class="relative overflow-x-auto">
                             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

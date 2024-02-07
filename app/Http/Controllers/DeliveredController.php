@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Delivered;
 use App\Models\Answer;
+use App\Models\User;
 use App\Models\Practice;
+use App\Jobs\Publish;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Dompdf\Dompdf;
@@ -36,21 +38,24 @@ class DeliveredController extends Controller
     public function save(Request $request)
     {
         
-        $delivered = $request->input('id');
-        $delivered = Delivered::findOrFail($delivered);
-        $score_max = $delivered->practice->total_score;
-        
-        // Validazione dei dati
         $validate = $request->validate([
-            'id' => 'numeric|required|min:1',
-            'valutation' => 'numeric|required|min:0|max:' . $score_max,
-            'note' => 'max:255|nullable',
-            'correct-file' => 'required|file|max:5120|mimetypes:application/pdf', 
+            'id_delivered' => "numeric|required|min:1",
+            'risposta' => "array|nullable",
+            'risposta.*' => "numeric",
+            'risposta_aperta' => "array|nullable",
+            'risposta_aperta.*' => "string|max:255",
+            'note' => "array|nullable",
+            'note.*' => "string|max:255",
+            'note_general' => "string|max:255",
+            'correct-file' => 'file|max:5120|mimetypes:application/pdf|nullable'
         ]);
-        
-        // Se la validazione ha successo, significa che tutti i dati sono corretti
-        // Quindi possiamo procedere con il caricamento del file
 
+        $delivered = Delivered::findOrFail($validate['id_delivered']);
+        $response = Answer::where('delivered_id', $delivered->id)->get()->keyBy('exercise_id'); 
+        $practice = Practice::find($delivered->practice_id)->withTrashed()->first();
+        $exercises = Practice::find($delivered->practice_id)->exercises()->withTrashed()->get();
+        $score_max = $practice->total_score;
+        
         if ($request->hasFile('correct-file')) {
 
             $file = $request->file('correct-file');
@@ -72,12 +77,35 @@ class DeliveredController extends Controller
             }
         } 
 
-        $delivered->valutation = $validate['valutation'];
-        $delivered->note = $validate['note'];
+        $score = 0;
+        foreach( $exercises as $exercise){
 
+            if( $exercise->type == "Risposta Aperta" ){
+                
+                $score += $validate["risposta_aperta"][$exercise->id];
+                $response[$exercise->id]->score_assign = $validate["risposta_aperta"][$exercise->id];
+                if( array_key_exists($exercise->id, $validate["note"]) ){
+
+                    $response[$exercise->id]->note = $validate["note"][$exercise->id];
+                }
+            }
+            else{
+
+                $score += $validate["risposta"][$exercise->id];
+                $response[$exercise->id]->score_assign = $validate["risposta"][$exercise->id];
+            }
+
+            $response[$exercise->id]->save();
+        }
+        $delivered->valutation = intval(round($score));
+        $delivered->note = $validate['note_general'];
         $delivered->save();
 
+
+
         return redirect()->route('view-delivered', ['practice' => $delivered->practice]);
+        
+        
     }
 
     /**
@@ -85,7 +113,7 @@ class DeliveredController extends Controller
      */
     public function show( Delivered $delivered ){
 
-        $response = Answer::where('delivered_id', $delivered->id)->get()->keyBy('exercise_id');
+        $response = Answer::where('delivered_id', $delivered->id)->get()->keyBy('exercise_id'); 
         $exercises = Practice::find($delivered->practice_id)->exercises()->withTrashed()->get();
         return view('valuta-esame', ['delivered' => $delivered, 'response' => $response, 'exercises' => $exercises]);
     }
@@ -135,6 +163,30 @@ class DeliveredController extends Controller
     {
         $fileName = $delivered->practice->title . ".pdf";
         return response()->download($delivered->path, $fileName);
+    }
+
+    public function public( Practice $practice ){
+
+        $delivered = $practice->delivereds;
+        foreach( $delivered as $delivery ){
+
+            if( $delivery->valutation == NULL ){
+
+                return back()->withErrors(["error" => "Ci sono ancora consegne senza valutazione."]);
+            }
+        }
+        
+        $users = [];
+        foreach( $delivered as $delivery ){
+
+            $user = User::find($delivery->user->id)->first();
+            Publish::dispatch($user);
+        }
+
+        $practice->public = 1;
+        $practice->save();
+        
+        return redirect()->route('ciao')->withErrors(['error' => 'Pubblicazione avvenuta con successo']);
     }
 
 

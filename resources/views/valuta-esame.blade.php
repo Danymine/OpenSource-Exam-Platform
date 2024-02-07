@@ -34,7 +34,7 @@
         }
 
         .question {
-            color: #007bff;
+            color: red;
             font-size: 20px;
             margin-bottom: 10px;
         }
@@ -71,43 +71,88 @@
             @endif
         </div>
 
-        @foreach($exercises as $exercise)
-            <div class="exercise">
-                <h3 class="question">{{ $exercise->question }}</h3>
-                @if(isset($response[$exercise->id]))
-                    <h4 class="response">{{ $response[$exercise->id]->response }}</h4>
-                @endif
-            </div>
-        @endforeach
+        @if( Auth::user()->roles == "Student")
 
-        @if( Auth::user()->roles == "Student" )
-            <div class="info">
-                Qui sta il voto: {{ $delivered->valutation }}
-            </div>
-            <div>
-                {{ $delivered->note }}
-            </div>
-        @else
-                <div class="valuta">
-                    <form action="{{ route('store-valutation') }}" method="post"  enctype="multipart/form-data">
-                        @csrf
-                        <input type="number" name="id" value="{{ $delivered->id }}"  style="display: none">
-                        Voto<br/><input type="number" name="valutation" class="@error('valutation') is-invalid @enderror"><br/>
-                        @error('valutation')
-                            <div class="alert alert-danger" style="color: red;">{{ $message }}</div>
-                        @enderror
-                        Note<br/><input type="text" name="note" class="@error('note') is-invalid @enderror"><br/>
-                        @error('note')
-                            <div class="alert alert-danger" style="color: red;">{{ $message }}</div>
-                        @enderror
-                        Correzione<br/><input type="file" name="correct-file" class="@error('file') is-invalid @enderror"><br/>
-                        @error('file')
-                            <div class="alert alert-danger" style="color: red;">{{ $message }}</div>
-                        @enderror
-                        <input type="submit">
-                    </form>
+            @foreach($exercises as $exercise)
+                <div class="exercise">
+                    <div class="question">
+                        <h3> {{ $exercise->question }} </h3>
+                    </div>
+                    <div class="answers">
+                        <h3> {{ $response[$exercise->id]->response }} </h3>
+                    </div>
                 </div>
+            @endforeach
+
+            @if ( $delivered->practice->public == 1 )
+
+                <div>
+                    <h4>{{ $delivered->valutation }}</h4>
+                    <h5>{{ $delivered->note }} </h5>
+                </div>
+            @else
+
+                <div>
+                    <h4>I risultati non sono stati ancora pubblicati </h4>
+                </div>
+            @endif
+        @else
+
+            @if ( $delivered->practice->public == 0 )
+
+                <form action="{{ route('store-valutation') }}" method="POST" >
+                    @csrf
+                    <input type="number" name="id_delivered" value="{{ $delivered->id }}" style="display: none">
+                    @foreach($exercises as $exercise)
+                        <div class="exercise">
+                            <div>
+                                <h3 class="question"> {{ $exercise->question }} </h3>
+                                @if ( $exercise->type == "Risposta Multipla" or $exercise->type == "Vero o Falso")
+
+                                    <input type="radio" name="risposta[{{ $exercise->id }}]" value="{{$exercise->pivot->custom_score }}" required>
+                                    <label>Corretta</label><br>
+                                    <input type="radio" id="{{ $exercise->id }}" name="risposta[{{ $exercise->id }}]" value="0" required>
+                                    <label>Sbagliata</label><br>
+                                
+                                @else
+
+                                    Assegna un punteggio (Deve essere compreso fra 0 e {{ $exercise->pivot->custom_score }}): <input type="number" name="risposta_aperta[{{ $exercise->id }}]" placeholder="Score" step="0.01" min="0" max="{{$exercise->pivot->custom_score}}" > <br/>
+                                    Segna delle note sull'esercizio: <input type="text" name="note[{{ $exercise->id }}]" placeholder="Note"><br/>
+                                @endif
+                            </div>
+                            <div class="answers">
+                                <h3> {{ $response[$exercise->id]->response }} </h3>
+                            </div>
+                        </div>
+                    @endforeach
+                    <input type="text" name="note_general">
+                    <input type="file" name="correct-file"><br/>
+                    <input type="submit" value="Salva">
+                    @if ($errors->any())
+                        <div>
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        </div>
+                    @endif
+                </form>
+            @else
+
+                @foreach($exercises as $exercise)
+                    <div class="exercise">
+                        <div class="question">
+                            <h3> {{ $exercise->question }} </h3>
+                        </div>
+                        <div class="answers">
+                            <h3> {{ $response[$exercise->id]->response }} </h3>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
         @endif
+
     </div>
 </body>
 </html>

@@ -28,6 +28,7 @@ class Practice extends Model
         'practice_date',
         'custom_score',
         'type',
+        'public',
     ];
 
     public function user() : BelongsTo  //Relazione crea fra user e practice 
