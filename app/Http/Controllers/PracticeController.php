@@ -42,7 +42,7 @@ class PracticeController extends Controller
         return $key;
     }
 
-    public function generatePracticeWithFilters(Request $request)
+    public function generatePracticeWithFilters(Request $request, $type)
     {
         $validatedData = $request->validate([
             'title' => 'required|string',
@@ -51,7 +51,11 @@ class PracticeController extends Controller
             'subject' => 'string',
             'max_questions' => 'nullable|integer|min:1',
             'max_score' => 'nullable|integer|min:1',
-            'practice_date' => 'nullable|date',
+            'practice_date' => [
+                'nullable',
+                'date',
+                'after_or_equal:' . now()->toDateString(),
+            ],
         ]);
     
         $title = $validatedData['title'];
@@ -60,10 +64,13 @@ class PracticeController extends Controller
         $subject = $validatedData['subject'];
         $maxQuestions = $validatedData['max_questions'];
         $maxScore = $validatedData['max_score'];
-        $practice_date = $validatedData['practice_date'] ?? null;   //Practice_date deve essere obbligatoria. La utilizzo in seguito per permettere l'accesso.
+        $practice_date = $validatedData['practice_date'] ?? null;
     
         $feedbackEnabled = $request->has('feedback');
         $randomizeQuestions = $request->has('randomize');
+    
+        // Impostiamo la data di pratica come la data odierna se non specificata
+        $practice_date = $validatedData['practice_date'] ?? now()->toDateString();
     
         $exerciseQuery = Exercise::query();
     
@@ -77,20 +84,16 @@ class PracticeController extends Controller
     
         // Ottieni gli esercizi filtrati
         $filteredExercises = $exerciseQuery->get();
-
-        //Qui hai tutti gli esercizi che rispettano quella query li.
     
         // Limita il numero massimo di domande se specificato
         if ($maxQuestions && $filteredExercises->count() > $maxQuestions) {
             $filteredExercises = $filteredExercises->take($maxQuestions);
         }
-
-        //Qui hai N esercizi che il docente ha inserito e che devono essere presenti nel test. 1,1,2,1,1 5 4 30 / 6 = 5 * 1 = 6 + 6
     
         // Calcola la somma degli score dei filtri
         $totalScoreFiltered = $filteredExercises->sum('score');
-     
-        // Ottieni la data corrente per il fuso orario Roma. Questo è da cambiare nel momento in cui aggiuntamo l'internazionale.
+    
+        // Ottieni la data corrente per il fuso orario Roma. Questo è da cambiare nel momento in cui aggiungiamo l'internazionalizzazione.
         date_default_timezone_set('Europe/Rome');
         $generatedDate = now();
     
@@ -105,7 +108,7 @@ class PracticeController extends Controller
             'description' => $description,
             'difficulty' => $difficulty,
             'subject' => $subject,
-            'total_score' => $maxScore, // Imposta il punteggio totale della pratica come max_score
+            'total_score' => $maxScore,
             'key' => $key,
             'user_id' => Auth::id(),
             'allowed' => 0,
@@ -113,6 +116,7 @@ class PracticeController extends Controller
             'randomize_questions' => $randomizeQuestions,
             'generated_at' => $generatedDate,
             'practice_date' => $practice_date,
+            'type' => $type,
         ]);
     
         $newPractice->save();
@@ -130,25 +134,24 @@ class PracticeController extends Controller
         return view('practice_new', [
             'newPractice' => $newPractice,
             'filteredExercises' => $filteredExercisesWithCustomScores,
+            'type' => $type, // Passa il parametro $type alla vista
         ]);
-    }    
+    }       
 
-    public function create()
+    public function create($type = 'default')
     {
-        return view('practice_create');
+        return view('practice_create', ['type' => $type]);
     }
-
-    public function exerciseList()
+    
+    public function exerciseList($type)
     {
         $exercises = Exercise::all();
-        
-        // Ottieni la lista delle materie uniche dagli esercizi
         $subjects = Exercise::distinct('subject')->pluck('subject');
-    
-        return view('exercise_list', ['exercises' => $exercises, 'subjects' => $subjects]);
+        return view('exercise_list', ['exercises' => $exercises, 'subjects' => $subjects, 'type' => $type]);
     }
+       
     
-    public function createExerciseSet(Request $request)
+    public function createExerciseSet(Request $request, $type)
     {
         // Validazione del form, se necessario
         $validatedData = $request->validate([
@@ -156,7 +159,11 @@ class PracticeController extends Controller
             'description' => 'required|string',
             'selected_exercises' => 'required|array',
             'max_score' => 'nullable|integer|min:1',
-            'practice_date' => 'nullable|date',
+            'practice_date' => [
+                'nullable',
+                'date',
+                'after_or_equal:' . now()->toDateString(),
+            ],
         ]);
     
         $title = $validatedData['title'];
@@ -167,24 +174,28 @@ class PracticeController extends Controller
         $feedbackEnabled = $request->has('feedback');
         $randomizeQuestions = $request->has('randomize');
     
+        // Impostiamo la data di pratica come la data odierna se non specificata
+        $practice_date = $validatedData['practice_date'] ?? now()->toDateString();
+    
         // Ottieni gli ID degli esercizi selezionati dal form
         $selectedExerciseIds = $request->input('selected_exercises');
     
-        // Ottieni la data corrente
+        // Ottieni la data corrente per il fuso orario Roma. Questo è da cambiare nel momento in cui aggiungiamo l'internazionalizzazione.
+        date_default_timezone_set('Europe/Rome');
         $generatedDate = now();
     
         // Ottieni gli esercizi selezionati dal database
         $selectedExercises = Exercise::whereIn('id', $selectedExerciseIds)->get();
-
+    
         // Ottieni la difficoltà da ciascun esercizio e stampala
         foreach ($selectedExercises as $exercise) {
             $difficulty = $exercise->difficulty;
             // Ora puoi utilizzare $difficulty come stringa
         }
-        
+    
         // Calcola la somma degli score dei filtri
         $totalScoreSelected = $selectedExercises->sum('score');
-
+    
         // Ottieni il massimo tra max_score e il totale dei punteggi degli esercizi selezionati
         $maxScore = $maxScore ?? $totalScoreSelected;
     
@@ -207,6 +218,7 @@ class PracticeController extends Controller
             'randomize_questions' => $randomizeQuestions,
             'generated_at' => $generatedDate,
             'practice_date' => $practice_date,
+            'type' => $type,
         ]);
     
         $newPractice->save();
@@ -217,34 +229,36 @@ class PracticeController extends Controller
             $customScore = round(($exercise->score / $totalScoreSelected) * $maxScore, 2);
             $newPractice->exercises()->attach($exercise->id, ['custom_score' => $customScore]);
         }
-
+    
         // Recupero gli esercizi associati con i loro punteggi personalizzati
         $selectedExercisesWithCustomScores = $newPractice->exercises()->withPivot('custom_score')->get();
-
+    
         return view('practice_new', [
             'newPractice' => $newPractice,
-            'selectedExercises' => $selectedExercisesWithCustomScores,
+            'selectedExercisesWithCustomScores' => $selectedExercisesWithCustomScores,
+            'type' => $type,
         ]);
     }
 
-    public function index()
+    public function index(Request $request, $type) 
     {
         $practices = Practice::where('user_id', '=', Auth::id())->get();
-        return view('practices', ['practices' => $practices]);
+        return view('practices', ['practices' => $practices, 'type' => $type]);
     }
 
-    public function show(Practice $practice)
+    public function show($type, $id)
     {
-        $practice = Practice::with('exercises')->findOrFail($practice->id);
-        return view('practice_show', compact('practice'));
-    }    
-
-    public function edit(Practice $practice)
-    {
-        return view('practice_edit', ['practice' => $practice]);
+        $practice = Practice::with('exercises')->findOrFail($id);
+        return view('practice_show', ['practice' => $practice, 'type' => $type]);
     }
+    
 
-    public function update(Request $request, Practice $practice)
+    public function edit($type, Practice $practice)
+    {
+        return view('practice_edit', ['practice' => $practice, 'type' => $type]);
+    }
+    
+    public function update(Request $request, $type, Practice $practice)
     {
         $validatedData = $request->validate([
             'title' => 'required',
@@ -253,23 +267,45 @@ class PracticeController extends Controller
             'subject' => 'required',
             'total_score' => 'required',
         ]);
-
-        $practice->update($validatedData);
-
-        return redirect()->route('practices.show', $practice->id)->with('success', 'Practice updated successfully');
-    }
-
-    public function destroy($id)
-    {
-        $practice = Practice::findOrFail($id);
     
+        $practice->update($validatedData);
+    
+        return redirect()->route('practices.show', ['type' => $type, 'practice' => $practice->id])->with('success', 'Practice updated successfully');
+    }
+    
+    public function duplicate(Request $request, $type, Practice $practice)
+    {
+        // Duplica la pratica
+        $newPractice = $practice->replicate();
+        $newPractice->title = $practice->title . ' (Copia)';
+        $newPractice->key = $this->generateKey();
+        $newPractice->save();
+    
+        // Duplica gli esercizi associati con i loro punteggi personalizzati
+        foreach ($practice->exercises as $exercise) {
+            $customScore = $exercise->pivot->custom_score ?? $exercise->score; // Usa il punteggio personalizzato se presente
+            $newPractice->exercises()->attach($exercise->id, ['custom_score' => $customScore]);
+        }
+    
+        return redirect()->route('practices.show', ['type' => $type, 'practice' => $newPractice->id])->with('success', 'Pratica duplicata con successo.');
+    }    
+
+    public function destroy($type, $id)
+    {
+        $practice = Practice::withTrashed()->findOrFail($id);
+
         // Dissocia gli esercizi collegati a questa pratica
         $practice->exercises()->detach();
-    
-        // Elimina la pratica
-        $practice->delete();
-    
-        return redirect()->route('practices.index')->with('success', 'Pratica eliminata correttamente.');
+
+        if ($practice->trashed()) {
+            // Se la pratica è già "soft deleted", forza la cancellazione definitiva
+            $practice->forceDelete();
+        } else {
+            // Altrimenti, esegui il soft delete impostando "deleted_at"
+            $practice->delete();
+        }
+
+        return redirect()->route('practices.index', ['type' => $type])->with('success', 'Pratica eliminata correttamente.');
     }
     
     // NOTE: Questa funzione si occupa di ricevere dall'utente la Key del test alla quale vuole accedere 

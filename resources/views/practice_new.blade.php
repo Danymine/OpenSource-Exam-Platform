@@ -74,10 +74,17 @@
     </style>
 </head>
 <body>
+
     <div class="container">
         @if(isset($newPractice))
             <div class="practice-info">
-                <h1>Esercitazione Generata</h1>
+                <h1>
+                    @if ($type === 'esame')
+                        Esame generato
+                    @elseif ($type === 'esercitazione')
+                        Esercitazione generata
+                    @endif
+                </h1>
                 <p><strong>Titolo:</strong> {{ $newPractice->title }}</p>
                 <p><strong>Descrizione:</strong> {{ $newPractice->description }}</p>
                 <p><strong>Difficoltà:</strong> {{ $newPractice->difficulty }}</p>
@@ -99,7 +106,6 @@
                 
                 <!-- Mostra la data in cui si terrà l'esercitazione -->
                 <p><strong>Data programmata:</strong> {{ \Carbon\Carbon::parse($newPractice->practice_date)->format('d-m-Y') }}</p>
-
             </div>
 
             <h2>Esercizi:</h2>
@@ -119,10 +125,10 @@
                 <button onclick="copyKey()">Copia</button>
             </div>
 
-            <!-- Bottone per tornare alla lista delle esercitazioni -->
+            <!-- Bottone per tornare alla lista -->
             <div class="back-button">
-                <a href="{{ route('practices.index') }}">
-                    <button>Torna alla lista delle esercitazioni</button>
+                <a href="{{ route('practices.index', ['type' => $type]) }}">
+                    <button>Torna alla lista </button>
                 </a>
             </div>
         @endif

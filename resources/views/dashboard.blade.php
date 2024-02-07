@@ -33,75 +33,60 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php
-                                        $i = 0;
-                                    @endphp
-                                    <!--Qui serve gestire le delivereds che si riferiscono a una practices o ad un esame "cancellato" -->
-                                    @foreach(Auth::user()->delivereds as $delivered)
-                                        @if( $i % 2 == 0)
-                                            @if( $delivered->valutation == NULL )
 
-                                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 row-type row-exame clickable" onclick="window.location='{{ route('view-details-delivered', ['delivered' =>  $delivered ] ) }}'">
-                                                    <!--Mi serve la gestione degli per adesso farò come se i dispari sono esami e i pari esercitazioni così per capirci -->
-                                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                        <span> {{ $delivered->practice->title }} </span>
-                                                    </th>
+                                    @foreach(Auth::user()->delivereds as $delivered)
+                                        
+                                        @php
+                                            $practice = $delivered->practice()->withTrashed()->first();
+                                        @endphp
+                                        
+                                        @if( $practice->type == "esercitazione")
+
+                                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 row-type row-practice clickable" onclick="window.location='{{ route('view-details-delivered', ['delivered' =>  $delivered ] ) }}'">
+                                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                    <span class="practice_title"> {{  $practice->title }} </span>
+                                                </th>
+                                                @if( $delivered->valutation != NULL )
                                                     <td class="px-6 py-4">
-                                                        {{ $delivered->practice->practice_date }}
+                                                        <span class="practice_date"> {{ $practice->practice_date }} </span>
+                                                    </td>
+                                                    <td class="px-6 py-4">
+                                                        <span class="practice_valutation" > {{ $delivered->valutation }} </span>
+                                                    </td>
+                                                @else
+                                                    <td class="px-6 py-4">
+                                                        <span> {{ $practice->practice_date }} </span>
                                                     </td>
                                                     <td class="px-6 py-4">
                                                         <span> Non valutata </span>
                                                     </td>
-                                                </tr>
-                                            @else
-                                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 row-type row-exame clickable" onclick="window.location='{{ route('view-details-delivered', ['delivered' =>  $delivered ] ) }}'">
-                                                    <!--Mi serve la gestione degli per adesso farò come se i dispari sono esami e i pari esercitazioni così per capirci -->
-                                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                        <span class="exame_title"> {{ $delivered->practice->title }} </span>
-                                                    </th>
-                                                    <td class="px-6 py-4">
-                                                        {{ $delivered->practice->practice_date }}
-                                                    </td>
-                                                    <td class="px-6 py-4">
-                                                        <span class="exame_valutation"> {{ $delivered->valutation }} </span>
-                                                    </td>
-                                                </tr>
-                                            @endif
+                                                @endif
+                                            </tr>
+
                                         @else
 
-                                            @if( $delivered->valutation == NULL )
-
-                                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 row-type row-practice clickable" onclick="window.location='{{ route('view-details-delivered', ['delivered' =>  $delivered ] ) }}'">
-                                                    <!--Mi serve la gestione degli per adesso farò come se i dispari sono esami e i pari esercitazioni così per capirci -->
-                                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                        <span> {{ $delivered->practice->title }} </span>
-                                                    </th>
+                                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 row-type row-exame clickable" onclick="window.location='{{ route('view-details-delivered', ['delivered' =>  $delivered ] ) }}'">
+                                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                    <span class="exame_titple"> {{ $practice->title }} </span>
+                                                </th>
+                                                @if( $delivered->valutation != NULL )
                                                     <td class="px-6 py-4">
-                                                        {{ $delivered->practice->practice_date }}
+                                                        <span class="exame_date"> {{ $practice->practice_date }} </span>
+                                                    </td>
+                                                    <td class="px-6 py-4">
+                                                        <span class="exame_valutation" > {{ $delivered->valutation }} </span>
+                                                    </td>
+                                                @else
+                                                    <td class="px-6 py-4">
+                                                        <span> {{ $practice->practice_date }} </span>
                                                     </td>
                                                     <td class="px-6 py-4">
                                                         <span> Non valutata </span>
                                                     </td>
-                                                </tr>
-                                            @else
-                                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 row-type row-practice clickable" onclick="window.location='{{ route('view-details-delivered', ['delivered' =>  $delivered ] ) }}'">
-                                                    <!--Mi serve la gestione degli per adesso farò come se i dispari sono esami e i pari esercitazioni così per capirci -->
-                                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                        <span class="practice_title"> {{ $delivered->practice->title }} </span>
-                                                    </th>
-                                                    <td class="px-6 py-4">
-                                                        {{ $delivered->practice->practice_date }}
-                                                    </td>
-                                                    <td class="px-6 py-4">
-                                                        <span class="practice_valutation"> {{ $delivered->valutation }} </span>
-                                                    </td>
-                                                </tr>
-                                            @endif
+                                                @endif
+                                            </tr>
 
                                         @endif
-                                        @php
-                                            $i += 1;
-                                        @endphp
                                     @endforeach
                                 </tbody>
                             </table>
@@ -113,36 +98,56 @@
                                 // Ottieni i titoli e le valutazioni dal DOM
                                 var titles = document.querySelectorAll(".exame_title");
                                 var valutation = document.querySelectorAll(".exame_valutation");
+                                var date = document.querySelectorAll(".exame_date");
+                                
+                                // Estrai i dati dalle variabili fornite
+                                var titlesArray = Array.from(titles).map(title => title.textContent);
+                                var valutationArray = Array.from(valutation).map(val => parseFloat(val.textContent));
+                                var dateArray = Array.from(date).map(date => date.textContent);
 
-                                var xValues = Array.from(titles).map(title => title.textContent);
-                                var yValues = Array.from(valutation).map(valuation => parseInt(valuation.textContent));
+                                // Definisci l'ID del canvas
+                                var canvasId = 'Chartexame';
+
+                                // Ottieni il contesto del canvas
+                                var ctx = document.getElementById(canvasId).getContext('2d');
 
                                 // Crea il grafico
-                                new Chart("Chartexame", {
-                                    type: "line",
+                                var myChart = new Chart(ctx, {
+                                    type: 'line',
                                     data: {
-                                        labels: xValues,
+                                        labels: dateArray,
                                         datasets: [{
+                                            label: 'Valutazioni',
+                                            data: valutationArray,
+                                            backgroundColor: 'rgba(255, 255, 255)', // Sfondo bianco con opacità
+                                            borderColor: 'rgba(255, 99, 132, 1)', // Colore verde della linea
+                                            pointBackgroundColor: 'rgba(255, 99, 132, 1)', // Colore dei pallini per tutte le esercitazioni
                                             fill: false,
-                                            lineTension: 0,
-                                            backgroundColor: "rgba(255, 255, 255, 0.2)", // Sfondo bianco con opacità
-                                            borderColor: "rgba(0, 128, 0, 1.0)", // Colore verde dei pallini
-                                            pointBackgroundColor: "rgba(0, 128, 0, 1.0)", // Colore dei pallini
-                                            data: yValues,
-                                            label: 'Valutazioni' // Etichetta per il dataset
+                                            lineTension: 0
                                         }]
                                     },
                                     options: {
                                         scales: {
                                             yAxes: [{
                                                 ticks: {
-                                                    min: Math.min(...yValues),  //... scandisce l'intero vettore.
-                                                    max: Math.max(...yValues) 
+                                                    min: 0,
+                                                    max: 100
                                                 }
-                                            }],
+                                            }]
+                                        },
+                                        tooltips: {
+                                            callbacks: {
+                                                title: function(tooltipItem, data) {
+                                                    var index = tooltipItem[0].index;
+                                                    return titlesArray[index];
+                                                },
+                                                label: function(tooltipItem, data) {
+                                                    return "Valutazione: " + tooltipItem.yLabel;
+                                                }
+                                            }
                                         }
                                     }
-                                    });
+                                });
 
                             </script>
 
@@ -153,37 +158,57 @@
                                 // Ottieni i titoli e le valutazioni dal DOM
                                 var titles = document.querySelectorAll(".practice_title");
                                 var valutation = document.querySelectorAll(".practice_valutation");
+                                var date = document.querySelectorAll(".practice_date");
+                                
+                                // Estrai i dati dalle variabili fornite
+                                var titlesArray = Array.from(titles).map(title => title.textContent);
+                                var valutationArray = Array.from(valutation).map(val => parseFloat(val.textContent));
+                                var dateArray = Array.from(date).map(date => date.textContent);
 
-                                // Mappa i valori delle valutazioni da stringhe a numeri
-                                xValues = Array.from(titles).map(title => title.textContent);
-                                yValues = Array.from(valutation).map(valuation => parseInt(valuation.textContent)); // Converti le stringhe in numeri
+                                // Definisci l'ID del canvas
+                                var canvasId = 'Chartpractice';
+
+                                // Ottieni il contesto del canvas
+                                var ctx = document.getElementById(canvasId).getContext('2d');
 
                                 // Crea il grafico
-                                new Chart("Chartpractice", {
-                                type: "line",
-                                data: {
-                                    labels: xValues,
-                                    datasets: [{
-                                        fill: false,
-                                        lineTension: 0,
-                                        backgroundColor: "rgba(255, 255, 255, 0.2)", // Sfondo bianco con opacità
-                                        borderColor: "rgba(0, 128, 0, 1.0)", // Colore verde dei pallini
-                                        pointBackgroundColor: "rgba(0, 128, 0, 1.0)", // Colore dei pallini
-                                        data: yValues,
-                                        label: 'Valutazioni' // Etichetta per il dataset
-                                    }]
-                                },
-                                options: {
-                                    scales: {
-                                        yAxes: [{
-                                            ticks: {
-                                                min: Math.min(...yValues), // Trova il minimo dei valori numerici
-                                                max: Math.max(...yValues) // Trova il massimo dei valori numerici
+                                var myChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: dateArray,
+                                        datasets: [{
+                                            label: 'Valutazioni',
+                                            data: valutationArray,
+                                            backgroundColor: 'rgba(255, 255, 255)', // Sfondo bianco con opacità
+                                            borderColor: 'rgba(54, 162, 235, 1))', // Colore verde della linea
+                                            pointBackgroundColor: 'rgba(54, 162, 235, 1)', // Colore dei pallini per tutte le esercitazioni
+                                            fill: false,
+                                            lineTension: 0
+                                        }]
+                                    },
+                                    options: {
+                                        scales: {
+                                            yAxes: [{
+                                                ticks: {
+                                                    min: 0,
+                                                    max: 100
+                                                }
+                                            }]
+                                        },
+                                        tooltips: {
+                                            callbacks: {
+                                                title: function(tooltipItem, data) {
+                                                    var index = tooltipItem[0].index;
+                                                    return titlesArray[index];
+                                                },
+                                                label: function(tooltipItem, data) {
+                                                    return "Valutazione: " + tooltipItem.yLabel;
+                                                }
                                             }
-                                        }],
+                                        }
                                     }
-                                }
                                 });
+
 
                             
                             </script>
@@ -213,12 +238,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php
-                                        $i = 0;
-                                    @endphp
-                                    <!--Qui serve gestire le delivereds che si riferiscono a una practices o ad un esame "cancellato" per il docente questa opezazione è molto dispendiosa in termini di risorse -->
-                                    @foreach(Auth::user()->practices as $practice)
-                                        @if( $i % 2 == 0)
+
+                                    @foreach(Auth::user()->practices()->withTrashed()->get() as $practice)
+                    
+                                        @if( $practice->type == "esame" )
+
                                             @foreach( $practice->delivereds as $delivered )
 
                                                 @if( $delivered->valutation == NULL )
@@ -237,11 +261,13 @@
                                                     @break
                                                 @endif
                                             @endforeach
+                                        
                                         @else
 
                                             @foreach( $practice->delivereds as $delivered )
 
                                                 @if( $delivered->valutation == NULL )
+
                                                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 row-type row-practice clickable" onclick="window.location='{{ route('view-delivered', ['practice' =>  $practice  ] ) }}'">
                                                         <!--Mi serve la gestione degli per adesso farò come se i dispari sono esami e i pari esercitazioni così per capirci -->
                                                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -259,9 +285,6 @@
                                             @endforeach
                 
                                         @endif
-                                        @php
-                                            $i += 1;
-                                        @endphp
                                     @endforeach
                                 </tbody>
                             </table>

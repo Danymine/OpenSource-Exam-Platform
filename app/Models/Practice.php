@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Practice extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'title',
         'description',
@@ -20,10 +23,11 @@ class Practice extends Model
         'user_id',
         'feedback_enabled',
         'randomize_questions',
-        'generated_at', // Aggiungi il campo per la data di generazione
+        'generated_at', 
         'allowed',
         'practice_date',
-        'custom_score'
+        'custom_score',
+        'type',
     ];
 
     public function user() : BelongsTo  //Relazione crea fra user e practice 
