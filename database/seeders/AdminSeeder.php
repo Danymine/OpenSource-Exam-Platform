@@ -10,12 +10,11 @@ class AdminSeeder extends Seeder
 {
     public function run()
     {
-        // Inserisci un record nel database
         DB::table('users')->insert([
             'name' => 'Admin',
-            'email' => 'jiganew437@ikuromi.com',
-            'password' => Hash::make('password123'),
-            'roles' => 'admin',
+            'email' => 'rixina1158@laymro.com',
+            'password' => Hash::make('ciao1234'), 
+            'roles'=> 'Admin',
         ]);
     }
 }

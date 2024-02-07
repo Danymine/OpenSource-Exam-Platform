@@ -156,7 +156,7 @@
         <td><a href="javascript:void(0)" class="edit-button" onclick="editExercise('{{ $exercise->id }}')"><i class="fas fa-pencil-alt"></i></a></td>
         <td><a href="{{ route('deleteExercise', ['id' => $exercise->id]) }}" onclick="return confirm('Sei sicuro di voler eliminare questo esercizio?');"><i class="fas fa-trash-alt"></i></a></td>
       </tr>
-    @endforeach
+    
   </tbody>
 </table>
 </tbody>
@@ -233,6 +233,7 @@
     
     <button type="button" onclick="updateExercise()">Aggiorna Esercizio</button>
     <button type="button" onclick="cancelEditExercise()">Annulla Modifiche</button>
+    @endforeach
   </form>
 </div>
 

@@ -6,6 +6,9 @@ use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\WaitingRoomController;
 use App\Http\Controllers\DeliveredController;
+use App\Http\Controllers\AdminRequestController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\RequestController;
 
 
 //Temporanea
@@ -60,13 +63,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/waiting-room/{key}', [WaitingRoomController::class, 'show'])->name('waiting-room');
 
-    /* Utilizzerò la key qui perchè non voglio fornire ulteriori informazioni all'utente sulla struttura del nostro dabatase e sull'utilizzo delle rotte. Chiariamoci meglio:
-        http://127.0.0.1/waiting-room/10 Questo è il risultato di questa route troppo semplice da comprendere. L'utente potrebbe tranquillamente cambiare il 10 con il 9 per entrare in una nuova waiting-room
-        e se presente accedervi.
-
-        http://127.0.0.1/waiting-room/jM1r54 questo è quello che otteniamo utilizzando questo metodo l'utente quindi può si cambiare un numero a quel codice nella speranza che ve ne sia uno simile
-        ma la probabilità si riduce.
-    */
 
     Route::get('/status/{test}', [WaitingRoomController::class, 'status'])->name('status');
     Route::get('/user/{test}', [WaitingRoomController::class, 'participants'])->name('user');
@@ -75,7 +71,28 @@ Route::middleware('auth')->group(function () {
     Route::get('/view-details-delivered/{delivered}', [DeliveredController::class, 'show'])->name('view-details-delivered')->middleware('control'); //Il middleware permette di vedere i dettagli della consegna solo per gli utenti che l'hanno consegnata o per il docente che ha creato la practice alla quale si riferisce
     Route::get('/download-details-delivered/{delivered}', [DeliveredController::class, 'print'])->name('download-details-delivered')->middleware('control');
     Route::get('/download-correct-delivered/{delivered}', [DeliveredController::class, 'printCorrect'])->name('download-correct-delivered');
-});
+    Route::get('/aggiungi-utente', [UserController::class, 'showAddUserForm'])->name('show-add-user-form');
+    Route::post('/aggiungi-utente', [UserController::class, 'aggiungiUtente'])->name('aggiungi-utente');
+    Route::get('/user-list', [UserController::class, 'showUserList'])->name('user-list');
+    Route::delete('/utenti/{id}', [UserController::class, 'destroy'])->name('delete-user');
+
+    Route::get('/lista-utenti', [UserController::class, 'showUserListFromDb'])->name('users-list');
+
+    Route::get('/modifica-utente/{id}', [UserController::class, 'editUserForm'])->name('edit-user-form');
+
+
+    Route::post('/aggiorna-utente/{id}', [UserController::class, 'updateUser'])->name('update-user');
+
+    Route::get('/annulla-modifiche', [UserController::class, 'cancelEdit'])->name('cancel-edit');
+
+    Route::get('/search-user', [UserController::class, 'search'])->name('search-user');
+
+
+
+
+
+
+ });
 
 Route::middleware('auth', 'role')->group(function (){
 
@@ -127,9 +144,14 @@ Route::middleware('auth', 'role')->group(function (){
         Route::delete('/{type}/{practice}', [PracticeController::class, 'destroy'])->name('practices.destroy');
         Route::get('/{type}/{practice}/duplicate', [PracticeController::class, 'duplicate'])->name('practices.duplicate');
     });
-    
-    
 });
+    Route::prefix('admin')->group(function () {
+        Route::get('/richiedi-assistenza', [RequestController::class, 'showAssistanceRequestForm'])->name('createAssistanceRequest');
+        Route::post('/richiedi-assistenza', [RequestController::class, 'createAssistanceRequest'])->name('storeAssistanceRequest'); 
+        Route::get('/admin/requests', [AdminRequestController::class, 'index'])->name('admin.requests.index');
+    });
+
+
     
 
 require __DIR__.'/auth.php';    //Istruzione per includere tutte le rotte definite nel file auth.php

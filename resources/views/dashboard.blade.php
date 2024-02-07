@@ -1,3 +1,4 @@
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -295,9 +296,17 @@
                          </div>
                     @else
                         <h2>Benvenuto Amministratore {{ Auth::User()->name }}</h2>
+                        
+                        
+                        <div>
+                            <a href="{{ route('show-add-user-form') }}" class="button">Aggiungi Utente</a>
+                            <a href="{{ route('user-list') }}" class="button">Gestione Utenti</a>
+
+                        </div>
+                        
+            
                     @endif
                 </div>
-            </div>
-        </div>
+
     </div>
 </x-app-layout>
