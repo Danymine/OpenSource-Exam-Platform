@@ -46,7 +46,7 @@
                                                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                     <span class="practice_title"> {{  $practice->title }} </span>
                                                 </th>
-                                                @if( $delivered->valutation != NULL )
+                                                @if( $delivered->valutation != NULL and $practice->public == 1 )
                                                     <td class="px-6 py-4">
                                                         <span class="practice_date"> {{ $practice->practice_date }} </span>
                                                     </td>

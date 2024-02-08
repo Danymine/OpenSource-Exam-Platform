@@ -69,7 +69,7 @@
         <div id="true_false" style="display: none;">
             <label for="correct_answer">Risposta corretta:</label>
             <select id="correct_answer" name="correct_answer">
-                <option value="Vero" selected>Vero</option>
+                <option value="Vero">Vero</option>
                 <option value="Falso">Falso</option>
             </select><br><br>
 
