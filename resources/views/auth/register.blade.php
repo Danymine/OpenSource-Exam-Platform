@@ -47,7 +47,7 @@
                             type="radio"
                             name="role" value="Student"/>
 
-            <x-input-label for="choice2" value="Professor" />
+            <x-input-label for="choice2" value="Teacher" />
             <x-text-input id="choice2"
                 type="radio"
                 name="role" value="Teacher"/>
