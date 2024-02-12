@@ -153,7 +153,9 @@
 
                 <!-- Function -->
                 <td><a class="details-button" onclick="showDetails('{{ $exercise->id }}')"><i class="fas fa-search"></i></a></td>
+
                 <td><a class="edit-button" onclick="editExercise('{{ $exercise->id }}')"><i class="fas fa-pencil-alt"></i></a></td>
+
                 <td><a href="{{ route('deleteExercise', ['id' => $exercise->id]) }}" onclick="return confirm('Sei sicuro di voler eliminare questo esercizio?');"><i class="fas fa-trash-alt"></i></a></td>
             </tr>
             
@@ -168,11 +170,11 @@
 
       <button onclick="closeDetailsDialog()">Chiudi</button>
     </div>
-
+    
     <div id="edit-dialog" class="details-dialog">
 
       <h2>Modifica Esercizio</h2>
-      <form id="edit-exercise-form" method="POST" action="{{ route('exercises.update', ['id' =>  $exercise->id]) }}">
+      <form id="edit-exercise-form" method="POST">
         @csrf
         @method('PUT')
 
@@ -183,7 +185,7 @@
         <textarea id="edit-question" name="question"></textarea><br><br>
 
         <label for="score">Punteggio:</label>
-        <input type="text" id="score" name="score" value="{{ $exercise->score }}"><br><br>
+        <input type="text" id="score" name="score"><br><br>
 
         <label for="difficulty">Difficoltà:</label>
         <select id="difficulty" name="difficulty">
@@ -194,15 +196,15 @@
         </select><br><br>
 
         <label for="subject">Materia:</label>
-        <input type="text" id="subject" name="subject" value="{{ $exercise->subject }}"><br><br>
+        <input type="text" id="subject" name="subject"><br><br>
             
         
         <label for="type">Tipo:</label>
         <select id="type" name="type">
 
-            <option value="Risposta Aperta" {{ $exercise->type == 'Risposta Aperta' ? 'selected' : '' }}>Risposta Aperta</option>
-            <option value="Risposta Multipla" {{ $exercise->type == 'Risposta Multipla' ? 'selected' : '' }}>Risposta Multipla</option>
-            <option value="Vero o Falso" {{ $exercise->type == 'Vero o Falso' ? 'selected' : '' }}>Vero o Falso</option>
+            <option value="Risposta Aperta">Risposta Aperta</option>
+            <option value="Risposta Multipla">Risposta Multipla</option>
+            <option value="Vero o Falso">Vero o Falso</option>
         </select><br><br>
 
 
@@ -224,7 +226,7 @@
             <input type="text" id="correct_option" name="correct_option"><br><br>
 
             <label for="explanation">Spiegazione:</label>
-            <textarea id="explanation_multiplo" name="explanation">{{ $exercise->explanation }}</textarea><br><br>
+            <textarea id="explanation_multiplo" name="explanation"></textarea><br><br>
         </div>
 
         <div id="true_false">
@@ -232,23 +234,23 @@
           <label for="correct_answer">Opzione corretta:</label>
           <select id="correct_answer" name="correct_option">
 
-              <option value="Vero" {{ $exercise->correct_option == 'Vero' ? 'selected' : '' }}>Vero</option>
-              <option value="Falso" {{ $exercise->correct_option == 'Falso' ? 'selected' : '' }}>Falso</option>
+              <option value="Vero">Vero</option>
+              <option value="Falso">Falso</option>
           </select><br><br>
 
           <label for="explanation">Spiegazione:</label>
-          <textarea id="explanation" name="explanation">{{ $exercise->explanation }}</textarea><br><br>
+          <textarea id="explanation" name="explanation"></textarea><br><br>
         </div>
 
         <button type="button" onclick="updateExercise()">Aggiorna Esercizio</button>
         <button type="button" onclick="cancelEditExercise()">Annulla Modifiche</button>
       </form>
-    </div>
+      </div>
 
     <script>
       var exercises = @json($exercises);
     </script>
-    <script src="/tableSorting.js"></script>
+    <script src="/js/tableSorting.js"></script>
 
   </body>
 </html>
