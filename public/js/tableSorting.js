@@ -102,6 +102,7 @@ function showDetails(exerciseId) {
         // Popola il titolo e il contenuto della finestra di dialogo in base al tipo di esercizio
         titleElement.textContent = exercise.name;
         
+        //Questa sintassi prende il nome di "Template literals" che consente di inserire espressioni JavaScript all'interno di stringhe delimitate da `
         contentElement.innerHTML = `
             <p><strong>Difficoltà:</strong> ${exercise.difficulty}</p>
             <p><strong>Materia:</strong> ${exercise.subject}</p>
@@ -124,13 +125,6 @@ function showDetails(exerciseId) {
                 <p><strong>Opzione 2:</strong> ${exercise.option_2}</p>
                 <p><strong>Opzione 3:</strong> ${exercise.option_3}</p>
                 <p><strong>Opzione 4:</strong> ${exercise.option_4}</p>
-                <p><strong>Spiegazione:</strong> ${exercise.explanation}</p>
-            `;
-        } 
-        else if (exercise.type === 'Risposta Aperta') {
-
-            console.log('Risposta Aperta');
-            contentElement.innerHTML += `
                 <p><strong>Spiegazione:</strong> ${exercise.explanation}</p>
             `;
         }

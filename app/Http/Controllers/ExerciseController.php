@@ -24,14 +24,26 @@ class ExerciseController extends Controller
             'subject' => 'required|string|regex:/^[A-Za-z0-9\s\-\'\?]+$/|max:255',
             'type' => ['required', Rule::in(['Risposta Aperta', 'Risposta Multipla', 'Vero o Falso'])],
             'explanation' => 'nullable|max:100',
-            'correct_option' => $request->input('type') === 'Risposta Aperta' ? 'nullable',
-            'correct_option' => $request->input('type') === 'Risposta Multipla' ? 'required|in:1,2,3,4' : 'nullable',
-            'correct_option' => $request->input('type') === 'Vero o Falso' ? 'required|in:Vero,Falso' : 'nullable',
-            'options.*' => $request->input('type') == 'Risposta Multipla' ? 'required|string|min:1|max:100' : 'nullable',
+            'correct_option' => [
+                'required_if:type,"Risposta Multipla"|numeric|in:1,2,3,4',
+                'required_if:type,"Vero o Falso"|string|in:Vero,Falso',
+            ],            
+            'options.*' => [
+                'required_if:type,"Risposta Multipla"|string|min:1|max:100',
+            ]
         ]);
            
-    
-        $exercise = new Exercise($request->all());
+
+        $options = $validatedData['options'] ?? [];
+        $exercise = new Exercise($validatedData);
+        if(count($options) != 0){
+
+            $exercise->option_1 = $options[0];
+            $exercise->option_2 = $options[1];
+            $exercise->option_3 = $options[2];
+            $exercise->option_4 = $options[3];
+        }
+        
         $exercise->user_id = Auth::user()->id;
         $exercise->save();
     
@@ -60,15 +72,18 @@ class ExerciseController extends Controller
             'subject' => 'required|string|regex:/^[A-Za-z0-9\s\-\'\?]+$/|max:255',
             'type' => ['required', Rule::in(['Risposta Aperta', 'Risposta Multipla', 'Vero o Falso'])],
             'explanation' => 'nullable|max:100',
-            'correct_option' => $request->input('type') === 'Risposta Multipla' ? 'required|in:1,2,3,4' : 'nullable',
-            'correct_option' => $request->input('type') === 'Vero o Falso' ? 'required|in:Vero,Falso' : 'nullable',
+            'correct_option' => [
+                'required_if:type,Risposta Multipla|numeric|in:1,2,3,4',
+                'required_if:type,Vero o Falso|string|in:Vero,Falso',
+            ],            
             'options.*' => $request->input('type') == 'Risposta Multipla' ? 'required|string|min:1|max:100' : 'nullable',
         ]);
+        
 
         $originalExercise = Exercise::findOrFail($id);
 
         // Creazione di un nuovo esercizio con le modifiche richieste
-        $newExercise = new Exercise($request->all());
+        $newExercise = new Exercise($validatedData);
         $newExercise->user_id = Auth::user()->id;
         $newExercise->save();
 
