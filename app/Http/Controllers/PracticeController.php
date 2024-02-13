@@ -45,9 +45,20 @@ class PracticeController extends Controller
     public function index($type) 
     {
         // Recupera tutte le pratiche associate all'utente autenticato di tipo specificato
-        $practices = Practice::where('user_id', Auth::id())
-                             ->where('type', $type)
-                             ->paginate(10);
+        $query = Practice::where('user_id', Auth::id())
+                         ->where('type', $type);
+    
+        // Applica i filtri se sono stati inviati
+        if (request()->has('subject')) {
+            $query->where('subject', request('subject'));
+        }
+    
+        if (request()->has('difficulty')) {
+            $query->where('difficulty', request('difficulty'));
+        }
+    
+        // Pagina i risultati dopo il filtraggio
+        $practices = $query->paginate(10);
     
         // Recupera le materie distinte per popolare il menu a tendina dei filtri
         $subjects = Practice::distinct('subject')->pluck('subject');
@@ -57,7 +68,7 @@ class PracticeController extends Controller
             'type' => $type,
             'subjects' => $subjects, 
         ]);
-    } 
+    }
 
     public function create($type = 'default')
     {
@@ -284,8 +295,6 @@ class PracticeController extends Controller
 
     public function edit($type, Practice $practice)
     {
-        $user = Auth::user(); // Ottieni l'utente corrente
-    
         // Genera una nuova chiave univoca
         $newKey = $this->generateKey();
     
@@ -300,22 +309,17 @@ class PracticeController extends Controller
         // Otteni gli ID degli esercizi presenti nella nuova pratica
         $newPracticeExerciseIds = $newPractice->exercises->pluck('id')->toArray();
     
-        // Ottieni solo gli esercizi creati dall'utente corrente
-        $allExercises = $user->exercises()->get();
-    
-        // Ottieni solo le subject degli esercizi creati dall'utente corrente
-        $allSubjects = $user->exercises()->distinct()->pluck('subject')->toArray();
-        
-        // Ottieni solo i tipi di esercizi creati dall'utente corrente
-        $allTypes = $user->exercises()->distinct()->pluck('type')->toArray();
-    
+        // Otteni tutte le subject dagli esercizi presenti nel database
+        $allSubjects = Exercise::distinct()->pluck('subject')->toArray();
+        $allTypes = Exercise::distinct()->pluck('type')->toArray();
+
         // Softdelete la pratica originale
         $practice->delete();
     
-        // Passiamo tutti i dati alla vista
+        // Passa la nuova pratica, la lista completa degli esercizi, gli ID degli esercizi e tutte le subject alla vista
         return view('practice_edit', [
             'practice' => $newPractice,
-            'allExercises' => $allExercises,
+            'allExercises' => Exercise::all(),
             'newPracticeExerciseIds' => $newPracticeExerciseIds,
             'type' => $type,
             'subjects' => $allSubjects,
