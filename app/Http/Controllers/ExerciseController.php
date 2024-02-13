@@ -24,6 +24,7 @@ class ExerciseController extends Controller
             'subject' => 'required|string|regex:/^[A-Za-z0-9\s\-\'\?]+$/|max:255',
             'type' => ['required', Rule::in(['Risposta Aperta', 'Risposta Multipla', 'Vero o Falso'])],
             'explanation' => 'nullable|max:100',
+            'correct_option' => $request->input('type') === 'Risposta Aperta' ? 'nullable',
             'correct_option' => $request->input('type') === 'Risposta Multipla' ? 'required|in:1,2,3,4' : 'nullable',
             'correct_option' => $request->input('type') === 'Vero o Falso' ? 'required|in:Vero,Falso' : 'nullable',
             'options.*' => $request->input('type') == 'Risposta Multipla' ? 'required|string|min:1|max:100' : 'nullable',

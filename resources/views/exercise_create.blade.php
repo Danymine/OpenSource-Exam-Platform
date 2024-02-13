@@ -77,14 +77,8 @@
             <textarea id="explanation" name="explanation"></textarea><br><br>
         </div>
 
-
-  
-        </body>
-        </html>
-
         <button type="submit">Crea Esercizio</button>
     </form>
-
   
     <script>
         document.getElementById('type').addEventListener('change', function() {

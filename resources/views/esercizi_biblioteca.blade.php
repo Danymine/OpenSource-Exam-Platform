@@ -156,8 +156,8 @@
                 <td><a class="edit-button" onclick="editExercise('{{ $exercise->id }}')"><i class="fas fa-pencil-alt"></i></a></td>
                 <td><a href="{{ route('deleteExercise', ['id' => $exercise->id]) }}" onclick="return confirm('Sei sicuro di voler eliminare questo esercizio?');"><i class="fas fa-trash-alt"></i></a></td>
             </tr>
-            
-         @endforeach
+            @endforeach
+         
         </tbody>
     </table>
 
@@ -170,7 +170,7 @@
     </div>
 
     <div id="edit-dialog" class="details-dialog">
-
+    
       <h2>Modifica Esercizio</h2>
       <form id="edit-exercise-form" method="POST" action="{{ route('exercises.update', ['id' =>  $exercise->id]) }}">
         @csrf
@@ -243,6 +243,7 @@
         <button type="button" onclick="updateExercise()">Aggiorna Esercizio</button>
         <button type="button" onclick="cancelEditExercise()">Annulla Modifiche</button>
       </form>
+
     </div>
 
     <script>
