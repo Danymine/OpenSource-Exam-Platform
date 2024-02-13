@@ -177,7 +177,7 @@ class PracticeController extends Controller
     }       
     
     public function exerciseList($type)
-    {
+    {   
         $user = Auth::user(); // Ottiene l'utente corrente
     
         // Ottiene solo gli esercizi dell'utente corrente
@@ -199,12 +199,14 @@ class PracticeController extends Controller
 
     public function createExerciseSet(Request $request, $type)
     {
+
         // Validazione del form, se necessario
         $validatedData = $request->validate([
-            'title' => 'required|string',
-            'description' => 'required|string',
+            'title' => 'required|string|regex:/^[A-Za-z0-9\s\-\'\?]+$/|max:255',
+            'description' => 'required|string|regex:/^[A-Za-z0-9\s\-\'\?]+$/|max:255',
             'selected_exercises' => 'required|array',
-            'max_score' => 'nullable|integer|min:1',
+            'selected_exercises.*' => 'integer|min:1',
+            'max_score' => 'nullable|integer|in:10,30,100',
             'practice_date' => [
                 'nullable',
                 'date',
@@ -225,7 +227,7 @@ class PracticeController extends Controller
     
         // Ottieni gli ID degli esercizi selezionati dal form
         $selectedExerciseIds = $request->input('selected_exercises');
-    
+
         // Ottieni la data corrente per il fuso orario Roma. Questo è da cambiare nel momento in cui aggiungiamo l'internazionalizzazione.
         date_default_timezone_set('Europe/Rome');
         $generatedDate = now();
@@ -285,6 +287,7 @@ class PracticeController extends Controller
             'selectedExercisesWithCustomScores' => $selectedExercisesWithCustomScores,
             'type' => $type,
         ]);
+        
     }
 
     public function show($type, Practice $practice)
@@ -422,6 +425,7 @@ class PracticeController extends Controller
         $practice->exercises()->detach();
 
         if ($practice->trashed()) {
+            
             // Se la pratica è già "soft deleted", forza la cancellazione definitiva
             $practice->forceDelete();
         } else {

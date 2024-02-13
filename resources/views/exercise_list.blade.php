@@ -287,59 +287,91 @@
     </form>
 
     <script>
-        function toggleSelectedExercise(id) {
-            let selectedExerciseIds = []; // Inizializza la variabile per memorizzare gli ID degli esercizi selezionati
+        
+        let exercises = @json($exercises);
+        let selectedExercises = [];
 
-            // Inizializza gli ID degli esercizi selezionati
-            document.querySelectorAll("input[name='selected_exercises[]']").forEach(input => {
-                selectedExerciseIds.push(input.value);
+        document.addEventListener("DOMContentLoaded", function() {
+
+            // Seleziona tutte le checkbox degli esercizi
+            const checkboxes = document.querySelectorAll('input[name="selected_exercises[]"]');
+
+            checkboxes.forEach(function(checkbox) {
+
+                checkbox.addEventListener("click", function() {
+
+                    const exerciseId = this.value; // Ottieni l'id dell'esercizio
+
+                    if (this.checked) {
+
+                        // Se la checkbox è stata selezionata, aggiungi l'id all'array
+                        selectedExercises.push(exerciseId);
+                    } 
+                    else {
+
+                        // Se la checkbox è stata deselezionata, rimuovi l'id dall'array
+                        const index = selectedExercises.indexOf(exerciseId);
+                        if (index !== -1) {
+
+                            selectedExercises.splice(index, 1);
+                        }
+                    }
+
+                });
             });
+        });
 
-            const index = selectedExerciseIds.indexOf(id);
-            if (index === -1) {
-                selectedExerciseIds.push(id);
-            } else {
-                selectedExerciseIds.splice(index, 1);
-            }
 
-            // Aggiorna gli input nascosti con gli ID degli esercizi selezionati
-            document.querySelector("input[name='selected_exercises[]'][value='" + id + "']").checked = (index === -1);
-        }
-
-        const subjectFilter = document.getElementById("subjectFilter");
-        const difficultyFilter = document.getElementById("difficultyFilter");
-        const typeFilter = document.getElementById("typeFilter");
-        const minScoreInput = document.getElementById("minScore");
-        const maxScoreInput = document.getElementById("maxScore");
-        const exerciseList = document.getElementById("exerciseList");
+        let subjectFilter = document.getElementById("subjectFilter");
+        let difficultyFilter = document.getElementById("difficultyFilter");
+        let typeFilter = document.getElementById("typeFilter");
+        let minScoreInput = document.getElementById("minScore");
+        let maxScoreInput = document.getElementById("maxScore");
+        let exerciseList = document.getElementById("exerciseList");
 
         difficultyFilter.addEventListener("change", filterExercises);
         minScoreInput.addEventListener("input", filterExercises);
         maxScoreInput.addEventListener("input", filterExercises);
         typeFilter.addEventListener("change", filterExercises);
 
-        const exercises = @json($exercises);
-
         function filterExercises() {
-            const subjectFilterValue = subjectFilter.value || "";
-            const difficultyFilterValue = difficultyFilter.value || "";
-            const typeFilterValue = typeFilter.value || "";
-            const minScoreValue = minScoreInput.value || 0;
-            const maxScoreValue = maxScoreInput.value || Infinity;
 
-            const filteredExercises = exercises.filter(exercise => {
-                return (
+            let subjectFilterValue = subjectFilter.value || "";
+            let difficultyFilterValue = difficultyFilter.value || "";
+            let typeFilterValue = typeFilter.value || "";
+            let minScoreValue = minScoreInput.value || 0;
+            let maxScoreValue = maxScoreInput.value || Infinity;
+
+            let filteredExercises = exercises.filter(exercise => {
+
+               if (
+                    // Controlla se il soggetto dell'esercizio contiene il valore del filtro del soggetto, ignorando maiuscole e minuscole
                     exercise.subject.toLowerCase().includes(subjectFilterValue.toLowerCase()) &&
+                    
+                    // Controlla se la difficoltà dell'esercizio corrisponde al valore del filtro di difficoltà, ignorando maiuscole e minuscole
                     (difficultyFilterValue === "" || exercise.difficulty.toLowerCase() === difficultyFilterValue.toLowerCase()) &&
+                    
+                    // Controlla se il tipo dell'esercizio corrisponde al valore del filtro del tipo, ignorando maiuscole e minuscole
                     (typeFilterValue === "" || exercise.type.toLowerCase() === typeFilterValue.toLowerCase()) &&
+                    
+                    // Controlla se il punteggio dell'esercizio rientra nell'intervallo specificato dal punteggio minimo e massimo
                     (exercise.score >= minScoreValue && exercise.score <= maxScoreValue)
-                );
+                ) {
+
+                    // Se tutti i criteri sono soddisfatti, l'esercizio viene incluso nei risultati filtrati
+                    return true;
+                } else {
+
+                    // Se uno qualsiasi dei criteri non è soddisfatto, l'esercizio viene escluso dai risultati filtrati
+                    return false;
+                }
             });
 
             displayExercises(filteredExercises);
         }
 
         function displayExercises(exercises) {
+            
             exerciseList.innerHTML = "";
             exercises.forEach(exercise => {
                 const li = document.createElement("li");
@@ -357,15 +389,12 @@
                         <input type="hidden" name="exercise_ids[]" value="${exercise.id}">
                     </div>
                     <div>
-                        <input type="checkbox" name="selected_exercises[]" value="${exercise.id}" ${document.querySelector("input[name='selected_exercises[]'][value='" + exercise.id + "']") ? 'checked' : ''} onchange="toggleSelectedExercise(${exercise.id})">
+                        <input type="checkbox" name="selected_exercises[]" value="${exercise.id}" ${selectedExerciseIds.includes(String(exercise.id)) ? 'checked' : ''}>
                     </div>
                 `;
                 exerciseList.appendChild(li);
             });
         }
-
-        // Applica i filtri iniziali
-        filterExercises();
 
         // Aggiorna i filtri automaticamente
         subjectFilter.addEventListener("change", filterExercises);

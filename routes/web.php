@@ -87,11 +87,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/search-user', [UserController::class, 'search'])->name('search-user');
 
-
-
-
-
-
  });
 
 Route::middleware('auth', 'role')->group(function (){
@@ -110,6 +105,7 @@ Route::middleware('auth', 'role')->group(function (){
     Route::prefix('exercises')->group(function () {
         // Mostra tutti gli esercizi
         Route::get('/esercizi_biblioteca', [ExerciseController::class, 'showAllExercises'])->name('showAllExercises');
+
         
         
         // Crea un nuovo esercizio
