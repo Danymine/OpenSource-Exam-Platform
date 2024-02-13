@@ -17,6 +17,7 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255|min:6',
+            'first_name' => 'required|string|max:255',
             'email' => [
                 'required',
                 'string',
@@ -26,6 +27,7 @@ class ProfileUpdateRequest extends FormRequest
                 Rule::unique('users')->ignore(auth()->id()),
                 'regex:/^(?!.*[_.-]{2})[a-zA-Z0-9_.-]{4,}@(?!-)(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/',
             ],
+            'icon_profile' => 'required|image',
         ];
     }
 }

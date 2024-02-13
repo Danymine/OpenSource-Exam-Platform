@@ -37,6 +37,7 @@
             tr:hover {
                 background-color: rgba(255, 255, 255, 0.1); /* Sostituisci con il colore desiderato */
             }
+
         </style>
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])

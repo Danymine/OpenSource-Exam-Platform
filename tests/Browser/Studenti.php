@@ -24,6 +24,7 @@ class Studenti extends DuskTestCase
 
             $browser->visit('/register')
                     ->type('name', 'Prova')
+                    ->type('firstname', 'Cognome')
                     ->type('email', $email)
                     ->type('password', 'Password123')
                     ->type('password_confirmation', 'Password123')
@@ -59,6 +60,7 @@ class Studenti extends DuskTestCase
         $email = Str::random(10) . "@example.com";
         $user = new User([
             'name' => 'Studente',
+            'first_name' => 'Cognome',
             'email' => $email,
             'password' => Hash::make("Password123"),
             'roles' => 'Student',

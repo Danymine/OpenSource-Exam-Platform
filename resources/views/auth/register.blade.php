@@ -1,12 +1,28 @@
 <x-guest-layout>
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
         <!-- Name -->
         <div>
-            <x-input-label for="name" :value="__('Prova')" />
+            <x-input-label for="name" :value="__('Name')" />
             <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
+        </div>
+        
+        <!-- First Name -->
+        <div class="mt-4">
+            <x-input-label for="firstname" :value="__('First Name')" />
+            <x-text-input id="firstname" class="block mt-1 w-full" type="text" name="firstname" :value="old('firstname')" required autofocus autocomplete="firstname" />
+            <x-input-error :messages="$errors->get('firstname')" class="mt-2" />
+        </div>
+
+         <!-- Date -->
+         <div class="mt-4">
+            <x-input-label for="datebirth" :value="__('Data Birth')" />
+            <x-text-input id="datebirth" class="block mt-1 w-full" type="date" name="date_birth" :value="old('date_birth')" autofocus autocomplete="datebirth" />
+            <x-input-error :messages="$errors->get('date_birth')" class="mt-2" />
+            <span id="feedback-date-validate"></span>
         </div>
 
         <!-- Email Address -->
@@ -14,6 +30,7 @@
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <span id="feedback-email-validate"></span>
         </div>
 
         <!-- Password -->
@@ -26,6 +43,8 @@
                             required autocomplete="new-password" />
 
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <button type="button" onmousedown="mostraPassword('password')" onmouseup="nascondiPassword('password')" onmouseleave="nascondiPassword('password')" style="color:white"><i class="fa fa-eye-slash"></i></button>
+            <span id="feedback-password-validate"></span>
         </div>
 
         <!-- Confirm Password -->
@@ -37,6 +56,8 @@
                             name="password_confirmation" required autocomplete="new-password" />
 
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+            <button type="button" onmousedown="mostraPassword('password_confirmation')" onmouseup="nascondiPassword('password_confirmation')" onmouseleave="nascondiPassword('password_confirmation')" style="color:white"><i class="fa fa-eye-slash"></i></button>
+            <span id="feedback-confirmation-validate"></span>
         </div>
 
         <!-- Choice Student or Professor -->
@@ -66,3 +87,4 @@
         </div>
     </form>
 </x-guest-layout>
+<script src="/js/validateRegister.js"></script>

@@ -25,7 +25,8 @@ class DeliveredSeeder extends Seeder
         for( $i = 0; $i < 100;  $i++ ){
 
             DB::table('users')->insert([
-                'name' => "Studente" . $i + 1,
+                'name' => "Nome" . $i + 1,
+                'first_name' => "Cognome" . $i + 1,
                 'email' => 'pseudoemail_' . Str::random(5) . $i + 1 . '@example.com',
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make('ciao1234'), 
