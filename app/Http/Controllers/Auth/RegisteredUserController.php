@@ -33,6 +33,8 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'firstname' => ['required', 'string', 'max:255'],
+            'date_birth' => ['present', 'nullable', 'date', 'before_or_equal:' . now()->subYears(14)->format('Y-m-d')],
             'email' => ['required', 'string', 'email', 'min:8', 'max:255', 'regex:/^(?!.*[_.-]{2})[a-zA-Z0-9_.-]{4,}@(?!-)(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/', 'unique:'.User::class],
             'password' => [
                 'required',
@@ -47,6 +49,8 @@ class RegisteredUserController extends Controller
 
         $user = User::create([
             'name' => $request->name,
+            'first_name' => $request->firstname,
+            'date_birth' => $request->date_birth,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'roles' => $request->input('role')

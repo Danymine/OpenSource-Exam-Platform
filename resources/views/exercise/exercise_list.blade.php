@@ -325,6 +325,11 @@
         maxScoreInput.addEventListener("input", filterExercises);
         typeFilter.addEventListener("change", filterExercises);
 
+         subjectFilter.addEventListener("change", filterExercises);
+        difficultyFilter.addEventListener("change", filterExercises);
+        minScoreInput.addEventListener("input", filterExercises);
+        maxScoreInput.addEventListener("input", filterExercises);
+
         function filterExercises() {
 
             let subjectFilterValue = subjectFilter.value || "";
@@ -386,12 +391,6 @@
                 exerciseList.appendChild(li);
             });
         }
-
-        // Aggiorna i filtri automaticamente
-        subjectFilter.addEventListener("change", filterExercises);
-        difficultyFilter.addEventListener("change", filterExercises);
-        minScoreInput.addEventListener("input", filterExercises);
-        maxScoreInput.addEventListener("input", filterExercises);
     </script>
 
 </body>

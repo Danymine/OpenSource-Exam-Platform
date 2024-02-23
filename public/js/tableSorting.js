@@ -80,116 +80,282 @@ function sortTable(columnIndex) {
 }
 
 function showDetails(exerciseId) {
-
     // Trova l'esercizio corrispondente nell'array $exercises
-    var exercise = null;
-    for (var i = 0; i < exercises.length; i++) {
+    var exercise = exercises.find(ex => ex.id == exerciseId);
 
-        if ( exercises[i].id == exerciseId ) {
-
-            exercise = exercises[i];
-            break;
-        }
-    }
-
-    if ( exercise ) {
-
+    if (exercise) {
         // Ottenere riferimenti agli elementi DOM della finestra di dialogo
-        var dialog = document.getElementById('details-dialog');
         var titleElement = document.getElementById('details-title');
         var contentElement = document.getElementById('details-content');
 
         // Popola il titolo e il contenuto della finestra di dialogo in base al tipo di esercizio
         titleElement.textContent = exercise.name;
-        
-        //Questa sintassi prende il nome di "Template literals" che consente di inserire espressioni JavaScript all'interno di stringhe delimitate da `
-        contentElement.innerHTML = `
-            <p><strong>Difficoltà:</strong> ${exercise.difficulty}</p>
-            <p><strong>Materia:</strong> ${exercise.subject}</p>
-            <p><strong>Tipo:</strong> ${exercise.type}</p>
+
+        // Costruisci il contenuto della finestra di dialogo
+        var contentHtml = `
+            <p style="color: black;" ><strong>Question:</strong> ${exercise.question}</p>
+            <p style="color: black;" ><strong>Difficoltà:</strong> ${exercise.difficulty}</p>
+            <p style="color: black;" ><strong>Materia:</strong> ${exercise.subject}</p>
+            <p style="color: black;" ><strong>Tipo:</strong> ${exercise.type}</p>
         `;
 
         // Aggiungi informazioni specifiche in base al tipo di esercizio
         if (exercise.type === 'Vero o Falso') {
-
-            contentElement.innerHTML += `
-                <p><strong>Risposta Corretta:</strong> ${exercise.correct_option}</p>
-                <p><strong>Spiegazione:</strong> ${exercise.explanation}</p>
+            contentHtml += `
+                <p style="color: black;" ><strong>Risposta Corretta:</strong> ${exercise.correct_option}</p>
+                <p style="color: black;" ><strong>Spiegazione:</strong> ${exercise.explanation}</p>
             `;
-        } 
-        else if (exercise.type === 'Risposta Multipla') {
-
-            contentElement.innerHTML += `
-                <p><strong>Risposta Corretta:</strong> ${exercise.correct_option}</p>
-                <p><strong>Opzione 1:</strong> ${exercise.option_1}</p>
-                <p><strong>Opzione 2:</strong> ${exercise.option_2}</p>
-                <p><strong>Opzione 3:</strong> ${exercise.option_3}</p>
-                <p><strong>Opzione 4:</strong> ${exercise.option_4}</p>
-                <p><strong>Spiegazione:</strong> ${exercise.explanation}</p>
+        } else if (exercise.type === 'Risposta Multipla') {
+            contentHtml += `
+                <p style="color: black;"><strong>Risposta Corretta:</strong> ${exercise.correct_option}</p>
+                <p style="color: black;" ><strong>Opzione 1:</strong> ${exercise.option_1}</p>
+                <p style="color: black;" ><strong>Opzione 2:</strong> ${exercise.option_2}</p>
+                <p style="color: black;" ><strong>Opzione 3:</strong> ${exercise.option_3}</p>
+                <p style="color: black;" ><strong>Opzione 4:</strong> ${exercise.option_4}</p>
+                <p style="color: black;" ><strong>Spiegazione:</strong> ${exercise.explanation}</p>
             `;
         }
 
-        // Mostra la finestra di dialogo
-        dialog.style.display = 'block';
+        // Inserisci il contenuto nella finestra di dialogo
+        contentElement.innerHTML = contentHtml;
+
+        // Mostra la finestra di dialogo utilizzando Bootstrap modal
+        $('#details-dialog').modal('show');
     }
 }
 
+
 function closeDetailsDialog() {
 
-    // Nascondi la finestra di dialogo quando viene cliccato il pulsante "Chiudi"
-    var dialog = document.getElementById('details-dialog');
-    dialog.style.display = 'none';
+    $('#details-dialog').modal('hide');
+}
+
+function buildMultipleChoiceOptions(exercise, bool) {
+
+    var multipleChoiceContainer = document.getElementById('multiple_choice_container');
+    if( bool === true){
+
+        // Numero di opzioni per la domanda a scelta multipla
+        multipleChoiceContainer.style.display = 'block';
+        const numOptions = 4;
+
+        // Cancella eventuali opzioni preesistenti
+        multipleChoiceContainer.innerHTML = '';
+        array = [
+            exercise.option_1, exercise.option_2, exercise.option_3, exercise.option_2
+        ]
+        // Ciclo per creare gli input per le opzioni
+        for (let i = 1; i <= numOptions; i++) {
+            const label = document.createElement('label');
+            label.setAttribute('for', `option${i}`);
+            label.setAttribute('class', `form-label`);
+            label.textContent = `Opzione ${i}: `;
+
+            const input = document.createElement('input');
+            input.setAttribute('type', 'text');
+            input.setAttribute('id', `option${i}`);
+            input.setAttribute('name', 'options[]');
+            input.setAttribute('value', array[i-1]);
+            input.setAttribute('class', 'form-control mb-3');
+
+            multipleChoiceContainer.appendChild(label);
+            multipleChoiceContainer.appendChild(input);
+            multipleChoiceContainer.appendChild(document.createElement('br'));
+        }
+
+        // Aggiungi l'input per l'opzione corretta
+        const correctOptionLabel = document.createElement('label');
+        correctOptionLabel.setAttribute('for', 'correct_option');
+        correctOptionLabel.setAttribute('class', `form-label`);
+        correctOptionLabel.textContent = 'Opzione corretta: ';
+
+        const correctOptionInput = document.createElement('select');
+        correctOptionInput.setAttribute('id', 'correct_option');
+        correctOptionInput.setAttribute('name', 'correct_option');
+        correctOptionInput.setAttribute('class', 'form-select form-select-lg mb-3 rounded p-2');
+        correctOptionInput.setAttribute('value',  exercise.correct_option);
+
+        array = ['a', 'b', 'c', 'd'];
+        for (let i = 0; i < numOptions; i++) {
+
+            var alt1 = document.createElement('option');
+            alt1.value = array[i];
+            alt1.textContent = array[i].toUpperCase();
+            if( exercise.correct_option == array[i] ){
+
+                alt1.setAttribute('selected', 'selected');
+            }
+            correctOptionInput.appendChild(alt1);
+        }
+
+
+        multipleChoiceContainer.appendChild(correctOptionLabel);
+        multipleChoiceContainer.appendChild(document.createElement('br'));
+        multipleChoiceContainer.appendChild(correctOptionInput);
+        multipleChoiceContainer.appendChild(document.createElement('br'));
+
+        // Aggiungi l'input per la spiegazione
+        const explanationLabel = document.createElement('label');
+        explanationLabel.setAttribute('for', 'explanation');
+        explanationLabel.setAttribute('class', `form-label`);
+        explanationLabel.textContent = 'Spiegazione: ';
+
+        const explanationInput = document.createElement('input');
+        explanationInput.setAttribute('type', 'text');
+        explanationInput.setAttribute('id', 'explanation');
+        explanationInput.setAttribute('name', 'explanation');
+        explanationInput.setAttribute('class', 'form-control mb-3');
+        explanationInput.setAttribute('value',  exercise.explanation);
+
+        multipleChoiceContainer.appendChild(explanationLabel);
+        multipleChoiceContainer.appendChild(explanationInput);
+        multipleChoiceContainer.appendChild(document.createElement('br'));
+    }
+    else{
+
+        multipleChoiceContainer.innerHTML = ''; // Rimuove tutto il contenuto HTML all'interno dell'elemento 
+    }
+}
+
+function buildVeroFalso(exercise, bool){
+
+    var true_false_container = document.getElementById('true_false_container');
+    if( bool === true ){
+
+        const correctOptionLabel = document.createElement('label');
+        correctOptionLabel.setAttribute('for', 'correct_option');
+        correctOptionLabel.setAttribute('class', `form-label`);
+        correctOptionLabel.textContent = 'Opzione corretta: ';
+
+        const correctOptionInput = document.createElement('select');
+        correctOptionInput.setAttribute('id', 'correct_option');
+        correctOptionInput.setAttribute('name', 'correct_option');
+        correctOptionInput.setAttribute('class', 'form-select form-select-lg mb-3 rounded p-2');
+        correctOptionInput.setAttribute('value',  exercise.correct_option);
+        
+
+        const option1 = document.createElement('option');
+        option1.value = 'Vero';
+        option1.textContent = 'Vero';
+        correctOptionInput.appendChild(option1);
+
+        const option2 = document.createElement('option');
+        option2.value = 'Falso';
+        option2.textContent = 'Falso';
+        correctOptionInput.appendChild(option2);
+
+        true_false_container.appendChild(correctOptionLabel);
+        true_false_container.appendChild(document.createElement('br'));
+        true_false_container.appendChild(correctOptionInput);
+        true_false_container.appendChild(document.createElement('br'));
+
+
+        const explanationLabel = document.createElement('label');
+        explanationLabel.setAttribute('for', 'explanation');
+        explanationLabel.setAttribute('class', `form-label`);
+        explanationLabel.textContent = 'Spiegazione: ';
+
+        const explanationInput = document.createElement('input');
+        explanationInput.setAttribute('type', 'text');
+        explanationInput.setAttribute('id', 'explanation');
+        explanationInput.setAttribute('name', 'explanation');
+        explanationInput.setAttribute('class', 'form-control mb-3');
+        explanationInput.setAttribute('value',  exercise.explanation);
+
+        true_false_container.appendChild(explanationLabel);
+        true_false_container.appendChild(explanationInput);
+        true_false_container.appendChild(document.createElement('br'));
+
+    }
+    else{
+
+        true_false_container.innerHTML = '';
+    }
+
 }
 
 function editExercise(id) {
+
     // Trova l'esercizio corrispondente dall'array di esercizi
     var exercise = exercises.find(function(exercise) {
-
         return exercise.id == id;
     });
-    var editForm = document.getElementById("edit-exercise-form");
-    editForm.setAttribute("action", "http://127.0.0.1/exercises/edit-exercise/" + exercise.id);
 
+    var editForm = document.getElementById("edit-exercise-form");
+    editForm.setAttribute("action", "http://127.0.0.1/exercises/edit-exercise");
+    document.getElementById("primary").setAttribute('value', id);
+    
+    
     // Popola i campi del form con i dati dell'esercizio
     document.getElementById('edit-name').value = exercise.name;
     document.getElementById('edit-question').value = exercise.question;
     document.getElementById('score').value = exercise.score;
     document.getElementById('difficulty').value = exercise.difficulty;
     document.getElementById('subject').value = exercise.subject;
-    document.getElementById('type').value = exercise.type;
+    
+    if(exercise.type == "Risposta Aperta" ){
 
-    // Nascondi tutti i div degli specifici tipi di esercizio
-    document.getElementById('multiple_choice').style.display = 'none';
-    document.getElementById('true_false').style.display = 'none';
+        document.getElementById('type_open').setAttribute('selected', 'selected');
+        buildMultipleChoiceOptions(exercise, false);
+        buildVeroFalso(exercise, false);
 
-    // Mostra il div corretto in base al tipo di esercizio
-    if ( exercise.type === 'Risposta Multipla' ) {
+    }
+    else if( exercise.type == "Risposta Multipla"){
 
-        document.getElementById('correct_option').value = exercise.correct_option;
-        document.getElementById('multiple_choice').style.display = 'block';
-        document.getElementById('option1').value = exercise.option_1;
-        document.getElementById('option2').value = exercise.option_2;
-        document.getElementById('option3').value = exercise.option_3;
-        document.getElementById('option4').value = exercise.option_4;
-        document.getElementById('explanation_multiplo').value = exercise.explanation;
+        document.getElementById('type_closed').setAttribute('selected', 'selected');
+        buildMultipleChoiceOptions(exercise, false);
+        buildMultipleChoiceOptions(exercise, true);
+        buildVeroFalso(exercise, false);
+        //Costruisco il form a lui necessario.
+    }
+    else{
 
-    } 
-    else if ( exercise.type === 'Vero o Falso' ) {
+        document.getElementById('type_true').setAttribute('selected', 'selected');
 
-        document.getElementById('true_false').style.display = 'block';
+        buildMultipleChoiceOptions(exercise, false);
+        buildVeroFalso(exercise, false);
+        buildVeroFalso(exercise, true);
+        //Costrisco il form a lui necessario.
     }
 
-    // Mostra il div di modifica
-    document.getElementById('edit-dialog').style.display = 'block';
+    // Mostra il modale di modifica
+    $('#edit-dialog').modal('show');
 }
 
 function cancelEditExercise() {
 
-    // Chiudi la finestra di dialogo senza inviare il form
-    document.getElementById('edit-dialog').style.display = 'none';
+    $('#edit-dialog').modal('hide');
 }
 
 function updateExercise() {
     // Invia il form al server per l'aggiornamento
     document.getElementById('edit-exercise-form').submit();
 }
+
+
+type =  document.getElementById('type');
+type.addEventListener('change', function(){
+    
+    var id = document.getElementById('primary').value;
+    var exercise = exercises.find(function(exercise) {
+        return exercise.id == id;
+    });
+    
+    if( type.value === "Risposta Aperta" ){
+
+        buildMultipleChoiceOptions(exercise, false);
+        buildVeroFalso(exercise, false);
+    }
+    else if( type.value == "Risposta Multipla"){
+
+        buildMultipleChoiceOptions(exercise, false);
+        buildMultipleChoiceOptions(exercise, true);
+        buildVeroFalso(exercise, false);
+    }
+    else{
+
+        buildMultipleChoiceOptions(exercise, false);
+        buildVeroFalso(exercise, false);
+        buildVeroFalso(exercise, true);
+    }
+});
