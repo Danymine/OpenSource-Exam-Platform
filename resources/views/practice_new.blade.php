@@ -79,9 +79,9 @@
         @if(isset($newPractice))
             <div class="practice-info">
                 <h1>
-                    @if ($type === 'esame')
+                    @if ($type === 'Exam')
                         Esame generato
-                    @elseif ($type === 'esercitazione')
+                    @elseif ($type === 'Practice')
                         Esercitazione generata
                     @endif
                 </h1>
@@ -114,7 +114,7 @@
                     <h3>{{ $exercise->name }}</h3>
                     <p><strong>Domanda:</strong> {{ $exercise->question }}</p>
                     <!-- Accedi al custom_score attraverso la relazione pivot -->
-                    <p><strong>Punteggio:</strong> {{ $exercise->pivot->custom_score }}</p>
+                    <p><strong>Punteggio:</strong> {{ $exercise->score }}</p>
                     <!-- Altri dettagli dell'esercizio -->
                 </div>
             @endforeach

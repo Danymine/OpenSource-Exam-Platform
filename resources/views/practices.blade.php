@@ -300,9 +300,9 @@
 </head>
 <body>
     <h1>
-        @if ($type === 'esame')
+        @if ($type === 'Exam')
         Elenco degli Esami
-        @elseif ($type === 'esercitazione')
+        @elseif ($type === 'Practice')
         Elenco delle Esercitazioni
         @endif
     </h1>
@@ -392,7 +392,7 @@
         </div>
     </div>
 
-    <a href="#" id="newPracticeBtn" class="new-practice-button">Crea l'{{ $type }}</a>
+    <a href="#" id="newPracticeBtn" class="new-practice-button">Crea</a>
     
     <!--script apertura e chiusura sidenav-->
     <script>
@@ -408,7 +408,6 @@
     <!-- Script per il filtraggio delle pratiche e il reset dei filtri -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var modal = document.getElementById('filterModal');
             var applyBtn = document.getElementById('applyFiltersBtn');
             var resetBtn = document.getElementById('resetFiltersBtn'); // Seleziona il pulsante di reset
 
@@ -422,8 +421,8 @@
                 // Resetta il valore dei filtri a vuoto
                 document.getElementById('subjectFilter').value = '';
                 document.getElementById('difficultyFilter').value = '';
-                // Applica i filtri per visualizzare tutte le pratiche
-                applyFilters();
+                // Effettua una richiesta GET per resettare i filtri
+                window.location.href = '{{ route("practices.index", ["type" => $type]) }}';
             }
 
             // Funzione per il filtraggio delle pratiche
@@ -431,18 +430,20 @@
                 var subjectFilter = document.getElementById('subjectFilter').value;
                 var difficultyFilter = document.getElementById('difficultyFilter').value;
 
-                var practices = document.querySelectorAll('ul li');
+                // Costruisci l'URL con i filtri
+                var url = '{{ route("practices.index", ["type" => $type]) }}';
 
-                practices.forEach(function (practice) {
-                    var subject = practice.querySelector('.subject').textContent.trim();
+                // Aggiungi i filtri all'URL se non sono vuoti
+                if (subjectFilter !== '') {
+                    url += '?subject=' + subjectFilter;
+                }
 
-                    if ((subjectFilter === '' || subject === subjectFilter) &&
-                        (difficultyFilter === '' || practice.querySelector('.difficulty').textContent.trim() === difficultyFilter)) {
-                        practice.style.display = 'block';
-                    } else {
-                        practice.style.display = 'none';
-                    }
-                });
+                if (difficultyFilter !== '') {
+                    url += (subjectFilter !== '' ? '&' : '?') + 'difficulty=' + difficultyFilter;
+                }
+
+                // Esegui una richiesta GET all'URL con i filtri
+                window.location.href = url;
             }
         });
     </script>
@@ -479,5 +480,6 @@
             window.location.href = '{{ route("exercise.list", ['type' => $type]) }}';
         }
     </script>
+
 </body>
 </html>
