@@ -15,6 +15,7 @@ use Carbon\Carbon;
 
 class PracticeController extends Controller
 {
+    //Funzione interna di generazione Key.
     private function generateKey()
     {
         $alphabet = array_merge(range('a', 'z'), range('A', 'Z'));
@@ -40,6 +41,122 @@ class PracticeController extends Controller
         } while (!$found);
 
         return $key;
+    }
+
+    private function selectExercises($exercises, $targetScore, $selectedExercises = []) {
+        foreach ($exercises as $exercise) {
+            // Aggiungi l'esercizio corrente alla selezione
+            $selectedExercises[] = $exercise;
+    
+            // Calcola la somma dei punteggi degli esercizi selezionati
+            $selectedScore = collect($selectedExercises)->sum('score');
+    
+            // Se la somma dei punteggi è uguale al target, restituisci gli esercizi selezionati
+            if ($selectedScore == $targetScore) {
+                return $selectedExercises;
+            }
+    
+            // Se la somma dei punteggi è inferiore al target, seleziona ulteriori esercizi
+            if ($selectedScore < $targetScore) {
+                $remainingExercises = $exercises->diff($selectedExercises);
+                $result = selectExercises($remainingExercises, $targetScore, $selectedExercises);
+                if ($result) {
+                    return $result;
+                }
+            }
+    
+            // Se la somma dei punteggi è maggiore del target, rimuovi l'ultimo esercizio aggiunto e continua
+            array_pop($selectedExercises);
+        }
+    
+        // Se non è possibile trovare una combinazione di esercizi, restituisci null
+        return null;
+    }
+
+    //Generazione automatica.
+    public function  create_automation(){
+        
+        return view('automation_create');
+    }
+
+    public function save_automation(Request $request){
+
+        
+        $validatedData = $request->validate([
+            'title' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
+            'subject' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
+            'description' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:512',
+            'time' => 'nullable|numeric|min:1',
+            'practice_date' => [
+                'required',
+                'date',
+                'after_or_equal:' . now()->toDateString(),
+            ],
+            'feedback' => 'nullable|numeric|min:0|max:1',
+            'randomize_questions' => 'required|numeric|min:0|max:1',
+            'difficulty' => 'required|string|in:Bassa,Media,Alta',
+            'total_score' => 'required|numeric|min:1|max:1000',
+            'type' => 'required|string|in:exame,practice',
+        ]);
+
+        $exerciseQuery = Auth::user()->exercises()
+            ->when($validatedData["feedback"] == 1, function ($query) {
+                return $query->whereIn('type', ['Risposta Multipla', 'Vero o Falso']);
+            });
+    
+
+        $exerciseQuery->where('difficulty', $validatedData['difficulty']);
+        $exerciseQuery->where('subject', $validatedData['subject']);
+
+        $exercises = $exerciseQuery->get();
+
+        if( !$exercises->isEmpty() ){
+
+            //Ora che sono qui ho x esercizi che rispettano quei criteri non resta che scegliere quelli adatti a raggiungere lo score che ha inserito. (Se possibile se non è possibile restituiamo errore)
+            $totalScoreFiltered = $exercises->sum('score');
+            if( $totalScoreFiltered >= $validatedData["total_score"]){
+
+                //Allora posso andare avanti nella creazione ora sono sicuro di poterlo soddisfare in qualche modo.
+                $selectedExercises = $this->selectExercises($exercises, $validatedData["total_score"]);
+                if ($selectedExercises) {
+
+                    date_default_timezone_set('Europe/Rome');
+                    $generatedDate = now();
+                    $key = $this->generateKey();
+                
+                    $newPractice = new Practice($validatedData);
+
+                    $newPractice->user_id = Auth::user()->id;
+                    $newPractice->key = $this->generateKey();
+                    $newPractice->allowed = 0;
+                    $newPractice->public = 0;
+
+                    $newPractice->save();
+                    
+                    foreach ($selectedExercises as $exercise) {
+
+                        $newPractice->exercises()->attach($exercise->id);
+                    }
+
+                    return "Successo!";
+
+                } 
+                else {
+
+                    return back()->withErrors('Non è possibile formare un test con lo score desiderato con gli esercizi disponibili')->withInput();
+                }
+
+            }
+            else{
+
+                return back()->withErrors('Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è: ' . $totalScoreFiltered)->withInput();
+            }
+        }
+        else{
+
+            return back()->withErrors('Non hai esercizi adatti alla creazione')->withInput();
+        }
+                
     }
 
     public function examIndex() 
@@ -84,14 +201,198 @@ class PracticeController extends Controller
         ]);
     } 
 
-    public function create($type = 'default')
+    /* NOTE: INIZIO AREA ESAME
+    ///
+    ///
+    ///
+    */
+    public function create_exame()
     {
-        $user = Auth::user(); // Supponendo che tu abbia un sistema di autenticazione e che stia utilizzando Laravel
-        $exercises = $user->exercises()->get();
-        $subjects = $user->exercises()->distinct('subject')->pluck('subject');
+        return view('exame.exame_create1');
+    }
+
+    public function create_exame2()
+    {
+        $exercises = Exercise::where('user_id', Auth::user()->id)->get();
+        return view('exame.exame_create2', ['exercises' => $exercises]);
+    }
+
+    public function create_exame3()
+    {
+        return view('exame.exame_create3');
+    }
+
+    public function store_exame(Request $request){
+
+        $validatedData = $request->validate([
+            'title' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
+            'subject' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
+            'description' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:512',
+        ]);
+
+        $request->session()->put('exame_step1', $validatedData);
+
+        return redirect()->route('exame_step2');
+
+    }
+
+    public function store_exame2(Request $request){
+
+        $validatedData = $request->validate([
+            'exercise' => 'array|required',
+            'total_score' => 'required|numeric|min:1'
+        ]);
+        $exameStep1 = session()->get('exame_step1');
+        
+        $exameStep2 = array_merge($exameStep1, $validatedData);
+        $request->session()->put('exame_step1', $exameStep2);
+
+        return redirect()->route('exame_step3');
+    }
+
+    public function save(Request $request){
+
+        $exameStep1 = session()->get('exame_step1');
+        $validatedData = $request->validate([
+            'time' => 'nullable|numeric|min:1',
+            'practice_date' => [
+                'required',
+                'date',
+                'after_or_equal:' . now()->toDateString(),
+            ],
+            'feedback' => 'nullable|numeric|min:0|max:1',
+            'randomize_questions' => 'required|numeric|min:0|max:1',
+            'difficulty' => 'required|string|in:Bassa,Media,Alta'
+        ]);
+
+        //$request->session()->forget('exame_step1');
+        $date = array_merge($exameStep1, $validatedData);
+        $practice = new Practice($date);
+        
+        $practice->user_id = Auth::user()->id;
+        $practice->key = $this->generateKey();
+        $practice->allowed = 0;
+        $practice->type = "exam";
+        $practice->public = 0;
+
+        $practice->save();
+
+        for( $i = 0; $i < count($date["exercise"]); $i++ ){
+
+            $practice->exercises()->attach($date["exercise"][$i]);
+        }
+
+        return "L'esame è stato creato con successo";
+    }
+
+    public function exit_create(){
+
+        if(session()->has('exercise_step1')){
+
+            session()->forget('exercise_step1');
+        }
     
-        return view('practice_create', ['exercises' => $exercises, 'subjects' => $subjects, 'type' => $type]);
-    } 
+        return redirect()->route('ciao');
+    }
+
+    /* NOTE: INIZIO AREA ESERCITAZIONI
+    ///
+    ///
+    ///
+    */
+
+    public function create_practice()
+    {
+        return view('practice.practice_create1');
+    }
+
+    public function create_practice2()
+    {
+        $exercises = Exercise::where('user_id', Auth::user()->id)->get();
+        return view('practice.practice_create2', ['exercises' => $exercises]);
+    }
+
+    public function create_practicee3()
+    {
+        return view('practice.practice_create3');
+    }
+
+    public function store_practice(Request $request){
+
+        $validatedData = $request->validate([
+            'title' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
+            'subject' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
+            'description' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:512',
+        ]);
+
+        $request->session()->put('exame_step1', $validatedData);
+
+        return redirect()->route('practice_step2');
+
+    }
+
+    public function store_practice2(Request $request){
+
+        $validatedData = $request->validate([
+            'exercise' => 'array|required',
+            'total_score' => 'required|numeric|min:1'
+        ]);
+        $exameStep1 = session()->get('exame_step1');
+        
+        $exameStep2 = array_merge($exameStep1, $validatedData);
+        $request->session()->put('exame_step1', $exameStep2);
+
+        return redirect()->route('practice_step3');
+    }
+
+    public function save_practice(Request $request){
+
+        $exameStep1 = session()->get('exame_step1');
+        $validatedData = $request->validate([
+            'time' => 'nullable|numeric|min:1',
+            'practice_date' => [
+                'required',
+                'date',
+                'after_or_equal:' . now()->toDateString(),
+            ],
+            'feedback' => 'nullable|numeric|min:0|max:1',
+            'randomize_questions' => 'required|numeric|min:0|max:1',
+            'difficulty' => 'required|string|in:Bassa,Media,Alta'
+        ]);
+
+        $request->session()->forget('exame_step1');
+        $date = array_merge($exameStep1, $validatedData);
+        $practice = new Practice($date);
+        
+        $practice->user_id = Auth::user()->id;
+        $practice->key = $this->generateKey();
+        $practice->allowed = 0;
+        $practice->type = "practice";
+        $practice->public = 0;
+
+        $practice->save();
+
+        for( $i = 0; $i < count($date["exercise"]); $i++ ){
+
+            $practice->exercises()->attach($date["exercise"][$i]);
+        }
+
+        return "L'esercitazione è stato creato con successo";
+    }
+
+    public function exit_create_practice(){
+
+        if(session()->has('exercise_step1')){
+
+            session()->forget('exercise_step1');
+        }
+    
+        return redirect()->route('ciao');
+    }
+
+
+    //DA VEDERE SE TENERE O MENO
+
     
     public function generatePracticeWithFilters(Request $request, $type)
     {

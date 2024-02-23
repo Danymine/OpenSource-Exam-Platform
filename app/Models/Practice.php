@@ -28,6 +28,7 @@ class Practice extends Model
         'practice_date',
         'type',
         'public',
+        'time',
     ];
 
     public function user() : BelongsTo  //Relazione crea fra user e practice 
@@ -39,7 +40,7 @@ class Practice extends Model
     public function exercises() : BelongsToMany //L'esercizio compone practice relazione N a N (Vedi Schema)
     {
 
-        return $this->belongsToMany(Exercise::class)->withPivot('custom_score');
+        return $this->belongsToMany(Exercise::class);
     }
 
     public function userwaiting() : BelongsToMany   //Lo studente partecipa all'esame. Relazione N a N fra User e Practice. Useremo questa relazione come waiting_rooms
