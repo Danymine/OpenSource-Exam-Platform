@@ -31,10 +31,10 @@
                     </li>
                 @endif
                 <li class="nav-item hide">
-                    <a class="nav-link" href="{{ route('practices.index') }}">{{ __("Esercitazioni") }}</a>
+                    <a class="nav-link">{{ __("Esercitazioni") }}</a>
                 </li>
                 <li class="nav-item hide">
-                    <a class="nav-link" href="{{ route('practices.index', ['type' => 'Esami']) }}">Esami</a>
+                    <a class="nav-link">Esami</a>
                 </li>
                 <hr class="menu-divider"/>
                 <li class="nav-item hide">
@@ -86,10 +86,10 @@
                             </li>
                         @endif
                         <li>
-                            <a class="nav-link" href="{{ route('practices.index', ['type' => 'Esercitazioni']) }}">Esercitazioni</a>
+                            <a class="nav-link">Esercitazioni</a>
                         </li>
                         <li class="nav-link">
-                            <a class="nav-link" href="{{ route('practices.index', ['type' => 'Esami']) }}">Esami</a>
+                            <a class="nav-link">Esami</a>
                         </li>
                         <hr class="menu-divider"/>
                         <li class="nav-link">

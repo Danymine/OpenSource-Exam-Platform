@@ -24,7 +24,7 @@
         <div class="small-container">
             <div class="circle-container">
                 <div class="circle"><i class="fas fa-check-circle text-success"></i></div>
-                <div class="circle active-circl">2</div>
+                <div class="circle active-circle">2</div>
                 <div class="circle">3</div>
                 <div class="connector-line"></div>
                 <div class="connector-line"></div>

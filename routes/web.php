@@ -108,20 +108,20 @@ Route::middleware('auth', 'role')->group(function (){
         Route::get('/', [ExerciseController::class, 'showAllExercises'])->name('showAllExercises');
 
         // Crea un nuovo esercizio
-            //Step - 1
-            Route::get('/create-first', [ExerciseController::class, 'create'])->name('exercise.step1');
-            Route::post('/create-first', [ExerciseController::class, 'store'])->name("create_step_1");
+        //Step - 1
+        Route::get('/create-first', [ExerciseController::class, 'create'])->name('exercise.step1');
+        Route::post('/create-first', [ExerciseController::class, 'store'])->name("create_step_1");
 
-            //Step - 2
-            Route::get('/create-second', [ExerciseController::class, 'create2'])->name('exercise.step2')->middleware('checkLocalStorage');
-            Route::post('/create-second', [ExerciseController::class, 'store2'])->name("create_step_2");
+        //Step - 2
+        Route::get('/create-second', [ExerciseController::class, 'create2'])->name('exercise.step2')->middleware('checkLocalStorage');
+        Route::post('/create-second', [ExerciseController::class, 'store2'])->name("create_step_2");
 
-            //Step - 3
-            Route::get('/create-third', [ExerciseController::class, 'create3'])->name('exercise.step3')->middleware('checkStep');
-            Route::post('/save-exercise', [ExerciseController::class, 'save'])->name("save");
+        //Step - 3
+        Route::get('/create-third', [ExerciseController::class, 'create3'])->name('exercise.step3')->middleware('checkStep');
+        Route::post('/save-exercise', [ExerciseController::class, 'save'])->name("save");
 
-            //Exit Process
-            Route::get('/exit', [ExerciseController::class, 'exit_create'])->name('exit_process_create');
+        //Exit Process
+        Route::get('/exit', [ExerciseController::class, 'exit_create'])->name('exit_process_create');
 
         //Modifica esercizio
         Route::post('/edit-exercise', [ExerciseController::class, 'update'])->name('editExercise');
@@ -132,30 +132,56 @@ Route::middleware('auth', 'role')->group(function (){
 
     });
 
-    //rotte per le esercitazioni 
-    Route::prefix('practices')->group(function () {
-        Route::get('/{type}', [PracticeController::class, 'index'])->name('practices.index');
+   
+    Route::prefix('exam')->group(function () {
         
-        Route::get('/create/{type}', [PracticeController::class, 'create'])->name('practices.create');
-        Route::post('/new/{type}', [PracticeController::class, 'generatePracticeWithFilters'])->name('practices.new');
-        
-        Route::get('/exercise-list/{type}', [PracticeController::class, 'exerciseList'])->name('exercise.list');
-        Route::post('/create-exercise-set/{type}', [PracticeController::class, 'createExerciseSet'])->name('createExerciseSet');
-        
-        Route::get('/{type}/{practice}', [PracticeController::class, 'show'])->name('practices.show');
+        //Processo di Creazione Manuale
+        //Step - 1 Creazione Esame
+        Route::get('/create-first', [PracticeController::class, 'create_exame'])->name('exame.step1');
+        Route::post('/create-first', [PracticeController::class, 'store_exame'])->name('create_exame_step1');
 
-        Route::get('/{type}/{practice}/edit', [PracticeController::class, 'edit'])->name('practices.edit');
-        Route::put('/{type}/{practice}/updated', [PracticeController::class, 'update'])->name('practices.update');
+        //Step - 2 Creazione Esame
+        Route::get('/create-second', [PracticeController::class, 'create_exame2'])->name('exame_step2');
+        Route::post('/create-second', [PracticeController::class, 'store_exame2'])->name('create_exame_step2');
 
-        Route::delete('/{type}/{practice}', [PracticeController::class, 'destroy'])->name('practices.destroy');
-        Route::get('/{type}/{practice}/duplicate', [PracticeController::class, 'duplicate'])->name('practices.duplicate');
+        //Step - 3 Creazione Esame
+        Route::get('/create-third', [PracticeController::class, 'create_exame3'])->name('exame_step3');
+        Route::post('/save-practices', [PracticeController::class, 'save'])->name('save_exame');
+
+        //Exit Process
+        Route::get('/exit', [PracticeController::class, 'exit_create'])->name('exit_exame_process');
+        
     });
+
+    Route::prefix('practice')->group(function () {
+        
+        
+        Route::get('/create-first', [PracticeController::class, 'create_practice'])->name('practice.step1');
+        Route::post('/create-first', [PracticeController::class, 'store_practice'])->name('create_practice_step1');
+
+        Route::get('/create-second', [PracticeController::class, 'create_practice2'])->name('practice_step2');
+        Route::post('/create-second', [PracticeController::class, 'store_practice2'])->name('create_practice_step2');
+
+        Route::get('/create-third', [PracticeController::class, 'create_practice3'])->name('practice_step3');
+        Route::post('/save-practices', [PracticeController::class, 'save_practice'])->name('save_practice');
+
+        //Exit Process
+        Route::get('/exit', [PracticeController::class, 'exit_create_practice'])->name('exit_practice_process');
+
+    });
+
+    //Creazione Auotmatica.
+    Route::get('/create-automation', [PracticeController::class, 'create_automation'])->name('create_automation');
+    Route::post('/save-automation', [PracticeController::class, 'save_automation'])->name('save_automation');  
+
 });
-    Route::prefix('admin')->group(function () {
-        Route::get('/richiedi-assistenza', [RequestController::class, 'showAssistanceRequestForm'])->name('createAssistanceRequest');
-        Route::post('/richiedi-assistenza', [RequestController::class, 'createAssistanceRequest'])->name('storeAssistanceRequest'); 
-        Route::get('/admin/requests', [AdminRequestController::class, 'index'])->name('admin.requests.index');
-    });
+
+
+Route::prefix('admin')->group(function () {
+    Route::get('/richiedi-assistenza', [RequestController::class, 'showAssistanceRequestForm'])->name('createAssistanceRequest');
+    Route::post('/richiedi-assistenza', [RequestController::class, 'createAssistanceRequest'])->name('storeAssistanceRequest'); 
+    Route::get('/admin/requests', [AdminRequestController::class, 'index'])->name('admin.requests.index');
+});
 
 
     

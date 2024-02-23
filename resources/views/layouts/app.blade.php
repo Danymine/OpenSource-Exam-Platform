@@ -288,6 +288,7 @@
                 max-width: 400px; /* Larghezza massima del container interno */
                 margin: 0 auto; /* Centrare il container */
             }
+
         </style>
     </head>
     <body>
