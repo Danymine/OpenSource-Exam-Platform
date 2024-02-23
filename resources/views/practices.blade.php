@@ -300,9 +300,9 @@
 </head>
 <body>
     <h1>
-        @if ($type === 'esame')
+        @if ($type === 'Exam')
         Elenco degli Esami
-        @elseif ($type === 'esercitazione')
+        @elseif ($type === 'Practice')
         Elenco delle Esercitazioni
         @endif
     </h1>
@@ -392,7 +392,7 @@
         </div>
     </div>
 
-    <a href="#" id="newPracticeBtn" class="new-practice-button">Crea l'{{ $type }}</a>
+    <a href="#" id="newPracticeBtn" class="new-practice-button">Crea</a>
     
     <!--script apertura e chiusura sidenav-->
     <script>
@@ -480,5 +480,6 @@
             window.location.href = '{{ route("exercise.list", ['type' => $type]) }}';
         }
     </script>
+
 </body>
 </html>

@@ -5,136 +5,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifica</title>
     <style>
-    body {
-        font-family: 'Arial', sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
-        color: #333;
-    }
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
 
-    .container {
-        max-width: 95%;
-        margin: 20px auto;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+        .container {
+            max-width: 95%;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-    h1, h2, h3 {
-        color: #333;
-    }
+        h1, h2, h3 {
+            color: #333;
+        }
 
-    form {
-        overflow: hidden;
-    }
+        form {
+            overflow: hidden;
+        }
 
-    .column {
-        float: left;
-        box-sizing: border-box;
-    }
+        .column {
+            float: left;
+            box-sizing: border-box;
+        }
 
-    .column.left {
-        width: 20%;
-        margin-right: 20px;
-    }
+        .column.left {
+            width: 20%;
+            margin-right: 20px;
+        }
 
-    .column.middle {
-        width: 35%;
-        margin-right: 20px;
-        overflow-y: auto; 
-        height: calc(100vh - 80px);
-    }
+        .column.middle {
+            width: 35%;
+            margin-right: 20px;
+            overflow-y: auto; 
+            height: calc(100vh - 80px);
+        }
 
-    .column.right {
-        width: 35%;
-    }
+        .column.right {
+            width: 35%;
+        }
 
-    .column.right .exercise-list-wrapper {
-        max-height: calc(100vh - 200px); 
-        overflow-y: auto; 
-        margin-top: 20px; 
-    }
+        .column.right .exercise-list-wrapper {
+            max-height: calc(100vh - 200px); 
+            overflow-y: auto; 
+            margin-top: 20px; 
+        }
 
-    label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
 
-    input, textarea, select {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 10px;
-        box-sizing: border-box;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 16px;
-    }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
 
-    button {
-        background-color: #4caf50;
-        color: #fff;
-        padding: 10px 15px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-    }
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
 
-    button:hover {
-        background-color: #45a049;
-    }
+        button:hover {
+            background-color: #45a049;
+        }
 
-    .alert {
-        padding: 15px;
-        background-color: #4caf50;
-        color: #fff;
-        margin-bottom: 15px;
-        border-radius: 4px;
-    }
+        .alert {
+            padding: 15px;
+            background-color: #4caf50;
+            color: #fff;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
 
-    .section {
-        margin-bottom: 20px;
-    }
+        .section {
+            margin-bottom: 20px;
+        }
 
-    .form-group {
-        margin-bottom: 15px;
-    }
+        .form-group {
+            margin-bottom: 15px;
+        }
 
-    ul {
-        list-style: none;
-        padding: 0;
-    }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
 
-    li.exercise {
-        margin-bottom: 10px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        overflow: hidden;
-        background-color: #fff;
-    }
+        li.exercise {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: #fff;
+        }
 
-    li.exercise div {
-        overflow: hidden;
-    }
+        li.exercise div {
+            overflow: hidden;
+        }
 
-    li.exercise div h3 {
-        margin-top: 0;
-        color: #333;
-    }
+        li.exercise div h3 {
+            margin-top: 0;
+            color: #333;
+        }
 
-    li.exercise div strong {
-        display: block;
-        margin-bottom: 5px;
-    }
+        li.exercise div strong {
+            display: block;
+            margin-bottom: 5px;
+        }
 
-    li.exercise div input[type="checkbox"] {
-        float: right;
-    }
-</style>
+        li.exercise div input[type="checkbox"] {
+            float: right;
+        }
+    </style>
 </head>
 <body>
     <div class="container">

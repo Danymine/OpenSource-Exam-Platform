@@ -178,15 +178,6 @@
             <label for="max_questions">Numero Massimo di Domande:</label>
             <input type="number" id="max_questions" name="max_questions" value="{{ old('max_questions') }}" required>
         </div>
-
-        <div class="form-group">
-            <label for="max_score">Punteggio Massimo:</label>
-            <select id="max_score" name="max_score" required>
-                <option value="10">10</option>
-                <option value="30">30</option>
-                <option value="100">100</option>
-            </select>
-        </div>
         
         <div class="form-group">
             <label for="feedback">Feedback Automatico:</label>

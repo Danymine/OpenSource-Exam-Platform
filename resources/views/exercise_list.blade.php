@@ -187,16 +187,7 @@
                         <label for="description">Descrizione dell'{{ $type }}:</label>
                         <textarea id="description" name="description" rows="4" required>{{ old('description') }}</textarea>
                     </div>
-
-                    <div class="form-group">
-                        <label for="max_score">Punteggio Massimo:</label>
-                        <select id="max_score" name="max_score" value="{{ old('max_score') }}" required>
-                            <option value="10">10</option>
-                            <option value="30">30</option>
-                            <option value="100">100</option>
-                        </select>
-                    </div>
-
+                    
                     <div class="form-group">
                         <label for="feedback">Feedback Automatico:</label>
                         <input type="checkbox" id="feedback" name="feedback" {{ old('feedback') ? 'checked' : '' }}>

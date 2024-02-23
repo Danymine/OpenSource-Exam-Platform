@@ -87,7 +87,6 @@ class PracticeController extends Controller
             'difficulty' => 'string',
             'subject' => 'string',
             'max_questions' => 'nullable|integer|min:1',
-            'max_score' => 'nullable|integer|min:1',
             'practice_date' => [
                 'nullable',
                 'date',
@@ -100,7 +99,6 @@ class PracticeController extends Controller
         $difficulty = $validatedData['difficulty'];
         $subject = $validatedData['subject'];
         $maxQuestions = $validatedData['max_questions'];
-        $maxScore = $validatedData['max_score'];
         $practice_date = $validatedData['practice_date'] ?? null;
     
         $feedbackEnabled = $request->has('feedback');
@@ -110,15 +108,15 @@ class PracticeController extends Controller
         $practice_date = $validatedData['practice_date'] ?? now()->toDateString();
     
         $exerciseQuery = Auth::user()->exercises(); // Ottiene gli esercizi dell'utente corrente
-
+    
         if ($difficulty) {
             $exerciseQuery->where('difficulty', $difficulty);
         }
-        
+    
         if ($subject) {
             $exerciseQuery->where('subject', $subject);
         }
-        
+    
         // Ottieni gli esercizi filtrati
         $filteredExercises = $exerciseQuery->get();
     
@@ -127,15 +125,12 @@ class PracticeController extends Controller
             $filteredExercises = $filteredExercises->take($maxQuestions);
         }
     
-        // Calcola la somma degli score dei filtri
+        // Calcola la somma degli score degli esercizi filtrati
         $totalScoreFiltered = $filteredExercises->sum('score');
     
         // Ottieni la data corrente per il fuso orario Roma. Questo è da cambiare nel momento in cui aggiungiamo l'internazionalizzazione.
         date_default_timezone_set('Europe/Rome');
         $generatedDate = now();
-    
-        // Ottieni il massimo tra max_score e il totale dei punteggi degli esercizi filtrati
-        $maxScore = $maxScore ?? $totalScoreFiltered;
     
         // Genera la chiave (presumo che tu abbia già implementato questa logica)
         $key = $this->generateKey();
@@ -145,7 +140,7 @@ class PracticeController extends Controller
             'description' => $description,
             'difficulty' => $difficulty,
             'subject' => $subject,
-            'total_score' => $maxScore,
+            'total_score' => $totalScoreFiltered, // Assegna la somma dei punteggi degli esercizi filtrati
             'key' => $key,
             'user_id' => Auth::id(),
             'allowed' => 0,
@@ -158,20 +153,15 @@ class PracticeController extends Controller
         ]);
     
         $newPractice->save();
-    
-        // Modifica dei punteggi personalizzati degli esercizi nella pratica
+        
+        // Associa gli esercizi alla pratica
         foreach ($filteredExercises as $exercise) {
-            // Calcola il punteggio proporzionato per ciascun esercizio rispetto al max_score
-            $customScore = round(($exercise->score / $totalScoreFiltered) * $maxScore, 2);
-            $newPractice->exercises()->attach($exercise->id, ['custom_score' => $customScore]);
-        }               
-    
-        // Recupero gli esercizi associati con i loro punteggi personalizzati
-        $filteredExercisesWithCustomScores = $newPractice->exercises()->withPivot('custom_score')->get();
+            $newPractice->exercises()->attach($exercise->id);
+        }
     
         return view('practice_new', [
             'newPractice' => $newPractice,
-            'filteredExercises' => $filteredExercisesWithCustomScores,
+            'filteredExercises' => $filteredExercises,
             'type' => $type, // Passa il parametro $type alla vista
         ]);
     }       
@@ -199,14 +189,11 @@ class PracticeController extends Controller
 
     public function createExerciseSet(Request $request, $type)
     {
-
-        // Validazione del form, se necessario
         $validatedData = $request->validate([
             'title' => 'required|string|regex:/^[A-Za-z0-9\s\-\'\?]+$/|max:255',
             'description' => 'required|string|regex:/^[A-Za-z0-9\s\-\'\?]+$/|max:255',
             'selected_exercises' => 'required|array',
             'selected_exercises.*' => 'integer|min:1',
-            'max_score' => 'nullable|integer|in:10,30,100',
             'practice_date' => [
                 'nullable',
                 'date',
@@ -216,41 +203,25 @@ class PracticeController extends Controller
     
         $title = $validatedData['title'];
         $description = $validatedData['description'];
-        $maxScore = $validatedData['max_score'];
-        $practice_date = $validatedData['practice_date'] ?? null;
+        $practice_date = $validatedData['practice_date'] ?? now()->toDateString();
     
         $feedbackEnabled = $request->has('feedback');
         $randomizeQuestions = $request->has('randomize');
     
-        // Impostiamo la data di pratica come la data odierna se non specificata
-        $practice_date = $validatedData['practice_date'] ?? now()->toDateString();
-    
-        // Ottieni gli ID degli esercizi selezionati dal form
         $selectedExerciseIds = $request->input('selected_exercises');
-
-        // Ottieni la data corrente per il fuso orario Roma. Questo è da cambiare nel momento in cui aggiungiamo l'internazionalizzazione.
+    
         date_default_timezone_set('Europe/Rome');
         $generatedDate = now();
     
-        // Ottieni gli esercizi selezionati dal database
         $selectedExercises = Exercise::whereIn('id', $selectedExerciseIds)->get();
     
-        // Ottieni la difficoltà da ciascun esercizio e stampala
-        foreach ($selectedExercises as $exercise) {
-            $difficulty = $exercise->difficulty;
-            // Ora puoi utilizzare $difficulty come stringa
-        }
-    
-        // Calcola la somma degli score dei filtri
+        // Calcola la somma degli score degli esercizi selezionati
         $totalScoreSelected = $selectedExercises->sum('score');
     
-        // Ottieni il massimo tra max_score e il totale dei punteggi degli esercizi selezionati
-        $maxScore = $maxScore ?? $totalScoreSelected;
-    
-        // Assegna la materia comune a tutti gli esercizi selezionati
+        // Trova la difficoltà e la materia comune tra gli esercizi selezionati
+        $difficulty = $selectedExercises->first()->difficulty;
         $commonSubject = $selectedExercises->first()->subject;
     
-        // Genera la chiave (presumo che tu abbia già implementato questa logica)
         $key = $this->generateKey();
     
         $newPractice = new Practice([
@@ -258,9 +229,9 @@ class PracticeController extends Controller
             'description' => $description,
             'difficulty' => $difficulty,
             'subject' => $commonSubject,
-            'total_score' => $maxScore,
+            'total_score' => $totalScoreSelected, // Imposta il punteggio totale come la somma degli score degli esercizi selezionati
             'key' => $key,
-            'user_id' => Auth::id(), // Utilizza Auth::id() per ottenere l'ID dell'utente autenticato
+            'user_id' => Auth::id(),
             'allowed' => 0,
             'feedback_enabled' => $feedbackEnabled,
             'randomize_questions' => $randomizeQuestions,
@@ -268,27 +239,15 @@ class PracticeController extends Controller
             'practice_date' => $practice_date,
             'type' => $type,
             'public' => 0,
-        ]); 
+        ]);
     
         $newPractice->save();
     
-        // Modifica dei punteggi personalizzati degli esercizi nella pratica
-        foreach ($selectedExercises as $exercise) {
-            // Calcola il punteggio proporzionato per ciascun esercizio rispetto al max_score
-            $customScore = round(($exercise->score / $totalScoreSelected) * $maxScore, 2);
-            $newPractice->exercises()->attach($exercise->id, ['custom_score' => $customScore]);
-        }
-    
-        // Recupero gli esercizi associati con i loro punteggi personalizzati
-        $selectedExercisesWithCustomScores = $newPractice->exercises()->withPivot('custom_score')->get();
-    
         return view('practice_new', [
             'newPractice' => $newPractice,
-            'selectedExercisesWithCustomScores' => $selectedExercisesWithCustomScores,
             'type' => $type,
         ]);
-        
-    }
+    }    
 
     public function show($type, Practice $practice)
     {
@@ -315,6 +274,7 @@ class PracticeController extends Controller
         // Otteni tutte le subject dagli esercizi presenti nel database
         $allSubjects = Exercise::distinct()->pluck('subject')->toArray();
         $allTypes = Exercise::distinct()->pluck('type')->toArray();
+        
 
         // Softdelete la pratica originale
         $practice->delete();
@@ -421,11 +381,7 @@ class PracticeController extends Controller
     {
         $practice = Practice::withTrashed()->findOrFail($id);
 
-        // Dissocia gli esercizi collegati a questa pratica
-        $practice->exercises()->detach();
-
         if ($practice->trashed()) {
-            
             // Se la pratica è già "soft deleted", forza la cancellazione definitiva
             $practice->forceDelete();
         } else {

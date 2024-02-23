@@ -46,7 +46,7 @@ class TestSeeder extends Seeder
     {
         $possibleTotalScores = [10, 30, 100];
         $difficulties = ['Alta', 'Media', 'Bassa'];
-        $type = ['esame', 'esercitazione'];
+        $type = ['Exam', 'Practice'];
     
         // Ottenere un elenco di materie uniche dalla tabella exercises
         $subjects = Exercise::pluck('subject')->unique()->toArray();
