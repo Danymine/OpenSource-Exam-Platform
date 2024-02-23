@@ -83,17 +83,33 @@ class UserController extends Controller
         return redirect()->route('users-list');
     }
     public function showUserListFromDb()
-{
-    $users = User::all();
-    return view('user-list', compact('users'));
-}
+    {
+        $users = User::all();
+        return view('user-list', compact('users'));
+    }
 
-public function search(Request $request)
-{
-    $email = $request->input('email');
-    $users = User::where('email', 'like', "%$email%")->get();
+    public function search(Request $request)
+    {
+        $email = $request->input('email');
+        $users = User::where('email', 'like', "%$email%")->get();
 
-    return view('user-list', ['users' => $users]);
-}
+        return view('user-list', ['users' => $users]);
+    }
+
+    public function destroy_account(User $user){
+
+        if( Auth::user()->id == $user->id ){
+
+            $user->delete();
+            Auth::logout();
+
+            // Reindirizza l'utente alla home
+            return redirect()->route('ciao');
+        }
+        else{
+
+            return back()->withErrors('msg',"Non puoi cancellare questo account.");
+        }
+    }
 
 }

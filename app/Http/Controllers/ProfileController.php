@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -24,19 +25,55 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
+
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-    
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $validatedData = $request->validated();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Se è stata inviata un'immagine
+        if ($request->hasFile('icon_profile')) {
+
+            $file = $request->file('icon_profile');
+
+            // Verifica se ci sono errori durante il caricamento del file
+            if ($file->getError() == UPLOAD_ERR_OK) {
+
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $location = 'uploads';
+
+                $user = $request->user();
+
+                if ($user->img_profile) {
+
+                    unlink($user->img_profile);
+                }
+
+                $file->move(public_path($location), $filename);
+
+                $user->img_profile = $location . '/' . $filename;
+                $user->save();
+
+            } else {
+
+                return back()->withError('msg', "Problemi con il file");
+            }
         }
 
-        $request->user()->save();
+        $user->fill($validatedData);
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        if ($user->isDirty('email')) {
+            
+            $user->email_verified_at = null;
+        }
+
+        // Salva le modifiche
+        $user->save();
+
+        // Redirect alla pagina di modifica del profilo con un messaggio di successo
+        return redirect()->route('profile.edit')->with('status', 'profile-updated');
     }
+
 
     /**
      * Delete the user's account.

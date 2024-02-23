@@ -35,13 +35,13 @@ Route::get('/errore2', function (){
 
 //Rotta per raggiungere il sito EBBASTA
 Route::get('/', function () {
-    return view('welcome');
+    return view('navigation.welcome');
 })->name('ciao');
 
 //Rotta per raggiungere la propria dashboard questa si occupera di fornire SOLO la dashboard visibile al tipo di utente che la richiede
 Route::get('/dashboard', function () {
 
-    return view('dashboard');
+    return view('navigation.dashboard');
 
 })->middleware(['auth','verified'])->name('dashboard'); //Richiede il passaggio da due middleware Auth e Verified (Da approfondire Verified)
 //Questa rotta va bene sia per studenti che per il docente che per l'amministratore nel caso.
@@ -103,22 +103,32 @@ Route::middleware('auth', 'role')->group(function (){
 
     // Rotte per gli esercizi
     Route::prefix('exercises')->group(function () {
+
         // Mostra tutti gli esercizi
-        Route::get('/esercizi_biblioteca', [ExerciseController::class, 'showAllExercises'])->name('showAllExercises');
+        Route::get('/', [ExerciseController::class, 'showAllExercises'])->name('showAllExercises');
 
-        
-        
         // Crea un nuovo esercizio
-        Route::get('/create', [ExerciseController::class, 'create']);
+            //Step - 1
+            Route::get('/create-first', [ExerciseController::class, 'create'])->name('exercise.step1');
+            Route::post('/create-first', [ExerciseController::class, 'store'])->name("create_step_1");
 
-        Route::post('/create', [ExerciseController::class, 'store'])->name("exercises.store");
+            //Step - 2
+            Route::get('/create-second', [ExerciseController::class, 'create2'])->name('exercise.step2')->middleware('checkLocalStorage');
+            Route::post('/create-second', [ExerciseController::class, 'store2'])->name("create_step_2");
+
+            //Step - 3
+            Route::get('/create-third', [ExerciseController::class, 'create3'])->name('exercise.step3')->middleware('checkStep');
+            Route::post('/save-exercise', [ExerciseController::class, 'save'])->name("save");
+
+            //Exit Process
+            Route::get('/exit', [ExerciseController::class, 'exit_create'])->name('exit_process_create');
 
         //Modifica esercizio
-       Route::get('/edit-exercise/{id}', [ExerciseController::class, 'edit'])->name('editExercise');
-       Route::post('/edit-exercise/{id}', [ExerciseController::class, 'update'])->name('editExercise');
-       Route::put('/edit-exercise/{id}', [ExerciseController::class, 'update'])->name('exercises.update');
+        Route::post('/edit-exercise', [ExerciseController::class, 'update'])->name('editExercise');
+        Route::put('/edit-exercise', [ExerciseController::class, 'update'])->name('exercises.update');
+
         // Elimina un esercizio
-       Route::get('/{id}/delete', [ExerciseController::class, 'deleteExercise'])->name('deleteExercise');
+        Route::get('/delete/{exercise}', [ExerciseController::class, 'deleteExercise'])->name('deleteExercise');
 
     });
 

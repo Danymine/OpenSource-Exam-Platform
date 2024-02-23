@@ -46,7 +46,7 @@ class TestSeeder extends Seeder
     {
         $possibleTotalScores = [10, 30, 100];
         $difficulties = ['Alta', 'Media', 'Bassa'];
-        $type = ['esame', 'esercitazione'];
+        $type = ['Exam', 'Practice'];
     
         // Ottenere un elenco di materie uniche dalla tabella exercises
         $subjects = Exercise::pluck('subject')->unique()->toArray();
@@ -67,7 +67,7 @@ class TestSeeder extends Seeder
                 'subject' => $subject,
                 'total_score' => $totalScore,
                 'key' => $key,
-                'user_id' => 1,
+                'user_id' => 5,
                 'feedback_enabled' => rand(0, 1),
                 'randomize_questions' => rand(0, 1),
                 'generated_at' => Carbon::now(),
