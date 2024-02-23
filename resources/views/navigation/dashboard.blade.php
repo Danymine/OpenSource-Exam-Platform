@@ -40,35 +40,52 @@
 
                                                 @if( $delivered->valutation == NULL )
 
-                                                        @if ( $practice->type  == "esame" )
+                                                    @if ( $practice->type  == "Exam" )
 
-                                                            <tr class="exame">
-                                                                <td>{{ $practice->title }}e</td>
-                                                                <td>{{ $practice->practice_date  }}</td>
-                                                                <td>
-                                                                    {{ 
-                                                                        count($practice->delivereds->filter(function ($delivered) {
-                                                                            return $delivered->valutation === NULL;
-                                                                        }));
-                                                                    }}
-                                                                </td>
-                                                            </tr>
-                                                        @else
-                                                            
-                                                            <tr class="practice" style="display: none">
-                                                                <td>{{ $practice->title }}e</td>
-                                                                <td>{{ $practice->practice_date  }}</td>
-                                                                <td>
-                                                                    {{ 
-                                                                        count($practice->delivereds->filter(function ($delivered) {
-                                                                            return $delivered->valutation === NULL;
-                                                                        }));
-                                                                    }}
-                                                                </td>
-                                                            </tr>
-                                                        @endif
-                                                    @break
+                                                        <tr class="exame">
+                                                            <td>
+                                                                <a href="{{ route('view-delivered', ['practice' => $practice]) }}">
+                                                                    {{ $practice->title }}
+                                                                </a>
+                                                            </td>
+                                                            <td>{{ $practice->practice_date }}</td>
+                                                            <td>
+                                                                {{ count($practice->delivereds->filter(function ($delivered) {
+                                                                    return $delivered->valutation === NULL;
+                                                                })) }}
+                                                            </td>
+                                                        </tr>
+                                                    @else
+                                                        
+                                                        <tr class="practice" style="display: none">
+                                                            <td>
+                                                                <a href="{{ route('view-delivered', ['practice' => $practice]) }}">{{ $practice->title }}</a>
+                                                            </td>
+                                                            <td>{{ $practice->practice_date  }}</td>
+                                                            <td>
+                                                                {{ 
+                                                                    count($practice->delivereds->filter(function ($delivered) {
+                                                                        return $delivered->valutation === NULL;
+                                                                    }));
+                                                                }}
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                    @break   
+
+                                                    <tr class="practice" style="display: none">
+                                                        <td>{{ $practice->title }}e</td>
+                                                        <td>{{ $practice->practice_date  }}</td>
+                                                        <td>
+                                                            {{ 
+                                                                count($practice->delivereds->filter(function ($delivered) {
+                                                                    return $delivered->valutation === NULL;
+                                                                }));
+                                                            }}
+                                                        </td>
+                                                    </tr>
                                                 @endif
+                                                @break
                                             @endforeach
                                         @endforeach
                                             
@@ -117,7 +134,6 @@
                                             <tr class="clickable row-type row-practice" onclick="window.location='{{ route('view-details-delivered', ['delivered' =>  $delivered ] ) }}'">
                                                 <td>{{  $practice->title }}</td>
                                                 @if( $delivered->valutation != NULL and $practice->public == 1 )
-
                                                     <td>{{ $practice->practice_date }}</td>
                                                     <td>{{ $delivered->valutation }}</td>
                                                 @else

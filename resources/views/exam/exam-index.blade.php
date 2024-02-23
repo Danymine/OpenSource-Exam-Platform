@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="container">
         <x-slot name="header">
-            <h4>Elenco delle esercitazioni</h4>
+            <h4>Elenco degli Esami</h4>
             <hr stile="border-top: 1px solid #000000; width: 90%;" />
         </x-slot>
 

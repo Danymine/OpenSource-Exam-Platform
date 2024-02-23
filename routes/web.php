@@ -182,6 +182,32 @@ Route::prefix('admin')->group(function () {
     Route::post('/richiedi-assistenza', [RequestController::class, 'createAssistanceRequest'])->name('storeAssistanceRequest'); 
     Route::get('/admin/requests', [AdminRequestController::class, 'index'])->name('admin.requests.index');
 });
+    //rotte per le esercitazioni 
+    Route::prefix('practices')->group(function () {
+        Route::get('/exam', [PracticeController::class, 'examIndex'])->name('exam.index');
+        Route::get('/practice', [PracticeController::class, 'practiceIndex'])->name('practices.index');              
+        
+        Route::get('/create/{type}', [PracticeController::class, 'create'])->name('practices.create');
+        Route::post('/new/{type}', [PracticeController::class, 'generatePracticeWithFilters'])->name('practices.new');
+        
+        Route::get('/exercise-list/{type}', [PracticeController::class, 'exerciseList'])->name('exercise.list');
+        Route::post('/create-exercise-set/{type}', [PracticeController::class, 'createExerciseSet'])->name('createExerciseSet');
+        
+        Route::get('/{type}/{practice}', [PracticeController::class, 'show'])->name('practices.show');
+
+        Route::get('/{type}/{practice}/edit', [PracticeController::class, 'edit'])->name('practices.edit');
+        Route::put('/{type}/{practice}/updated', [PracticeController::class, 'update'])->name('practices.update');
+
+        Route::delete('/{type}/{practice}', [PracticeController::class, 'destroy'])->name('practices.destroy');
+        Route::get('/{type}/{practice}/duplicate', [PracticeController::class, 'duplicate'])->name('practices.duplicate');
+    });
+
+});
+    Route::prefix('admin')->group(function () {
+        Route::get('/richiedi-assistenza', [RequestController::class, 'showAssistanceRequestForm'])->name('createAssistanceRequest');
+        Route::post('/richiedi-assistenza', [RequestController::class, 'createAssistanceRequest'])->name('storeAssistanceRequest'); 
+        Route::get('/admin/requests', [AdminRequestController::class, 'index'])->name('admin.requests.index');
+    });
 
 
     

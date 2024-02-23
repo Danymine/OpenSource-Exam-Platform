@@ -37,7 +37,7 @@ class DeliveredSeeder extends Seeder
 
         $this->command->info("Incomincio l'inserimento delle consegne da parte degli utenti.");
 
-        $practices = Practice::where('user_id', '=' , 5)->with('exercises')->get();
+        $practices = Practice::where('user_id', '=' , 1)->with('exercises')->get();
         $users = User::all();
         
         foreach( $practices as $practice ){

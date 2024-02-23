@@ -79,7 +79,7 @@ class ExercicesSeeder extends Seeder
         for( $i = 0; $i < 44; $i++){
 
             DB::table('exercises')->insert([
-                'user_id' => 5,
+                'user_id' => 1,
                 'name' => $domande_scolastiche[$i][0],
                 'question' => $domande_scolastiche[$i][0],
                 'score' => rand(1,10),
