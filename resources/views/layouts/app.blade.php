@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="it">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,120 +8,326 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
         <!-- Fonts -->
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+        <script src="https://cdn.lordicon.com/lordicon.js"></script>
         <link rel="preconnect" href="https://fonts.bunny.net">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-        <!--Da capire come integrare bootstrap dopo <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">-->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
         <style>
-            .button {
-                background-color: #04AA6D; /* Green */
-                border: none;
-                color: white;
-                padding: 15px 32px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                margin: 0px 0px 1em 0px;
+            body {
+                font-family: 'Roboto', sans-serif;
+            }
+            
+            h1 {
+                font-family: 'Roboto', sans-serif;
+                font-weight: 700;
+            }
+       
+            p {
+                font-family: 'Roboto', sans-serif;
+                font-weight: 400;
+                color: #CCCCCC;
             }
 
-            .row-practice{
+            .navbar-toggler-icon {
+                color: white !important;
+            }
+
+            ul.navbar-nav > li > a{
+
+                color: #CCCCCC;
+                font-size: 1.5em;
+            }
+
+            ul.navbar-nav > li > a:hover{
+
+                font-weight: bold;
+            }
+
+            #iscriviti{
+
+                background-color: #286445;
+            }
+
+            #iscriviti:hover{
+
+                background-color: #183e2b;
+            }
+
+            .hide{
 
                 display: none;
             }
 
-            tr{
+            @media (max-width: 768px) {
+                .navbar-nav-ms-auto {
+                    display: none;
+                }
 
-                cursor: pointer;
+                label{
+
+                    margin-top: 10px;
+                }
+
+                #menu{
+
+                    display: none;
+                }
+
+                .hide{
+
+                    display: block;
+                }
+
             }
 
-            tr:hover {
-                background-color: rgba(255, 255, 255, 0.1); /* Sostituisci con il colore desiderato */
+            .overlay {
+                height: 100%;
+                width: 0;
+                position: fixed;
+                z-index: 1;
+                top: 0;
+                right: 0;
+                background-color: rgb(0,0,0);
+                background-color: rgba(0,0,0, 0.9);
+                overflow-x: hidden;
+                transition: 0.5s;
+            }
+            
+
+            .overlay-content {
+                position: relative;
+                top: 25%;
+                width: 100%;
+                text-align: center;
+                margin-top: 30px;
             }
 
+            .overlay-content ul {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .overlay-content ul li {
+                margin-bottom: 10px; /* Aggiungi spazio tra le voci di menu */
+            }
+
+            .overlay a {
+                padding: 8px;
+                text-decoration: none;
+                font-size: 24px; /* Riduci la dimensione del testo per adattarsi meglio */
+                color: #818181;
+                display: block;
+                transition: 0.3s;
+            }
+
+            .overlay a:hover, .overlay a:focus {
+                color: #f1f1f1;
+            }
+
+            .overlay .closebtn {
+                position: absolute;
+                top: 20px;
+                left: 45px;
+                font-size: 60px;
+            }
+
+            .menu-divider {
+                border-top: 1px solid #ccc; /* Cambia il colore a tuo piacimento */
+                width: 80%;
+            }
+
+            .custom-container {
+                max-width: 600px; /* Imposta la larghezza massima desiderata */
+                margin-right: auto;
+                margin-left: auto;
+            }
+
+            :root {
+                --fc-border-color: none;
+                --fc-event-bg-color: #ce502f;
+                --fc-button-border-color: #ffffff;
+                --fc-button-hover-bg-color: #218838;
+                --fc-button-hover-border-color: #ffffff;
+                --fc-button-bg-color: #28a745;
+                --fc-daygrid-event-dot-width: 5px;
+            }
+
+            body{
+                background-color:#f2f6fc;
+            }
+
+            .img-account-profile {
+                height: 10rem;
+            }
+
+            .rounded-circle {
+                border-radius: 50% !important;
+            }
+
+            .card {
+                box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+            }
+
+            .card .card-header {
+                font-weight: 500;
+            }
+
+            .card-header:first-child {
+                border-radius: 0.35rem 0.35rem 0 0;
+            }
+
+            .card-header {
+                padding: 1rem 1.35rem;
+                margin-bottom: 0;
+                background-color: rgba(33, 40, 50, 0.03);
+                border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+            }
+
+            .form-control, .dataTable-input {
+                display: block;
+                width: 100%;
+                padding: 0.875rem 1.125rem;
+                font-size: 0.875rem;
+                font-weight: 400;
+                line-height: 1;
+                color: #69707a;
+                background-color: #fff;
+                background-clip: padding-box;
+                border: 1px solid #c5ccd6;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                border-radius: 0.35rem;
+                transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            }
+
+            .nav-borders .nav-link.active {
+                color: #0061f2;
+                border-bottom-color: #0061f2;
+            }
+            
+            .nav-borders .nav-link {
+                color: #69707a;
+                border-bottom-width: 0.125rem;
+                border-bottom-style: solid;
+                border-bottom-color: transparent;
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+                padding-left: 0;
+                padding-right: 0;
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+            
+            .circle-container {
+
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                position: relative;
+            }
+
+            .active-circle{
+
+                background-color: #010039 !important;
+            }
+
+            .circle {
+
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background-color: #007bff; /* colore dei cerchi */
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                color: white; /* colore del testo */
+                z-index: 2;
+            }
+
+            .connector {
+
+                height: 3px;
+                background-color: #007bff; /* colore del collegamento */
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1;
+            }
+
+            .connector-line {
+
+                width: calc(100% - 100px); /* Larghezza del connettore */
+                height: 3px;
+                background-color: #007bff; /* colore del collegamento */
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 0;
+            }
+
+            .connector-line:nth-child(1) {
+
+                margin-left: 50px; /* Distanza tra cerchio 1 e 2 */
+            }
+
+            .connector-line:nth-child(2) {
+
+                margin-right: 50px; /* Distanza tra cerchio 2 e 3 */
+            }
+
+            .small-container {
+
+                max-width: 400px; /* Larghezza massima del container interno */
+                margin: 0 auto; /* Centrare il container */
+            }
         </style>
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            @include('layouts.navigation')
+    <body>
 
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endif
+        @include('layouts.navigation')
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
-        </div>
+        <!-- Page Heading -->
+        @if (isset($header))
+            <header>
+                <div class="container-fluid p-3">
+                    {{ $header }}
+                </div>
+            </header>
+        @endif
+
+        <!-- Page Content -->
+        <main>
+            {{ $slot }}
+        </main>
+
         <script>
-            function showExams() {
-
-                @if ( Auth::user()->roles == "Teacher" || Auth::user()->roles == "Admin")
-
-                    var story = document.getElementById('StoricoEsercitazioni');
-                    if( story != null ){
-
-                        story.style.display = "none";
-                        story = document.getElementById('StoricoEsami').style.display = "block";
-                    }
-                    showRows("exame");
-                @else
-
-                    var chart = document.getElementById("Chartpractice");
-                    if( chart != null ){
-
-                        chart.style.display = "none";
-                        chart = document.getElementById("Chartexame").style.display = "block";
-                    }
-                    showRows("exame");
-        
-                @endif
+            function openNav() {
+                document.getElementById("myNav").style.width = "20%";
             }
 
-            function showPractices() {
-
-                @if ( Auth::user()->roles == "Teacher" || Auth::user()->roles == "Admin")
-
-                    var story = document.getElementById('StoricoEsami');
-                    if( story != null ){
-
-                        story.style.display = "none";
-                        story = document.getElementById('StoricoEsercitazioni').style.display = "block";
-                    }
-                    showRows("practice");
-                @else
-
-                    var chart = document.getElementById("Chartexame");
-                    if( chart != null ){
-
-                        chart.style.display = "none";
-                        chart = document.getElementById("Chartpractice").style.display = "block";
-                    }
-                    showRows("practice");
-                @endif
-            }
-
-            function showRows(type) {
-                var rows = document.querySelectorAll(".row-type");
-
-                rows.forEach(function(row) {
-
-                    if (row.classList.contains("row-" + type)) {
-
-                        row.style.display = "table-row";
-                    } else {
-                        row.style.display = "none";
-                    }
-                });
+            function closeNav() {
+                document.getElementById("myNav").style.width = "0%";
             }
         </script>
-        <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>-->
+
+        <footer class="footer mt-5 py-3 text-white" style="background-color: #010039;">
+            <div class="container text-center">
+                <span style="color: #FFFFFF">© 2024 ProgettoLaravel Tutti i diritti riservati.</span>
+            </div>
+        </footer>
+        
+       
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
     </body>
 </html>

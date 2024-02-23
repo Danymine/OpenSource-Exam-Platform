@@ -7,6 +7,7 @@ function nascondiPassword(id) {
     var campoPassword = document.getElementById("" + id);
     campoPassword.type = "password";
 }
+
 var date_birth = document.getElementById('datebirth');
 var email = document.getElementById('email');
 var password = document.getElementById('password');

@@ -1,90 +1,94 @@
-<x-guest-layout>
+<x-app-layout>
 
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card" style="background-color: #010039; color: white; border: 1px solid #010039;">
+                <div class="card-body" style="background-color: #010039; color: white; border: 1px solid #010039;">
+                    <h1 class="card-title text-center mb-4">{{ __('Register') }}</h1>
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                    <form method="POST" action="{{ route('register') }}">
+                        @csrf
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">{{ __('Name') }}</label>
+                                <input id="name" class="form-control" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name">
+                                <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="firstname" class="form-label">{{ __('First Name') }}</label>
+                                <input id="firstname" class="form-control" type="text" name="firstname" value="{{ old('firstname') }}" required autocomplete="firstname">
+                                <x-input-error :messages="$errors->get('firstname')" class="mt-2" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="datebirth" class="form-label">{{ __('Date Birth') }}</label>
+                                <input id="datebirth" class="form-control" type="date" name="date_birth" value="{{ old('date_birth') }}" required autocomplete="datebirth">
+                                <x-input-error :messages="$errors->get('date_birth')" class="mt-2" />
+                                <span id="feedback-date-validate"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">{{ __('Email') }}</label>
+                                <input id="email" class="form-control" type="email" name="email" value="{{ old('email') }}" required autocomplete="username">
+                                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                                <span id="feedback-email-validate"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="password" class="form-label">{{ __('Password') }}</label>
+                                <div class="input-group">
+                                    <input id="password" class="form-control" type="password" name="password" required autocomplete="new-password">
+                                    <button type="button" class="btn btn-outline-secondary" onmousedown="mostraPassword('password')" onmouseup="nascondiPassword('password')" onmouseleave="nascondiPassword('password')">
+                                        <span class="fa fa-eye-slash"></span>
+                                    </button>
+                                </div>
+                                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                                <span id="feedback-password-validate"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="password_confirmation" class="form-label">{{ __('Confirm Password') }}</label>
+                                <div class="input-group">
+                                    <input id="password_confirmation" class="form-control" type="password" name="password_confirmation" required autocomplete="new-password">
+                                    <button type="button" class="btn btn-outline-secondary" onmousedown="mostraPassword('password_confirmation')" onmouseup="nascondiPassword('password_confirmation')" onmouseleave="nascondiPassword('password_confirmation')">
+                                        <span class="fa fa-eye-slash"></span>
+                                    </button>
+                                </div>
+                                <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+                                <span id="feedback-confirmation-validate"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <fieldset aria-labelledby="role-group-label">
+                                <legend id="role-group-label" style="font-size: 16px">{{ __('Role') }}</legend>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="role" value="Student" id="choice1">
+                                    <label class="form-check-label text-white" for="choice1">{{ __('Student') }}</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="role" value="Teacher" id="choice2">
+                                    <label class="form-check-label text-white" for="choice2">{{ __('Teacher') }}</label>
+                                </div>
+                            </fieldset>
+                            <x-input-error :messages="$errors->get('role')" class="mt-2" />
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">{{ __('Register') }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        
-        <!-- First Name -->
-        <div class="mt-4">
-            <x-input-label for="firstname" :value="__('First Name')" />
-            <x-text-input id="firstname" class="block mt-1 w-full" type="text" name="firstname" :value="old('firstname')" required autofocus autocomplete="firstname" />
-            <x-input-error :messages="$errors->get('firstname')" class="mt-2" />
-        </div>
+    </div>
+</div>
 
-         <!-- Date -->
-         <div class="mt-4">
-            <x-input-label for="datebirth" :value="__('Data Birth')" />
-            <x-text-input id="datebirth" class="block mt-1 w-full" type="date" name="date_birth" :value="old('date_birth')" autofocus autocomplete="datebirth" />
-            <x-input-error :messages="$errors->get('date_birth')" class="mt-2" />
-            <span id="feedback-date-validate"></span>
-        </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-            <span id="feedback-email-validate"></span>
-        </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-            <button type="button" onmousedown="mostraPassword('password')" onmouseup="nascondiPassword('password')" onmouseleave="nascondiPassword('password')" style="color:white"><i class="fa fa-eye-slash"></i></button>
-            <span id="feedback-password-validate"></span>
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-            <button type="button" onmousedown="mostraPassword('password_confirmation')" onmouseup="nascondiPassword('password_confirmation')" onmouseleave="nascondiPassword('password_confirmation')" style="color:white"><i class="fa fa-eye-slash"></i></button>
-            <span id="feedback-confirmation-validate"></span>
-        </div>
-
-        <!-- Choice Student or Professor -->
-        <div class="mt-4">
-            <x-input-label for="choice1" value="Student" />
-            
-            <x-text-input id="choice1"
-                            type="radio"
-                            name="role" value="Student"/>
-
-            <x-input-label for="choice2" value="Teacher" />
-            <x-text-input id="choice2"
-                type="radio"
-                name="role" value="Teacher"/>
-
-            <x-input-error :messages="$errors->get('role')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+</x-app-layout>
 <script src="/js/validateRegister.js"></script>
