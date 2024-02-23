@@ -134,7 +134,8 @@ Route::middleware('auth', 'role')->group(function (){
 
     //rotte per le esercitazioni 
     Route::prefix('practices')->group(function () {
-        Route::get('/{type}', [PracticeController::class, 'index'])->name('practices.index');
+        Route::get('/exam', [PracticeController::class, 'examIndex'])->name('exam.index');
+        Route::get('/practice', [PracticeController::class, 'practiceIndex'])->name('practices.index');              
         
         Route::get('/create/{type}', [PracticeController::class, 'create'])->name('practices.create');
         Route::post('/new/{type}', [PracticeController::class, 'generatePracticeWithFilters'])->name('practices.new');
@@ -150,6 +151,7 @@ Route::middleware('auth', 'role')->group(function (){
         Route::delete('/{type}/{practice}', [PracticeController::class, 'destroy'])->name('practices.destroy');
         Route::get('/{type}/{practice}/duplicate', [PracticeController::class, 'duplicate'])->name('practices.duplicate');
     });
+
 });
     Route::prefix('admin')->group(function () {
         Route::get('/richiedi-assistenza', [RequestController::class, 'showAssistanceRequestForm'])->name('createAssistanceRequest');

@@ -39,19 +39,22 @@
 
                                             @if( $delivered->valutation == NULL )
 
-                                                    @if ( $practice->type  == "esame" )
+                                                    @if ( $practice->type  == "Exam" )
 
-                                                        <tr class="exame">
-                                                            <td>{{ $practice->title }}e</td>
-                                                            <td>{{ $practice->practice_date  }}</td>
-                                                            <td>
-                                                                {{ 
-                                                                    count($practice->delivereds->filter(function ($delivered) {
-                                                                        return $delivered->valutation === NULL;
-                                                                    }));
-                                                                }}
-                                                            </td>
-                                                        </tr>
+                                                    <tr class="exame">
+                                                        <td>
+                                                            <a href="{{ route('view-delivered', ['practice' => $practice]) }}">
+                                                                {{ $practice->title }}
+                                                            </a>
+                                                        </td>
+                                                        <td>{{ $practice->practice_date }}</td>
+                                                        <td>
+                                                            {{ count($practice->delivereds->filter(function ($delivered) {
+                                                                return $delivered->valutation === NULL;
+                                                            })) }}
+                                                        </td>
+                                                    </tr>
+
                                                     @else
                                                         
                                                         <tr class="practice" style="display: none">
@@ -133,65 +136,3 @@
 
     }    
 </script>
-<script>
-            function showExams() {
-                
-                    @if ( Auth::user()->roles == "Teacher" || Auth::user()->roles == "Admin")
-
-                        var story = document.getElementById('StoricoEsercitazioni');
-                        if( story != null ){
-
-                            story.style.display = "none";
-                            story = document.getElementById('StoricoEsami').style.display = "block";
-                        }
-                        showRows("exame");
-                    @else
-
-                        var chart = document.getElementById("Chartpractice");
-                        if( chart != null ){
-
-                            chart.style.display = "none";
-                            chart = document.getElementById("Chartexame").style.display = "block";
-                        }
-                        showRows("exame");
-            
-                    @endif
-            }
-
-            function showPractices() {
-
-                @if ( Auth::user()->roles == "Teacher" || Auth::user()->roles == "Admin")
-
-                    var story = document.getElementById('StoricoEsami');
-                    if( story != null ){
-
-                        story.style.display = "none";
-                        story = document.getElementById('StoricoEsercitazioni').style.display = "block";
-                    }
-                    showRows("practice");
-                @else
-
-                    var chart = document.getElementById("Chartexame");
-                    if( chart != null ){
-
-                        chart.style.display = "none";
-                        chart = document.getElementById("Chartpractice").style.display = "block";
-                    }
-                    showRows("practice");
-                @endif
-            }
-
-            function showRows(type) {
-                var rows = document.querySelectorAll(".row-type");
-
-                rows.forEach(function(row) {
-
-                    if (row.classList.contains("row-" + type)) {
-
-                        row.style.display = "table-row";
-                    } else {
-                        row.style.display = "none";
-                    }
-                });
-            }
-        </script>

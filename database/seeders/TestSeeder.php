@@ -67,7 +67,7 @@ class TestSeeder extends Seeder
                 'subject' => $subject,
                 'total_score' => $totalScore,
                 'key' => $key,
-                'user_id' => 5,
+                'user_id' => 1,
                 'feedback_enabled' => rand(0, 1),
                 'randomize_questions' => rand(0, 1),
                 'generated_at' => Carbon::now(),

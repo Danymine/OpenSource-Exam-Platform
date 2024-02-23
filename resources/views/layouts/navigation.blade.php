@@ -31,10 +31,10 @@
                     </li>
                 @endif
                 <li class="nav-item hide">
-                    <a class="nav-link" href="{{ route('practices.index') }}">{{ __("Esercitazioni") }}</a>
+
                 </li>
                 <li class="nav-item hide">
-                    <a class="nav-link" href="{{ route('practices.index', ['type' => 'Esami']) }}">Esami</a>
+
                 </li>
                 <hr class="menu-divider"/>
                 <li class="nav-item hide">

@@ -42,33 +42,47 @@ class PracticeController extends Controller
         return $key;
     }
 
-    public function index($type) 
+    public function examIndex() 
     {
-        // Recupera tutte le pratiche associate all'utente autenticato di tipo specificato
-        $query = Practice::where('user_id', Auth::id())
-                         ->where('type', $type);
+        // Determina il tipo di pratica come "exam"
+        $type = 'Exam';
     
-        // Applica i filtri se sono stati inviati
-        if (request()->has('subject')) {
-            $query->where('subject', request('subject'));
-        }
+        // Recupera tutte le pratiche associate all'utente autenticato di tipo "exam"
+        $practices = Practice::where('user_id', Auth::id())
+                             ->where('type', $type)
+                             ->get();
     
-        if (request()->has('difficulty')) {
-            $query->where('difficulty', request('difficulty'));
-        }
+        // Estrai tutte le materie univoche dalle pratiche
+        $subjects = $practices->pluck('subject')->unique();
     
-        // Pagina i risultati dopo il filtraggio
-        $practices = $query->paginate(10);
-    
-        // Recupera le materie distinte per popolare il menu a tendina dei filtri
-        $subjects = Practice::distinct('subject')->pluck('subject');
-    
-        return view('practices', [
+        // Restituisci la vista degli esami con i dati recuperati
+        return view('exam.exam-index', [
             'practices' => $practices, 
             'type' => $type,
             'subjects' => $subjects, 
         ]);
-    }
+    }       
+
+    public function practiceIndex() 
+    {
+        // Determina il tipo di pratica come "practice"
+        $type = 'Practice';
+    
+        // Recupera tutte le pratiche associate all'utente autenticato di tipo "practice"
+        $practices = Practice::where('user_id', Auth::id())
+                             ->where('type', $type)
+                             ->get();
+    
+        // Estrai tutte le materie univoche dalle pratiche
+        $subjects = $practices->pluck('subject')->unique();
+    
+        // Restituisci la vista degli esami con i dati recuperati
+        return view('practice.practice-index', [
+            'practices' => $practices, 
+            'type' => $type,
+            'subjects' => $subjects, 
+        ]);
+    } 
 
     public function create($type = 'default')
     {

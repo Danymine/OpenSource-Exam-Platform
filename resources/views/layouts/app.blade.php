@@ -288,6 +288,41 @@
                 max-width: 400px; /* Larghezza massima del container interno */
                 margin: 0 auto; /* Centrare il container */
             }
+
+            .filter-select {
+                height: calc(2.25rem + 2px);
+                padding: 0.375rem 0.75rem;
+                font-size: 1rem;
+                font-weight: 400;
+                line-height: 1.5;
+                color: #495057;
+                background-color: #fff;
+                background-image: none;
+                border: 1px solid #ced4da;
+                border-radius: 0.25rem;
+                transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            }
+
+            .range-labels {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 5px;
+            }
+
+            .range-label {
+                font-size: 12px;
+                position: absolute;
+                pointer-events: none;
+            }
+
+            #punteggioMinLabel {
+                left: 0;
+            }
+
+            #punteggioMaxLabel {
+                right: 0;
+            }
+
         </style>
     </head>
     <body>
