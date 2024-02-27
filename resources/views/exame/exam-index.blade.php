@@ -5,17 +5,35 @@
             <hr stile="border-top: 1px solid #000000; width: 90%;" />
         </x-slot>
 
+        <div class="container">
+            @if($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
+            @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+            @endif
+        </div>
+
         <div class="text-right mb-3">
-            <button class="btn btn-secondary" style="display: none;" onclick="resetFilters()"><i class="fas fa-times"></i> Reset Filtri</button>
-            <button class="btn btn-info" onclick="toggleFilterModal()"><i class="fas fa-filter"></i> Filtri</button>
+            <button class="btn btn-secondary" style="display: none;" onclick="resetFilters()"><i class="fas fa-times"></i> {{ __('Reset Filtri') }}</button>
+            <button class="btn btn-info" onclick="toggleFilterModal()"><i class="fas fa-filter"></i> {{ __('Filtri') }}</button>
             <!-- Bottone di creazione con menu a discesa -->
             <div class="dropdown" style="display: inline-block;">
                 <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-plus"></i> Crea
+                    <i class="fas fa-plus"></i> {{ __('Crea') }}
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="{{ route('practices.create', ['type' => $type]) }}"><i class="fas fa-magic"></i> Genera automaticamente</a>
-                    <a class="dropdown-item" href="{{ route('exercise.list', ['type' => $type]) }}"><i class="fas fa-edit"></i> Crea manualmente</a>
+                    <a class="dropdown-item" href="{{ route('create_automation') }}"><i class="fas fa-magic"></i> {{ __('Genera automaticamente') }}</a>
+                    <a class="dropdown-item" href="{{ route('exame.step1') }}"><i class="fas fa-edit"></i> {{ __('Crea manualmente') }}</a>
                 </div>
             </div>
         </div>
@@ -25,7 +43,7 @@
             <div class="row" style="margin-bottom: 0;">
                 <div class="col-md-3">
                     <select id="materiaInput" class="form-select w-100 filter-select" aria-label="Seleziona materia" onchange="applyFilters()">
-                        <option value="">Tutte le materie</option>
+                        <option value="">{{ __('Tutte le materie') }}</option>
                         @foreach ($subjects as $subject)
                             <option value="{{ $subject }}">{{ $subject }}</option>
                         @endforeach
@@ -39,10 +57,10 @@
                 </div>
                 <div class="col-md-3">
                     <select id="difficoltaInput" class="form-select w-100 filter-select" aria-label="Seleziona difficoltà" onchange="applyFilters()">
-                        <option value="">Tutte le difficoltà</option>
-                        <option value="bassa">Bassa</option>
-                        <option value="media">Media</option>
-                        <option value="alta">Alta</option>
+                        <option value="">{{ __('Tutte le difficoltà') }}</option>
+                        <option value="Bassa">{{ __('Bassa') }}</option>
+                        <option value="Media">{{ __('Media') }}</option>
+                        <option value="Alta">{{ __('Alta')}}</option>
                     </select>
                 </div>
             </div>
@@ -62,15 +80,15 @@
                 </colgroup>
                 <thead>
                     <tr>
-                        <th onclick="sortTable(0)">Titolo <i class="fas fa-chevron-down"></i></th>
-                        <th onclick="sortTable(1)">Materia <i class="fas fa-chevron-down"></i></th>
-                        <th onclick="sortTable(2)">Difficoltà <i class="fas fa-chevron-down"></i></th>
-                        <th onclick="sortTable(3)">Data <i class="fas fa-chevron-down"></i></th>
-                        <th onclick="sortTable(4)">Punteggio <i class="fas fa-chevron-down"></i></th>
-                        <th>Duplica</th>
-                        <th>Visualizza</th>
-                        <th>Modifica</th>
-                        <th>Elimina</th>
+                        <th onclick="sortTable(0)">{{ __('Titolo') }} <i class="fas fa-chevron-down"></i></th>
+                        <th onclick="sortTable(1)">{{ __('Materia') }} <i class="fas fa-chevron-down"></i></th>
+                        <th onclick="sortTable(2)">{{ __('Difficoltà') }} <i class="fas fa-chevron-down"></i></th>
+                        <th onclick="sortTable(3)">{{ __('Data') }} <i class="fas fa-chevron-down"></i></th>
+                        <th onclick="sortTable(4)">{{ __('Punteggio') }} <i class="fas fa-chevron-down"></i></th>
+                        <th>{{ __('Duplica') }}</th>
+                        <th>{{ __('Visualizza') }}</th>
+                        <th>{{ __('Modifica') }}</th>
+                        <th>{{ __('Elimina') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -82,16 +100,16 @@
                         <td>{{ $practice->practice_date }}</td>
                         <td>{{ $practice->total_score }}</td>
                         <td>
-                            <a href="{{ route('practices.duplicate', ['type' => $type, 'practice' => $practice->id]) }}" class="btn btn-primary"><i class="fas fa-copy"></i></a>
+                            <a href="{{ route('practices.duplicate', ['practice' => $practice]) }}" class="btn btn-primary"><i class="fas fa-copy"></i></a>
                         </td>
                         <td>
-                            <a href="{{ route('practices.show', ['type' => $type, 'practice' => $practice->id]) }}" class="btn btn-info"><i class="fas fa-search"></i></a>
+                            <a href="{{ route('practices.show', ['practice' => $practice]) }}" class="btn btn-info"><i class="fas fa-search"></i></a>
                         </td>
                         <td>
-                            <a class="btn btn-warning edit-button" onclick="editExercise('{{ $practice->id }}')" href="{{ route('practices.edit', ['type' => $type, 'practice' => $practice->id]) }}"><i class="fas fa-pencil-alt"></i></a>
+                            <a class="btn btn-warning edit-button" href="{{ route('practices.edit', ['practice' => $practice]) }}"><i class="fas fa-pencil-alt"></i></a>
                         </td>
                         <td>
-                            <form action="{{ route('practices.destroy', ['type' => $type, 'practice' => $practice->id]) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questa pratica?');">
+                            <form action="{{ route('practices.destroy', ['practice' => $practice]) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questa pratica?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>

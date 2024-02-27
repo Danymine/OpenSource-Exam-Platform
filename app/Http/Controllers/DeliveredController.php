@@ -19,46 +19,44 @@ class DeliveredController extends Controller
      */
     public function index( Practice $practice )
     {
-        
-        $delivered = Delivered::where('practice_id', $practice->id)->get();
-        return view('view-delivereds', ['delivereds' => $delivered]);
-    }
+        if( $practice->user_id == Auth::user()->id ){
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+            $delivered = Delivered::where('practice_id', $practice->id)->get();
+            return view('delivereds.view-delivereds', ['delivereds' => $delivered, 'practice' => $practice]);
+        }
+        
+        abort('403', "Non autorizzato");
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function save(Request $request)
+    public function save(Request $request, Delivered $delivered)
     {
-        
-        $validate = $request->validate([
-            'id_delivered' => "numeric|required|min:1",
-            'risposta' => "array|nullable",
-            'risposta.*' => "numeric",
-            'risposta_aperta' => "array|nullable",
-            'risposta_aperta.*' => "string|max:255",
-            'note' => "array|nullable",
-            'note.*' => "string|max:255",
-            'note_general' => "string|max:255",
-            'correct-file' => 'file|max:5120|mimetypes:application/pdf|nullable'
+        $validateData = $request->validate([
+            'correct' => 'required|array|size:' . $delivered->practice->exercises()->count(),
+            'correct.*' => 'numeric|min:0',
+            'note' => 'required|array|size:' . $delivered->practice->exercises()->count(),
+            'note_general' => 'nullable|string|max:255',
+            'file-correct' => 'nullable|file|mimes:pdf,image/*',
         ]);
 
-        $delivered = Delivered::findOrFail($validate['id_delivered']);
-        $response = Answer::where('delivered_id', $delivered->id)->get()->keyBy('exercise_id'); 
-        $practice = Practice::find($delivered->practice_id)->withTrashed()->first();
-        $exercises = Practice::find($delivered->practice_id)->exercises()->withTrashed()->get();
-        $score_max = $practice->total_score;
-        
-        if ($request->hasFile('correct-file')) {
 
-            $file = $request->file('correct-file');
+        $answers = $delivered->answers;
+        foreach($answers as $answer){
+
+            $answer->score_assign = $validateData['correct'][$answer->id];
+            $answer->note = $validateData['note'][$answer->id];
+
+            $answer->save();
+        }
+
+        $delivered->valutation =  array_sum($validateData['correct']);  //Sommo gli elementi del vettore
+        $delivered->note = $validateData['note_general'];
+
+        if ($request->hasFile('file-correct')) {
+
+            $file = $request->file('file-correct');
         
             // Verifica se ci sono errori durante il caricamento del file
             if ($file->getError() == UPLOAD_ERR_OK) {
@@ -77,34 +75,9 @@ class DeliveredController extends Controller
             }
         } 
 
-        $score = 0;
-        foreach( $exercises as $exercise){
-
-            if( $exercise->type == "Risposta Aperta" ){
-                
-                $score += $validate["risposta_aperta"][$exercise->id];
-                $response[$exercise->id]->score_assign = $validate["risposta_aperta"][$exercise->id];
-                if( array_key_exists($exercise->id, $validate["note"]) ){
-
-                    $response[$exercise->id]->note = $validate["note"][$exercise->id];
-                }
-            }
-            else{
-
-                $score += $validate["risposta"][$exercise->id];
-                $response[$exercise->id]->score_assign = $validate["risposta"][$exercise->id];
-            }
-
-            $response[$exercise->id]->save();
-        }
-        $delivered->valutation = intval(round($score));
-        $delivered->note = $validate['note_general'];
         $delivered->save();
 
-
-
         return redirect()->route('view-delivered', ['practice' => $delivered->practice]);
-        
         
     }
 
@@ -113,51 +86,59 @@ class DeliveredController extends Controller
      */
     public function show( Delivered $delivered ){
 
-        $response = Answer::where('delivered_id', $delivered->id)->get()->keyBy('exercise_id'); 
+        $response = Answer::where('delivered_id', $delivered->id)
+        ->get()
+        ->groupBy('exercise_id');
         $exercises = Practice::find($delivered->practice_id)->exercises()->withTrashed()->get();
-        return view('valuta-esame', ['delivered' => $delivered, 'response' => $response, 'exercises' => $exercises]);
+        return view('delivereds.valuta-esame', ['delivered' => $delivered, 'response' => $response, 'exercises' => $exercises]);
     }
 
-    public function print( Delivered $delivered )
-    {
+    public function print(Delivered $delivered){
 
         // Creazione di un nuovo oggetto Dompdf
         $dompdf = new Dompdf();
 
-        $html = '<h1>'  . $delivered->user->name . "</h1>"; //Title 
-        $response = Answer::where('delivered_id', $delivered->id)->get()->keyBy('exercise_id');
-        $exercises = Practice::find($delivered->practice_id)->exercises()->withTrashed()->get();
+        // Intestazione del PDF con il nome dello studente e il titolo della pratica
+        $header = '
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2>' . $delivered->user->name . ' ' . $delivered->user->first_name . '</h2>
+                <h3>' . $delivered->practice->title . '</h3>
+            </div>
+            <hr style="border-top: 1px solid #000;">
+        ';
 
-        $body = "";
+        // Creazione del corpo del PDF con le risposte agli esercizi
+        $body = '';
         $i = 1;
-        foreach( $exercises as $exercise ){
-
-            $body .= "<div>
-                        <h3>" . $i . ")" .  $exercise->question . "</h3>";
-            if(isset($response[$exercise->id])){
-
-                $body .= "<h4 style=\"color: red;\">" . $response[$exercise->id]->response . "</h4>";
+        foreach ($delivered->practice->exercises as $exercise) {
+            $response = $delivered->answers->where('exercise_id', $exercise->id)->first();
+            if ($response) {
+                $body .= '
+                    <div style="margin-bottom: 20px;">
+                        <h4>' . $i . '. ' . $exercise->question . '</h4>
+                        <p style="color: red;">' . $response->response . '</p>
+                    </div>
+                ';
+                $i++;
             }
-            
-            $body .= "</div>";
-            $i++;
         }
 
-        $html .= $body;
+        // HTML completo del PDF con intestazione e corpo
+        $html = '<html><body>' . $header . $body . '</body></html>';
 
+        // Caricamento dell'HTML nel Dompdf
         $dompdf->loadHtml($html);
+
+        // Impostazione delle dimensioni della pagina e del layout
         $dompdf->setPaper('A4', 'portrait');
+
+        // Rendering del PDF
         $dompdf->render();
 
-        if( Auth::user()->roles == "Teacher" ){
-
-            return $dompdf->stream("" . $delivered->user->name . ".pdf");
-        }
-        else if( Auth::user()->roles == "Student" ){
-            
-            return $dompdf->stream("" . $delivered->practice->title . ".pdf");
-        }
+        // Restituzione del PDF come stream per il download
+        return $dompdf->stream('Correction_' . $delivered->user->name . '.pdf');
     }
+
 
     public function printCorrect( Delivered $delivered )
     {
@@ -167,17 +148,17 @@ class DeliveredController extends Controller
 
     public function public( Practice $practice ){
 
-        $delivered = $practice->delivereds;
-        foreach( $delivered as $delivery ){
+        $delivereds = $practice->delivereds;
+        foreach( $delivereds as $delivery ){
 
-            if( $delivery->valutation == NULL ){
+            if( $delivery->valutation === NULL ){
 
                 return back()->withErrors(["error" => "Ci sono ancora consegne senza valutazione."]);
             }
         }
         
         $users = [];
-        foreach( $delivered as $delivery ){
+        foreach( $delivereds as $delivery ){
 
             $user = User::find($delivery->user->id)->first();
             Publish::dispatch($user);
@@ -186,31 +167,6 @@ class DeliveredController extends Controller
         $practice->public = 1;
         $practice->save();
         
-        return redirect()->route('ciao')->withErrors(['error' => 'Pubblicazione avvenuta con successo']);
-    }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Delivered $delivered)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Delivered $delivered)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Delivered $delivered)
-    {
-        //
+        return redirect()->route('dashboard')->with('success', "Valutazioni pubblicate con successo");
     }
 }

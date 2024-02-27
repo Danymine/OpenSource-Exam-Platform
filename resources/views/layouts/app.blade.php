@@ -6,10 +6,13 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
         <!-- Fonts -->
         <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
         <script src="https://cdn.lordicon.com/lordicon.js"></script>
+
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -323,10 +326,94 @@
                 right: 0;
             }
 
+            .text-black{
+
+                color: black !important;
+            }
+
+            .overlay-chart {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            }
+            
+            .aggiungiModulo {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: white;
+                padding: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+                border-radius: 10px;
+                max-width: 600px; /* Imposta la larghezza massima del riquadro */
+                width: 100%;
+            }
+
+            .hide-total{
+
+                display: none;
+            }
+            
+            .waiting-container{
+                max-width: 400px;
+                margin: 100px auto;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .loader {
+                border: 8px solid #f3f3f3; /* Light grey */
+                border-top: 8px solid #3498db; /* Blue */
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                animation: spin 2s linear infinite;
+                margin: 0 auto;
+                margin-top: 20px;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            @media screen and (max-width: 425px) {
+                .d-flex {
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                }
+                .form-inline {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+                .form-control {
+                    width: 100%;
+                    margin-bottom: 10px;
+                }
+            }
+
+            .equal-height {
+                height: 38px;
+            }
+
+    </style>
+</head>
+<body>
+
         </style>
     </head>
     <body>
-
         @include('layouts.navigation')
 
         <!-- Page Heading -->

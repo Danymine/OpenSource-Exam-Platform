@@ -14,7 +14,7 @@
                             <!-- Email Address -->
                             <div class="mb-3">
                                 <label for="email" class="form-label">{{ __('Email') }}</label>
-                                <input id="email" class="form-control" type="email" name="email" :value="old('email')" required autofocus autocomplete="username">
+                                <input id="email" class="form-control" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username">
                                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
                             </div>
 

@@ -74,7 +74,8 @@ class TestSeeder extends Seeder
                 'allowed' => 0,
                 'practice_date' => Carbon::now()->addDay(),
                 'type' => $type[$typeIndex],
-                'public' => 0
+                'public' => 0,
+                'time' => rand(10,180)
             ]);
     
             $practice->save();
@@ -92,10 +93,7 @@ class TestSeeder extends Seeder
                     break;
                 }
     
-                // Calcola il punteggio proporzionato per ciascun esercizio rispetto al max_score
-                $customScore = round(($exercise->score / $totalScore) * $totalScore, 2);
-                $sumScore += $customScore;
-                $practice->exercises()->attach($exercise->id, ['custom_score' => $customScore]);
+                $practice->exercises()->attach($exercise->id);
                 
                 // Incrementa il contatore degli esercizi aggiunti
                 $exerciseCount++;

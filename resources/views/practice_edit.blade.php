@@ -1,416 +1,248 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifica</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        .container {
-            max-width: 95%;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1, h2, h3 {
-            color: #333;
-        }
-
-        form {
-            overflow: hidden;
-        }
-
-        .column {
-            float: left;
-            box-sizing: border-box;
-        }
-
-        .column.left {
-            width: 20%;
-            margin-right: 20px;
-        }
-
-        .column.middle {
-            width: 35%;
-            margin-right: 20px;
-            overflow-y: auto; 
-            height: calc(100vh - 80px);
-        }
-
-        .column.right {
-            width: 35%;
-        }
-
-        .column.right .exercise-list-wrapper {
-            max-height: calc(100vh - 200px); 
-            overflow-y: auto; 
-            margin-top: 20px; 
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-
-        button {
-            background-color: #4caf50;
-            color: #fff;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .alert {
-            padding: 15px;
-            background-color: #4caf50;
-            color: #fff;
-            margin-bottom: 15px;
-            border-radius: 4px;
-        }
-
-        .section {
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li.exercise {
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            overflow: hidden;
-            background-color: #fff;
-        }
-
-        li.exercise div {
-            overflow: hidden;
-        }
-
-        li.exercise div h3 {
-            margin-top: 0;
-            color: #333;
-        }
-
-        li.exercise div strong {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        li.exercise div input[type="checkbox"] {
-            float: right;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Modifica {{ $type }}</h1>
-
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
+<x-app-layout>
+    <x-slot name="header">
+        <div class="row">
+            <div class="col-6">
+                <h4 class="text-2xl font-bold text-black mb-4">{{ $practice->title }}</h4>
             </div>
+            <div class="col-6 text-right">
+                @if( $practice->type == "Exam")
+                    <a href="{{ route('exam.index') }}" class="btn btn-info">{{ __('Torna Indietro') }}</a>
+                @else
+                    <a href="{{ route('practices.index') }}" class="btn btn-info">{{ __('Torna Indietro') }}</a>
+                @endif
+            </div>
+        </div>
+        <hr stile="border-top: 1px solid #000000; width: 90%;" />
+    </x-slot>
+
+    <div class="container">
+        @if($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
         @endif
 
-        <form method="POST" action="{{ route('practices.update', ['type' => $type, 'practice' => $practice->id]) }}">
-            @csrf
-            @method('PUT')
-
-            <!-- Sezione per la modifica dei campi della pratica -->
-            <div class="column left">
-            <h2>Modifica Campi Pratica</h2>
-
-                <label for="title">Titolo</label>
-                <input type="text" name="title" value="{{ old('title', $practice->title) }}" required>
-
-                <label for="description">Descrizione</label>
-                <textarea name="description" required>{{ old('description', $practice->description) }}</textarea>
-
-                <label for="difficulty">Difficoltà:</label>
-                <select id="difficulty" name="difficulty">
-                    <option value="{{ old('difficulty', $practice->difficulty) }}">{{ old('difficulty', $practice->difficulty) }}</option>
-                    <option value="Bassa">Bassa</option>
-                    <option value="Media">Media</option>
-                    <option value="Alta">Alta</option>
-                </select>
-
-                <label for="subject">Materia:</label>
-                <select id="subject" name="subject" >
-                    <option value="{{ old('subject', $practice->subject) }}">{{ old('subject', $practice->subject) }}</option>
-                    @foreach($subjects as $subject)
-                        <option value="{{ $subject }}">
-                            {{ $subject }}
-                        </option>
-                    @endforeach
-                </select>
-
-                <label for="total_score">Punteggio Massimo:</label>
-                <input type="number" id="total_score" name="total_score" value="{{ $practice->total_score }}" required>
-
-                <label for="feedback">Feedback Automatico:</label>
-                <input type="checkbox" id="feedback" name="feedback" {{ $practice->feedback ? 'checked' : '' }}>
-
-                <label for="randomize">Randomizzazione delle Domande:</label>
-                <input type="checkbox" id="randomize" name="randomize" {{ $practice->randomize ? 'checked' : '' }}>
-
-                <label for="practice_date">Data dell'{{ $type }}:</label>
-                <input type="date" id="practice_date" name="practice_date" value="{{ $practice->practice_date }}">
-
-                <!-- pulsante di aggiornamento -->
-                <button type="submit">Aggiorna</button>
-            </div>
-
-            <!-- Sezione per gli esercizi già presenti nella pratica -->
-            <div class="column middle">
-                <h2>Esercizi Presenti</h2>
-
-                <ul id="selectedExerciseList">
-                    @foreach ($practice->exercises as $exercise)
-                        @if (in_array($exercise->id, $newPracticeExerciseIds))
-                            <li class="exercise" data-subject="{{ $exercise->subject }}" data-difficulty="{{ $exercise->difficulty }}" data-score="{{ $exercise->score }}">
-                                <div>
-                                    <h3>{{ $exercise->name }}</h3>
-                                    <strong>Domanda:</strong> {{ $exercise->question }}<br>
-                                    <strong>Materia:</strong> {{ $exercise->subject }}<br>
-                                    <strong>Difficoltà:</strong> {{ $exercise->difficulty }}<br>
-                                    <strong>Punteggio:</strong> {{ $exercise->score }}<br>
-                                    <input type="hidden" name="exercise_ids[]" value="{{ $exercise->id }}">
-                                </div>
-                                <div>
-                                    <!-- Aggiungi l'attributo "checked" se l'esercizio è presente -->
-                                    <input type="checkbox" name="selected_exercises[]" value="{{ $exercise->id }}" checked>
-                                </div>
-                            </li>
-                        @endif
-                    @endforeach
-                </ul>
-            </div>
-
-            <!-- Sezione per la selezione degli esercizi disponibili -->
-            <div class="column right">
-                <div class="section">
-                    <h2>Lista degli Esercizi Disponibili</h2>
-                    
-                    <div class="form-group">
-                        <label for="subjectFilter">Filtra per Materia:</label>
-                        <select id="subjectFilter" name="subjectFilter">
-                            <option value="">Tutte le Materie</option>
-                            @foreach($subjects as $subject)
-                                <option value="{{ $subject }}" {{ old('subjectFilter') == $subject ? 'selected' : '' }}>
-                                    {{ $subject }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="difficultyFilter">Filtra per Difficoltà:</label>
-                        <select id="difficultyFilter" name="difficultyFilter">
-                            <option value="">Tutte le Difficoltà</option>
-                            <option value="Bassa" {{ old('difficultyFilter') == 'Bassa' ? 'selected' : '' }}>Bassa</option>
-                            <option value="Media" {{ old('difficultyFilter') == 'Media' ? 'selected' : '' }}>Media</option>
-                            <option value="Alta" {{ old('difficultyFilter') == 'Alta' ? 'selected' : '' }}>Alta</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="typeFilter">Filtra per Tipo di Esercizio:</label>
-                        <select id="typeFilter" name="typeFilter">
-                            <option value="">Tutti i Tipi</option>
-                            @foreach($exerciseType as $type)
-                                <option value="{{ $type }}" {{ old('typeFilter') == $type ? 'selected' : '' }}>
-                                    {{ $type }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group score-filter">
-                        <label for="minScore">Punteggio Minimo:</label>
-                        <input type="number" id="minScore" name="minScore" min="0" value="{{ old('minScore') }}">
-                        <label for="maxScore">Punteggio Massimo:</label>
-                        <input type="number" id="maxScore" name="maxScore" min="0" value="{{ old('maxScore') }}">
-                    </div>
-
-                </div>
-
-                <!-- Lista degli esercizi -->
-                <div class="exercise-list-wrapper">
-                    <ul id="exerciseList">
-                        @foreach ($practice->exercises as $exercise)
-                            @if (in_array($exercise->id, $newPracticeExerciseIds))
-                                <li class="exercise" data-subject="{{ $exercise->subject }}" data-difficulty="{{ $exercise->difficulty }}" data-score="{{ $exercise->score }}">
-                                    <div>
-                                        <h3>{{ $exercise->name }}</h3>
-                                        <strong>Domanda:</strong> {{ $exercise->question }}<br>
-                                        <strong>Materia:</strong> {{ $exercise->subject }}<br>
-                                        <strong>Difficoltà:</strong> {{ $exercise->difficulty }}<br>
-                                        <strong>Punteggio:</strong> {{ $exercise->score }}<br>
-                                        <input type="hidden" name="exercise_ids[]" value="{{ $exercise->id }}">
-                                    </div>
-                                    <div>
-                                        <!-- Aggiungi l'attributo "checked" se l'esercizio è presente -->
-                                        <input type="checkbox" name="selected_exercises[]" value="{{ $exercise->id }}" checked>
-                                    </div>
-                                </li>
-                            @endif
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        </form>
+        @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+        @endif
     </div>
 
-    <!-- script per i filtri e aggiornamento della lista di esercizi disponibili --> 
-    <script>
-        // Dichiarazione dell'array selectedExerciseIds
-        const selectedExerciseIds = @json($selectedExerciseIds);
+    <div class="container p-4 rounded" style="background-color: #fff; box-shadow: 0.15rem 0.25rem 0 rgb(33 40 50 / 15%); border: 1px solid rgba(0,0,0,.125);">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0">{{ __('Dettagli') }}:</h3>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#editDetailsModal">{{ __('Modifica') }}</button>
+        </div>
+        <div class="practice-details">
+            <!-- Description -->
+            <p class="mb-3 text-black"><strong>{{ __('Descrizione') }}:</strong> {{ $practice->description }}</p>
 
-        const subjectFilter = document.getElementById("subjectFilter");
-        const difficultyFilter = document.getElementById("difficultyFilter");
-        const typeFilter = document.getElementById("typeFilter");
-        const minScoreInput = document.getElementById("minScore");
-        const maxScoreInput = document.getElementById("maxScore");
-        const exerciseList = document.getElementById("exerciseList");
+            <!-- Difficulty -->
+            <p class="mb-3 text-black"><strong>{{ __('Difficoltà') }}:</strong> {{ $practice->difficulty }}</p>
 
-        difficultyFilter.addEventListener("change", filterExercises);
-        typeFilter.addEventListener("change", filterExercises);
-        minScoreInput.addEventListener("input", filterExercises);
-        maxScoreInput.addEventListener("input", filterExercises);
+            <!-- Subject -->
+            <p class="mb-3 text-black"><strong>{{ __('Materia') }}:</strong> {{ $practice->subject }}</p>
 
-        const exercises = @json($allExercises);
+            <!-- Total Score -->
+            <p class="mb-3 text-black"><strong>{{ __('Punteggio Totale') }}:</strong> {{ $practice->total_score }}</p>
 
-        function filterExercises() {
-            const subjectFilterValue = subjectFilter.value || "";
-            const difficultyFilterValue = difficultyFilter.value || "";
-            const typeFilterValue = typeFilter.value || "";
-            const minScoreValue = minScoreInput.value || 0;
-            const maxScoreValue = maxScoreInput.value || Infinity;
+            <!-- Feedback Enabled -->
+            <p class="mb-3 text-black">
+                <input type="checkbox" id="feedbackEnabled" disabled {{ $practice->feedback_enabled ? 'checked' : '' }}>
+                <label for="feedbackEnabled" class="text-black">{{ __('Feedback Automatico') }}</label>
+            </p>
 
-            const filteredExercises = exercises.filter(exercise => {
-                return (
-                    exercise.subject.toLowerCase().includes(subjectFilterValue.toLowerCase()) &&
-                    (difficultyFilterValue === "" || exercise.difficulty.toLowerCase() === difficultyFilterValue.toLowerCase()) &&
-                    (typeFilterValue === "" || exercise.type.toLowerCase() === typeFilterValue.toLowerCase()) &&
-                    (exercise.score >= minScoreValue && exercise.score <= maxScoreValue)
-                );
-            });
+            <!-- Randomize Questions -->
+            <p class="mb-3">
+                <input type="checkbox" id="randomizeQuestions" disabled {{ $practice->randomize_questions ? 'checked' : '' }}>
+                <label for="randomizeQuestions" class="text-black">{{ __('Randomizzazione Domande') }}</label>
+            </p>
 
-            displayExercises(filteredExercises);
-        }
+            <!-- Creation Date -->
+            <p class="mb-3 text-black"><strong>{{ __('Data di Creazione') }}:</strong> {{ $practice->created_at }}</p>
 
-        function displayExercises(exercises) {
-            exerciseList.innerHTML = "";
+            <!-- Practice Date -->
+            <p class="mb-3 text-black"><strong>{{ __('Data programmata') }}:</strong> {{ \Carbon\Carbon::parse($practice->practice_date)->format('d-m-Y') }}</p>
+        </div>
 
-            exercises.forEach(exercise => {
-                const li = document.createElement("li");
-                li.classList.add("exercise");
-                li.dataset.subject = exercise.subject;
-                li.dataset.difficulty = exercise.difficulty;
-                li.dataset.score = exercise.score;
-                li.innerHTML = `
-                    <div>
-                        <h3>${exercise.name}</h3>
-                        <strong>Domanda:</strong> ${exercise.question}<br>
-                        <strong>Materia:</strong> ${exercise.subject}<br>
-                        <strong>Difficoltà:</strong> ${exercise.difficulty}<br>
-                        <strong>Punteggio:</strong> ${exercise.score}<br>
-                        <input type="hidden" name="exercise_ids[]" value="${exercise.id}">
+        <!-- Linea di separazione -->
+        <hr class="my-5">
+
+        <div class="d-flex justify-content-between align-items-center">
+            <!-- Testo "Esercizi" a sinistra -->
+            <h2 class="text-xl font-bold text-black">{{ __('Esercizi') }}:</h2>
+
+            <!-- Pulsante "Aggiungi" a destra -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                {{ __('Aggiungi esercizi') }}
+            </button>
+        </div>
+        <hr class="my-2">
+
+        @foreach($practice->exercises as $exercise)
+            <div class="exercise border-b-2 border-gray-200 pb-3 mb-4">
+                <!-- Exercise Name -->
+                <div class="row">
+                    <div class="col-9">
+                        <!-- Exercise Name -->
+                        <h4 class="text-lg font-semibold text-black">{{ $exercise->name }}</h4>
                     </div>
-                    <div>
-                        <button type="button" class="add-exercise-btn" data-exercise-id="${exercise.id}">Aggiungi</button>
+                    <div class="col-3 d-flex justify-content-end">
+                        <!-- Rimuovi esercizio Button -->
+                        <form action="{{ route('practices.remove_exercise', ['practice' => $practice, 'exercise' => $exercise]) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">{{ __('Rimuovi esercizio') }}</button>
+                        </form>
                     </div>
-                `;
-                exerciseList.appendChild(li);
-            });
-
-            // Aggiungi event listener ai bottoni "Aggiungi"
-            document.querySelectorAll('.add-exercise-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const exerciseId = this.dataset.exerciseId;
-                    addExerciseToList(exerciseId);
-                    this.parentNode.parentNode.remove(); // Rimuovi l'esercizio dalla lista degli esercizi disponibili
-                });
-            });
-        }
-
-        // Funzione per aggiungere l'esercizio alla lista degli esercizi presenti
-        function addExerciseToList(exerciseId) {
-            // Aggiungi l'ID dell'esercizio all'array degli esercizi presenti
-            selectedExerciseIds.push(exerciseId);
-            // Aggiungi l'esercizio alla lista degli esercizi presenti
-            const exercise = exercises.find(exercise => exercise.id === parseInt(exerciseId));
-            appendExerciseToSelectedList(exercise);
-        }
-
-        // Funzione per aggiungere l'esercizio alla lista degli esercizi presenti
-        function appendExerciseToSelectedList(exercise) {
-            // Crea l'elemento della lista per l'esercizio
-            const li = document.createElement("li");
-            li.classList.add("exercise");
-            li.dataset.subject = exercise.subject;
-            li.dataset.difficulty = exercise.difficulty;
-            li.dataset.score = exercise.score;
-            li.innerHTML = `
-                <div>
-                    <h3>${exercise.name}</h3>
-                    <strong>Domanda:</strong> ${exercise.question}<br>
-                    <strong>Materia:</strong> ${exercise.subject}<br>
-                    <strong>Difficoltà:</strong> ${exercise.difficulty}<br>
-                    <strong>Punteggio:</strong> ${exercise.score}<br>
-                    <input type="hidden" name="exercise_ids[]" value="${exercise.id}">
                 </div>
-                <div>
-                    <!-- Aggiungi qui eventuali altri elementi necessari -->
+
+                <!-- Question -->
+                <p class="mb-1 text-black "><strong>{{ __('Domanda') }}:</strong> {{ $exercise->question }}</p>
+
+                <!-- Score -->
+                <p class="mb-1 text-black"><strong>{{ __('Punteggio') }}:</strong> {{ $exercise->score }}</p>
+            </div>
+            <hr stile="border-top: 1px solid #000000; width: 90%;" />
+        @endforeach
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="editDetailsModal" tabindex="-1" role="dialog" aria-labelledby="editDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editDetailsModalLabel">{{ __('Modifica Dettagli') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-            `;
-            // Aggiungi l'elemento alla lista degli esercizi presenti
-            document.getElementById('selectedExerciseList').appendChild(li);
-        }
+                <div class="modal-body">
+                    <form action="{{ route('practices.update.details') }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <input type="text" class="form-control" id="id" value="{{ $practice->id }}" name="id" style="display: none;">
+                        <!-- Titolo -->
+                        <div class="form-group">
+                            <label for="title">{{ __('Titolo') }}</label>
+                            <input type="text" class="form-control" id="title" value="{{ $practice->title }}" name="title">
+                        </div>
+                        <div class="form-group">
+                        <label for="difficulty">{{ __('Difficoltà') }}:</label>
+                            <select class="form-control p-2" name="difficulty" required>
+                                <option value="Bassa" {{ $practice->difficulty == 'Bassa' ? 'selected' : '' }}>Bassa</option>
+                                <option value="Media" {{ $practice->difficulty== 'Media' ? 'selected' : '' }}>Media</option>
+                                <option value="Alta" {{ $practice->difficulty == 'Alta' ? 'selected' : '' }}>Alta</option>
+                            </select>           
+                        </div>
+                        <!-- Descrizione -->
+                        <div class="form-group">
+                            <label for="description">{{ __('Descrizione') }}</label>
+                            <textarea class="form-control" id="description" rows="3" name="description">{{ $practice->description }}</textarea>
+                        </div>
+                        <!-- Materia -->
+                        <div class="form-group">
+                            <label for="subject">{{ __('Materia') }}</label>
+                            <input type="text" class="form-control" id="subject" name="subject" value="{{ $practice->subject }}">
+                        </div>
+                        @php $cond = true; @endphp
+                        @foreach($practice->exercises as $exercise)
+                            @if($exercise->type == "Risposta Aperta")
+                                @php $cond = false; @endphp
+                                @break
+                            @endif
+                        @endforeach
+                        @if( $cond == true )
+                            <!-- Feedback Automatico -->
+                            <div class="form-group">
+                                <label>{{ __('Feedback Automatico') }}</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="feedback_enabled" id="feedbackYes" value="1" {{ $practice->feedback_enabled ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="feedbackYes">
+                                        {{ __('Si') }}
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="feedback_enabled" id="feedbackNo" value="0" {{ !$practice->feedback_enabled ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="feedbackNo">
+                                        {{ __('No') }}
+                                    </label>
+                                </div>
+                            </div>
+                        @endif
+                        <!-- Randomizzazione -->
+                        <div class="form-group">
+                            <label>{{ __('Randomizzazione') }}</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="randomize_questions" id="randomizeYes" value="1" {{ $practice->randomize_questions ? 'checked' : '' }}>
+                                <label class="form-check-label" for="randomizeYes">
+                                    {{ __('Si') }}
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="randomize_questions" id="randomizeNo" value="0" {{ !$practice->randomize_questions ? 'checked' : '' }}>
+                                <label class="form-check-label" for="randomizeNo">
+                                    {{ __('No') }}
+                                </label>
+                            </div>
+                        </div>
+                        <!-- Durata -->
+                        <div class="form-group">
+                            <label for="duration">{{ __('Durata') }}</label>
+                            <input type="text" class="form-control" id="duration" name="time" value="{{ $practice->time }}">
+                        </div>
+                        <!-- Data Programmata -->
+                        <div class="form-group">
+                            <label for="practiceDate">{{ __('Data Programmata') }}</label>
+                            <input type="date" class="form-control" id="practiceDate" name="practice_date" value="{{ $practice->practice_date }}">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Chiudi') }}</button>
+                        <!-- Aggiungi un bottone per salvare le modifiche -->
+                        <button type="submit" class="btn btn-primary">{{ __('Salva Modifiche') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-        // Applica i filtri iniziali
-        filterExercises();
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">{{ __('Seleziona gli esercizi da aggiungere') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('practices.add_exercises', ['practice' => $practice]) }}"  method="POST">
+                        @csrf
 
-        // Aggiorna i filtri automaticamente
-        subjectFilter.addEventListener("change", filterExercises);
-        difficultyFilter.addEventListener("change", filterExercises);
-        minScoreInput.addEventListener("input", filterExercises);
-        maxScoreInput.addEventListener("input", filterExercises);
-    </script>
-
-</body>
-</html>
+                        @foreach($availableExercises as $exercise)
+                            @if (!$practice->exercises->contains($exercise) && $exercise->subject == $practice->subject)
+                                <div class="form-check p-3">
+                                    <input class="form-check-input" type="checkbox" name="exercises[]" value="{{ $exercise->id }}" id="exercise{{ $exercise->id }}">
+                                    <label class="form-check-label" for="exercise{{ $exercise->id }}">
+                                        <strong>{{ $exercise->question }}</strong><br/>{{ __('Tipo') }}: {{ $exercise->type }},<br/>{{ __('Punteggio') }}: {{ $exercise->score }}
+                                    </label>
+                                </div>
+                            @endif
+                        @endforeach
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Chiudi') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Conferma') }}</button>
+                </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

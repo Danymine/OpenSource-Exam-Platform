@@ -64,9 +64,10 @@
                                     <input type="checkbox" id="exercise{{ $exercise->id }}" data-score="{{ $exercise->score }}" name="exercise[]" value="{{ $exercise->id }}" class="align-self-stretch" {{ session()->has('exame_step1') && array_key_exists('exercise', session('exame_step1')) && in_array($exercise->id, session('exame_step1')['exercise']) ? 'checked' : '' }}>
                                 </div>
                             </div>
-                            <input type="number" value="0" id="score_input" style="display: none;" name="total_score">
                         </div>
                     @endforeach
+
+                    <input type="number" id="score_input" style="display: none;" name="total_score">
 
             @else
 

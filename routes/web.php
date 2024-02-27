@@ -33,7 +33,6 @@ Route::get('/errore2', function (){
 |
 */
 
-//Rotta per raggiungere il sito EBBASTA
 Route::get('/', function () {
     return view('navigation.welcome');
 })->name('ciao');
@@ -43,37 +42,42 @@ Route::get('/dashboard', function () {
 
     return view('navigation.dashboard');
 
-})->middleware(['auth','verified'])->name('dashboard'); //Richiede il passaggio da due middleware Auth e Verified (Da approfondire Verified)
-//Questa rotta va bene sia per studenti che per il docente che per l'amministratore nel caso.
+})->middleware(['auth','verified'])->name('dashboard');
 
-//Tutte le rotte in questo group sono sottoposte al dover rispettare il middleware Auth
+//Questa rotta va bene sia per studenti che per il docente che per l'amministratore nel caso.
 Route::middleware('auth')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     //Rotte di partecipazione Esame/Esercitazione
     Route::post('/join', [PracticeController::class, 'join'])->name('pratices.join');
+    
     Route::get('/view-test/{key}', [PracticeController::class, 'showExam'])->name('view-test')->middleware('allowed');
 
-
     Route::post('/send', [PracticeController::class, 'send'])->name('pratices.send');
-    //Forse questo non dovrebbe essere relativo alla Practice ma al Delivered in quanto lui consegna la consegna non una practice.
 
+    //Rotta di partecipazione alla waiting-room (Avvio esame per il docente.) Questa rotta è disponibile solo per studenti o per il docente che ha creato la Practice con quella Key.
     Route::get('/waiting-room/{key}', [WaitingRoomController::class, 'show'])->name('waiting-room');
 
+    Route::get('/status/{practice}', [WaitingRoomController::class, 'status'])->name('status');
 
-    Route::get('/status/{test}', [WaitingRoomController::class, 'status'])->name('status');
-    Route::get('/user/{test}', [WaitingRoomController::class, 'participants'])->name('user');
-    Route::get('/authorize/{test}', [WaitingRoomController::class, 'empower'])->name('empower');
-
+    //Mostra i dettagli della consegna. (Le risposte e se presenti voti o altro.)
     Route::get('/view-details-delivered/{delivered}', [DeliveredController::class, 'show'])->name('view-details-delivered')->middleware('control'); //Il middleware permette di vedere i dettagli della consegna solo per gli utenti che l'hanno consegnata o per il docente che ha creato la practice alla quale si riferisce
+    
     Route::get('/download-details-delivered/{delivered}', [DeliveredController::class, 'print'])->name('download-details-delivered')->middleware('control');
+    
     Route::get('/download-correct-delivered/{delivered}', [DeliveredController::class, 'printCorrect'])->name('download-correct-delivered');
+   
     Route::get('/aggiungi-utente', [UserController::class, 'showAddUserForm'])->name('show-add-user-form');
+   
     Route::post('/aggiungi-utente', [UserController::class, 'aggiungiUtente'])->name('aggiungi-utente');
+    
     Route::get('/user-list', [UserController::class, 'showUserList'])->name('user-list');
+    
     Route::delete('/utenti/{id}', [UserController::class, 'destroy'])->name('delete-user');
 
     Route::get('/lista-utenti', [UserController::class, 'showUserListFromDb'])->name('users-list');
@@ -87,18 +91,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/search-user', [UserController::class, 'search'])->name('search-user');
 
- });
+});
 
 Route::middleware('auth', 'role')->group(function (){
 
-
-    Route::get('/view-delivered/{practice}', [DeliveredController::class, 'index'])->name('view-delivered');
-    Route::get('/public/{practice}', [DeliveredController::class, 'public'])->name('public');
-    Route::get('/view-exame-passed', [PracticeController::class, 'showHistoryExame'])->name('exame-passed');
-    Route::get('/view-practice-passed', [PracticeController::class, 'showHistoryPractice'])->name('practice-passed');
-    Route::get('/stats-practice/{practice}', [PracticeController::class, 'stats'])->name('stats');
-
-    Route::post('/save', [DeliveredController::class, 'save'])->name('store-valutation');
     /* ROTTE DI MARCO */
 
     // Rotte per gli esercizi
@@ -135,6 +131,9 @@ Route::middleware('auth', 'role')->group(function (){
    
     Route::prefix('exam')->group(function () {
         
+        //Pagina iniziale mostra tutti gli esami
+        Route::get('/', [PracticeController::class, 'examIndex'])->name('exam.index');
+
         //Processo di Creazione Manuale
         //Step - 1 Creazione Esame
         Route::get('/create-first', [PracticeController::class, 'create_exame'])->name('exame.step1');
@@ -155,6 +154,8 @@ Route::middleware('auth', 'role')->group(function (){
 
     Route::prefix('practice')->group(function () {
         
+        //Pagina iniziale mostra tutte le practice
+        Route::get('/', [PracticeController::class, 'practiceIndex'])->name('practices.index');   
         
         Route::get('/create-first', [PracticeController::class, 'create_practice'])->name('practice.step1');
         Route::post('/create-first', [PracticeController::class, 'store_practice'])->name('create_practice_step1');
@@ -170,46 +171,65 @@ Route::middleware('auth', 'role')->group(function (){
 
     });
 
-    //Creazione Auotmatica.
+    //Creazione Auotomatica.
     Route::get('/create-automation', [PracticeController::class, 'create_automation'])->name('create_automation');
-    Route::post('/save-automation', [PracticeController::class, 'save_automation'])->name('save_automation');  
+    Route::post('/save-automation', [PracticeController::class, 'save_automation'])->name('save_automation');
+    
+    //Cancellazione
+    Route::delete('/delete/{practice}', [PracticeController::class, 'destroy'])->name('practices.destroy');
+
+    //Duplica
+    Route::get('/duplicate/{practice}', [PracticeController::class, 'duplicate'])->name('practices.duplicate');
+
+    //Mostra il contenuto di una Practice
+    Route::get('/show/{practice}', [PracticeController::class, 'show'])->name('practices.show');
+
+    //Modifica
+    Route::get('/edit/{practice}', [PracticeController::class, 'edit'])->name('practices.edit');
+    Route::put('/update', [PracticeController::class, 'update_details'])->name('practices.update.details'); //Modifica dettagli.
+    Route::delete('/remove/{practice}/{exercise}', [PracticeController::class, 'remove'])->name('practices.remove_exercise'); //Togli Esercizi
+    Route::post('/add-exercise/{practice}', [PracticeController::class, 'add'])->name('practices.add_exercises'); //Aggiungi esercizi.
+
+    //Passiamo a gestire le consegne.
+    //Pagina Iniziale
+    Route::get('/view-delivered/{practice}', [DeliveredController::class, 'index'])->name('view-delivered');
+
+    //Si occupa di memorizzare il voto.
+    Route::post('/save-valutation/{delivered}', [DeliveredController::class, 'save'])->name('store-valutation');
+
+    //Si occupa di pubblicare le valutazioni
+    Route::get('/public/{practice}', [DeliveredController::class, 'public'])->name('public');
+
+    //Passiamo a gestire la Waiting-Room e l'avvio dell'esame.
+    Route::get('/authorize/{practice}', [WaitingRoomController::class, 'empower'])->name('start-test');
+
+    //Annulla l'avvio di un test kikkando tutti gli studenti che tentavano di partecipare.
+    Route::get('/cancel-start/{practice}', [WaitingRoomController::class, 'cancel'])->name('cancel-start');
+
+    //Otteniamo gli utenti che cercano di partecipare alla Prova.
+    Route::get('/user/{practice}', [WaitingRoomController::class, 'participants'])->name('fetch-partecipants');
+
+    //Kick studenti
+    Route::delete('/kick/{user_id}', [WaitingRoomController::class, 'kick'])->name('kick-partecipants');
+
+    //Accetta Studenti
+    Route::get('/allowed/{user_id}', [WaitingRoomController::class, 'allowed'])->name('allow-student');
+
+    //Annulla l'avvio di un test kikkando tutti gli studenti che tentavano di partecipare.
+    Route::get('/finish-test/{practice}', [PracticeController::class, 'finish'])->name('finish-test');
+
+    Route::get('/view-exame-passed', [PracticeController::class, 'showHistoryExame'])->name('exame-passed');
+    Route::get('/view-practice-passed', [PracticeController::class, 'showHistoryPractice'])->name('practice-passed');
+
+    Route::get('/stats-practice/{practice}', [PracticeController::class, 'stats'])->name('stats');
+
 
 });
-
 
 Route::prefix('admin')->group(function () {
     Route::get('/richiedi-assistenza', [RequestController::class, 'showAssistanceRequestForm'])->name('createAssistanceRequest');
     Route::post('/richiedi-assistenza', [RequestController::class, 'createAssistanceRequest'])->name('storeAssistanceRequest'); 
     Route::get('/admin/requests', [AdminRequestController::class, 'index'])->name('admin.requests.index');
 });
-    //rotte per le esercitazioni 
-    Route::prefix('practices')->group(function () {
-        Route::get('/exam', [PracticeController::class, 'examIndex'])->name('exam.index');
-        Route::get('/practice', [PracticeController::class, 'practiceIndex'])->name('practices.index');              
-        
-        Route::get('/create/{type}', [PracticeController::class, 'create'])->name('practices.create');
-        Route::post('/new/{type}', [PracticeController::class, 'generatePracticeWithFilters'])->name('practices.new');
-        
-        Route::get('/exercise-list/{type}', [PracticeController::class, 'exerciseList'])->name('exercise.list');
-        Route::post('/create-exercise-set/{type}', [PracticeController::class, 'createExerciseSet'])->name('createExerciseSet');
-        
-        Route::get('/{type}/{practice}', [PracticeController::class, 'show'])->name('practices.show');
-
-        Route::get('/{type}/{practice}/edit', [PracticeController::class, 'edit'])->name('practices.edit');
-        Route::put('/{type}/{practice}/updated', [PracticeController::class, 'update'])->name('practices.update');
-
-        Route::delete('/{type}/{practice}', [PracticeController::class, 'destroy'])->name('practices.destroy');
-        Route::get('/{type}/{practice}/duplicate', [PracticeController::class, 'duplicate'])->name('practices.duplicate');
-    });
-
-});
-    Route::prefix('admin')->group(function () {
-        Route::get('/richiedi-assistenza', [RequestController::class, 'showAssistanceRequestForm'])->name('createAssistanceRequest');
-        Route::post('/richiedi-assistenza', [RequestController::class, 'createAssistanceRequest'])->name('storeAssistanceRequest'); 
-        Route::get('/admin/requests', [AdminRequestController::class, 'index'])->name('admin.requests.index');
-    });
-
-
-    
 
 require __DIR__.'/auth.php';    //Istruzione per includere tutte le rotte definite nel file auth.php

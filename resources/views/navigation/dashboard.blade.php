@@ -2,13 +2,45 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <h4>
-            {{ __('Dashboard') }}
-        </h4>
-        <hr stile="border-top: 1px solid #000000; width: 90%;" />
+        @if( Auth::user()->roles == "Student")
+            <div class="d-flex justify-content-between align-items-center">
+                <h4>{{ __('Dashboard') }}</h4>
+                <form action="{{ route('pratices.join') }}" method="POST" class="form-inline">
+                    @csrf
+                    <input type="text" id="key" name="key" class="form-control mr-3 equal-height" placeholder="{{ __('Inserisci la chiave') }}">
+                    <button type="submit" class="btn btn-primary equal-height">{{ __('Partecipa') }}</button>
+                </form>
+            </div>
+            <hr stile="border-top: 1px solid #000000; width: 90%;" />
+        @else
+            <x-slot name="header">
+            <h4>
+                {{ __('Dashboard') }}
+            </h4>
+            <hr stile="border-top: 1px solid #000000; width: 90%;" />
+        @endif
     </x-slot>
 
+
     @if( Auth::user()->roles == "Teacher" )
+        
+        <div class="container">
+            @if($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
+            @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+            @endif
+        </div>
         <div class="container">
             <div class="row">
                 <div class="col-sm-6">
@@ -17,8 +49,8 @@
                             <!-- Primo elemento: bottoni Esami ed Esercitazioni -->
                             <div class="col">
                                 <div class="btn-group" role="group" aria-label="Bottoni Esami ed Esercitazioni">
-                                    <button type="button" class="btn btn-success rounded  mr-2" onclick="showExams()">Esami</button>
-                                    <button type="button" class="btn btn-success rounded " onclick="showPractices()">Esercitazioni</button>
+                                    <button type="button" class="btn btn-success rounded  mr-2" onclick="showExams()">{{ __('Esami') }}</button>
+                                    <button type="button" class="btn btn-success rounded " onclick="showPractices()">{{ __('Esercitazioni') }}</button>
                                 </div>
                             </div>
                         </div>
@@ -28,9 +60,9 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Nome</th>
-                                            <th scope="col">Data</th>
-                                            <th scope="col">Alunni mancanti</th>
+                                            <th scope="col">{{ __('Nome') }}</th>
+                                            <th scope="col">{{ __('Data') }}</th>
+                                            <th scope="col">{{ __('Alunni mancanti') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -38,7 +70,7 @@
 
                                             @foreach( $practice->delivereds as $delivered )
 
-                                                @if( $delivered->valutation == NULL )
+                                                @if( $delivered->valutation === NULL )
 
                                                     @if ( $practice->type  == "Exam" )
 
@@ -101,14 +133,59 @@
                 </div>
             </div>
         </div>
+        <script>
+
+            // Filtra gli eventi per mostrare solo quelli con data uguale o successiva a oggi
+            events = {!! json_encode(Auth::user()->practices()->where('practice_date', '>=', now()->toDateString())->get()->map(function ($practice) {
+                return [
+                    'title' => $practice->title,
+                    'start' => $practice->practice_date,
+                    'url' => route('waiting-room', ['key' => $practice->key]),
+                ];
+            })) !!};
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var calendarEl = document.getElementById('calendar');
+
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    events: events,
+                    eventClick: function(info) {
+                        if (info.event.url) {
+                            window.location.href = info.event.url; // Reindirizza alla URL dell'evento
+                        }
+                    }
+                });
+
+                calendar.render();
+            });
+        </script>
+
     @elseif( Auth::user()->roles == "Student" )
         
+        <div class="container">
+            @if($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
+            @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+            @endif
+        </div>
         <div class="container">
             <h4>Ciao, {{ Auth::User()->name }}</h4>
                 <div class="row">
                     <div class="col">
-                        <button id="esamiButton" class="btn btn-primary" onclick="showExams()">Esami</button>
-                        <button id="esercitazioniButton" class="btn btn-primary" onclick="showPractices()">Esercitazioni</button>
+                        <button id="esamiButton" class="btn btn-primary" onclick="showExamsStudent()">{{ __('Esami') }}</button>
+                        <button id="esercitazioniButton" class="btn btn-primary" onclick="showPracticesStudent()">{{ __('Esercitazioni') }}</button>
                     </div>
                 </div>
 
@@ -118,9 +195,9 @@
                             <table class="table">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th scope="col">Nome</th>
-                                        <th scope="col">Data</th>
-                                        <th scope="col">Voto</th>
+                                        <th scope="col">{{ __('Nome') }}</th>
+                                        <th scope="col">{{ __('Data') }}</th>
+                                        <th scope="col">{{ __('Voto') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -129,7 +206,7 @@
                                             $practice = $delivered->practice()->withTrashed()->first();
                                         @endphp
 
-                                        @if( $practice->type == "esercitazione")
+                                        @if( $practice->type == "Practice")
 
                                             <tr class="clickable row-type row-practice" onclick="window.location='{{ route('view-details-delivered', ['delivered' =>  $delivered ] ) }}'">
                                                 <td>{{  $practice->title }}</td>
@@ -143,20 +220,20 @@
                                                 @endif
                                             </tr>
                                         @else
-                                        <tr class="clickable row-type row-exame" onclick="window.location='{{ route('view-details-delivered', ['delivered' =>  $delivered ] ) }}'">
-                                            <td>{{ $practice->title }}</td>
-                                            @if( $delivered->valutation != NULL and $practice->public == 1)
-                                                <td>{{ $practice->practice_date }}</td>
-                                                @if( $delivered->valutation >= $practice->total_score * 0.6)
-                                                    <td>{{ $delivered->valutation }}</td>
+                                            <tr class="clickable row-type row-exame" onclick="window.location='{{ route('view-details-delivered', ['delivered' =>  $delivered ] ) }}'">
+                                                <td>{{ $practice->title }}</td>
+                                                @if( $delivered->valutation != NULL and $practice->public == 1)
+                                                    <td>{{ $practice->practice_date }}</td>
+                                                    @if( $delivered->valutation >= $practice->total_score * 0.6)
+                                                        <td>{{ $delivered->valutation }}</td>
+                                                    @else
+                                                        <td>Insufficiente</td>
+                                                    @endif
                                                 @else
-                                                    <td>Insufficiente</td>
+                                                    <td>{{ $practice->practice_date }}</td>
+                                                    <td>Non valutata</td>
                                                 @endif
-                                            @else
-                                                <td>{{ $practice->practice_date }}</td>
-                                                <td>Non valutata</td>
-                                            @endif
-                                        </tr>
+                                            </tr>
                                         @endif
                                     @endforeach
                                 </tbody>
@@ -305,25 +382,6 @@
                     
 </x-app-layout>
 <script>
-    events = {!! json_encode(Auth::user()->practices()->get()->map(function ($practice) {
-        return [
-            'title' => $practice->title,
-            'start' => $practice->practice_date, // Assumendo che $practice->practice_date sia nel formato corretto
-        ];
-    })) !!};    
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            events: events
-    });
-
-    calendar.render();
-    });
-
-</script>
-<script>
 
     function showExams(){
 
@@ -352,55 +410,34 @@
     }    
 </script>
 <script>
-/*
-function showExams() {
+
+function showExamsStudent() {
     
-        @if ( Auth::user()->roles == "Teacher" || Auth::user()->roles == "Admin")
+        
 
-            var story = document.getElementById('StoricoEsercitazioni');
-            if( story != null ){
+    var chart = document.getElementById("Chartpractice");
+    if( chart != null ){
 
-                story.style.display = "none";
-                story = document.getElementById('StoricoEsami').style.display = "block";
-            }
-            showRows("exame");
-        @else
+        chart.style.display = "none";
+        chart = document.getElementById("Chartexame").style.display = "block";
+    }
+    showRows("exame");
 
-            var chart = document.getElementById("Chartpractice");
-            if( chart != null ){
-
-                chart.style.display = "none";
-                chart = document.getElementById("Chartexame").style.display = "block";
-            }
-            showRows("exame");
-
-        @endif
 }
 
-function showPractices() {
+function showPracticesStudent() {
 
-    @if ( Auth::user()->roles == "Teacher" || Auth::user()->roles == "Admin")
+    var chart = document.getElementById("Chartexame");
+    if( chart != null ){
 
-        var story = document.getElementById('StoricoEsami');
-        if( story != null ){
-
-            story.style.display = "none";
-            story = document.getElementById('StoricoEsercitazioni').style.display = "block";
-        }
-        showRows("practice");
-    @else
-
-        var chart = document.getElementById("Chartexame");
-        if( chart != null ){
-
-            chart.style.display = "none";
-            chart = document.getElementById("Chartpractice").style.display = "block";
-        }
-        showRows("practice");
-    @endif
+        chart.style.display = "none";
+        chart = document.getElementById("Chartpractice").style.display = "block";
+    }
+    showRows("practice");
 }
 
 function showRows(type) {
+
     var rows = document.querySelectorAll(".row-type");
 
     rows.forEach(function(row) {
@@ -413,5 +450,4 @@ function showRows(type) {
         }
     });
 }
-*/
 </script>
