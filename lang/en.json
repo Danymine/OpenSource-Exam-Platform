@@ -1,0 +1,51 @@
+{
+    "Scopri subito ExamSync": "Discover ExamSync now",
+    "Benvenuti alla Piattaforma per la Gestione di Esercitazioni/Esami, il vostro compagno digitale per la creazione, gestione e valutazione di esercizi e test educativi in modo efficiente e intuitivo. Sviluppata con l'obiettivo di semplificare il processo di preparazione e somministrazione di esercitazioni ed esami, la nostra piattaforma offre una vasta gamma di funzionalità progettate per soddisfare le esigenze di docenti, formatori e istituti educativi di ogni livello.": "Welcome to the Exam/Exercise Management Platform, your digital companion for creating, managing, and evaluating educational exercises and tests efficiently and intuitively. Developed with the aim of simplifying the process of preparation and administration of exercises and exams, our platform offers a wide range of features designed to meet the needs of teachers, trainers, and educational institutions at all levels.",
+    "Iscriviti Subito": "Sign Up Now",
+    "Compito in classe": "In-class Assignment",
+    "Perchè scegliere ExamSync?": "Why Choose ExamSync?",
+    "Assistenza Garantita": "Guaranteed Support",
+    "Assistenza tecnica garantita per ogni problema o necessità ogni giorno dalle 8:00 fino alle 18:00": "Guaranteed technical support for any problem or need every day from 8:00 am to 6:00 pm",
+    "Semplice Utilizzo": "Simple Usage",
+    "La nostra piattaforma ha ottenuto ottimi risultati con i propri utenti certificandosi tripla A": "Our platform has achieved excellent results with its users, certifying triple A",
+    "Sicurezza dei Dati": "Data Security",
+    "La vostra sicurezza e qualla dei suoi studenti è garantita da meccanismi crittografici.": "Your and your students' security is guaranteed by cryptographic mechanisms.",
+
+    "Accedi": "Sign In",
+    "Registrati": "Sign Up",
+    "Dashboard": "Dashboard",
+    "Biblioteca": "Library",
+    "Esercitazioni": "Exercises",
+    "Esami": "Exams",
+    "Profilo": "Profile",
+    "Logout": "Logout",
+
+    
+    "Nome": "Name",
+    "Cognome": "Surname",
+    "Data di Nascita": "Date of Birth",
+    "Email": "Email",
+    "Password": "Password",
+    "Conferma Password": "Confirm Password",
+    "Ruolo": "Role",
+    "Studente": "Student",
+    "Insegnante": "Teacher",
+
+    
+    "Ricordami": "Remember me",
+    "Hai dimenticato la password?": "Forgot your password?",
+    
+    
+    "Recupera Password": "Recover Password",
+    "Dimenticata la password? Nessun problema. Fornisci il tuo indirizzo email e ti invieremo un link per il ripristino della password, che ti permetterà di sceglierne una nuova.": "Forgot your password? No problem. Just provide your email address and we will email you a password reset link that will allow you to choose a new one.",
+    "Recupera": "Recover",
+
+    "Questa è un'area protetta dell'applicazione. Conferma la tua password prima di continuare": "This is a secure area of the application. Please confirm your password before continuing.",
+    "Conferma": "Confirm",
+    "Ripristina Password": "Reset Password",
+
+    "Grazie per esserti registrato! Prima di iniziare, potresti confermare il tuo indirizzo email cliccando sul link che ti abbiamo appena inviato via email? Se non hai ricevuto l'email, saremo lieti di inviartene un'altra.": "Thank you for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.",
+    "Rinvia Email di Verifica": "Resend Verification Email",
+    "Un nuovo link di verifica è stato inviato all'indirizzo email fornito durante la registrazione.": "A new verification link has been sent to the email address you provided during registration."   
+    
+}

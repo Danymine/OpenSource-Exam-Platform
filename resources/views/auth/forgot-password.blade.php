@@ -10,7 +10,7 @@
                     <div class="card-body" style="background-color: #010039; color: white; border: 1px solid #010039;">
                         <h1 class="card-title text-center mb-4">{{ __('Recupera Password') }}</h1>
                         <div class="mb-4 text-sm text-gray-600">
-                            {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+                            {{ __('Dimenticata la password? Nessun problema. Fornisci il tuo indirizzo email e ti invieremo un link per il ripristino della password, che ti permetterà di sceglierne una nuova.') }}
                         </div>
 
                         <form method="POST" action="{{ route('password.email') }}">
@@ -24,7 +24,7 @@
                             </div>
 
                             <div class="d-flex justify-content-end mb-3">
-                                <button type="submit" class="btn btn-primary">{{ __('Email Password Reset Link') }}</button>
+                                <button type="submit" class="btn btn-primary">{{ __('Recupera') }}</button>
                             </div>
                         </form>
                     </div>

@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'ExamSync'),
 
     /*
     |--------------------------------------------------------------------------
@@ -83,10 +83,7 @@ return [
     |
     */
 
-    'locales' => [
-        'en', 
-        'it',
-    ],
+    'locale' => 'it',
     
 
     /*

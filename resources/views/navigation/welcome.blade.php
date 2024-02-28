@@ -3,21 +3,21 @@
     <div class="container-fluid d-flex p-0" style="background-color: #010039;">
         <div class="row m-0 w-100"> <!-- Utilizza la classe w-100 per fare in modo che la riga occupi l'intera larghezza del contenitore -->
             <div class="col-md-6 p-4 mb-3"> <!-- Utilizza la classe col-md-7 per occupare il 60% dello schermo su dispositivi di dimensioni medie e superiori -->
-                <h1 class="text-white">Scopri subito ExameSync</h1>
+                <h1 class="text-white">{{ __('Scopri subito ExameSync') }}</h1>
                 <p>
-                    Benvenuti alla Piattaforma per la Gestione di Esercitazioni/Esami, il vostro compagno digitale per la creazione, gestione e valutazione di esercizi e test educativi in modo efficiente e intuitivo. Sviluppata con l'obiettivo di semplificare il processo di preparazione e somministrazione di esercitazioni ed esami, la nostra piattaforma offre una vasta gamma di funzionalità progettate per soddisfare le esigenze di docenti, formatori e istituti educativi di ogni livello.
+                    {{ __("Benvenuti alla Piattaforma per la Gestione di Esercitazioni/Esami, il vostro compagno digitale per la creazione, gestione e valutazione di esercizi e test educativi in modo efficiente e intuitivo. Sviluppata con l'obiettivo di semplificare il processo di preparazione e somministrazione di esercitazioni ed esami, la nostra piattaforma offre una vasta gamma di funzionalità progettate per soddisfare le esigenze di docenti, formatori e istituti educativi di ogni livello.") }}
                 </p>
-                <a type="button" id="iscriviti" class="btn rounded text-white" href="{{ route('register') }}">Iscriviti Subito</a>
+                <a type="button" id="iscriviti" class="btn rounded text-white" href="{{ route('register') }}">{{ __('Iscriviti Subito') }}</a>
             </div>
             <div class="col-md-6 mb-3 d-flex align-items-center justify-content-center"> <!-- Aggiungi le classi d-flex, align-items-center e justify-content-center per centrare l'immagine verticalmente e orizzontalmente -->
-                <img src="/system/SfondoHome.jpeg" class="img-fluid" alt="Immagine">
+                <img src="/system/SfondoHome.jpeg" class="img-fluid" alt="{{ __('Compito in classe') }}">
             </div>
         </div>
     </div>
 
     <!-- Schede -->
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Perchè scegliere ExameSync?</h2>
+        <h2 class="text-center mb-4">{{ __('Perchè scegliere ExameSync?') }}</h2>
         <div class="row">
             <div class="col-md-4 mb-4">
                 <div class="card text-center"  style="background-color: #010039; border-radius: 30px;">
@@ -28,8 +28,8 @@
                             colors="primary:#FFFFFF,secondary:#FFFFFF,tertiary:#66ee78,quaternary:#e86830"
                             style="width:150px;height:150px">
                         </lord-icon>
-                        <h4 class="card-title mt-3 text-white">Assistenza Garantita</h4>
-                        <p class="card-text">Assistenza tecnica garantita per ogni problema o necessità ogni giorno dalle 8:00 fino alle 18:00</p>
+                        <h4 class="card-title mt-3 text-white">{{ __('Assistenza Garantita') }}</h4>
+                        <p class="card-text">{{ __('Assistenza tecnica garantita per ogni problema o necessità ogni giorno dalle 8:00 fino alle 18:00') }}/p>
                     </div>
                 </div>
             </div>
@@ -41,8 +41,8 @@
                             trigger="hover"
                             style="width:150px;height:150px">
                         </lord-icon>
-                        <h4 class="card-title mt-3 text-white">Semplice Utilizzo</h4>
-                        <p class="card-text">La nostra piattaforma ha ottenuto ottimi risultati con i propri utenti certificandosi tripla A</p>
+                        <h4 class="card-title mt-3 text-white">{{ __('Semplice Utilizzo') }}</h4>
+                        <p class="card-text">{{ __('La nostra piattaforma ha ottenuto ottimi risultati con i propri utenti certificandosi tripla A') }}</p>
                     </div>
                 </div>
             </div>
@@ -55,8 +55,8 @@
                             colors="primary:#ffffff,secondary:#ffffff"
                             style="width:150px;height:150px">
                         </lord-icon>
-                        <h4 class="card-title mt-3 text-white">Sicurezza dei Dati</h4>
-                        <p class="card-text">La vostra sicurezza e qualla dei suoi studenti è garantita da meccanismi crittografici. </p>
+                        <h4 class="card-title mt-3 text-white">{{ __('Sicurezza dei Dati') }}</h4>
+                        <p class="card-text">{{ __('La vostra sicurezza e qualla dei suoi studenti è garantita da meccanismi crittografici.') }} </p>
                     </div>
                 </div>
             </div>
@@ -64,5 +64,4 @@
     </div>
 
 </x-app-layout>
-<script src="/js/validateRegister.js"></script>
 
