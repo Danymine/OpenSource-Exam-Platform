@@ -6,7 +6,7 @@
         </x-slot>
 
         <div class="text-right mb-3">
-            <button class="btn btn-secondary" style="display: none;" onclick="resetFilters()"><i class="fas fa-times"></i> {{ __('Reset Filtri') }}</button>
+            <button class="btn btn-secondary" style="display: none;" onclick="resetFilters()"><i class="fas fa-times"></i> {{ __('Cancella Filtri') }}</button>
             <button class="btn btn-info" onclick="toggleFilterModal()"><i class="fas fa-filter"></i> {{ __('Filtri') }}</button>
             <!-- Bottone di creazione con menu a discesa -->
             <div class="dropdown" style="display: inline-block;">
@@ -32,10 +32,10 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <input id="punteggioMinInput" type="number" class="form-control w-100 filter-select" aria-label="Inserisci punteggio minimo" onchange="applyFilters()" placeholder="Minimo punteggio">
+                    <input id="punteggioMinInput" type="number" class="form-control w-100 filter-select" aria-label="Inserisci punteggio minimo" onchange="applyFilters()" placeholder="{{ __('Minimo punteggio') }}">
                 </div>
                 <div class="col-md-3">
-                    <input id="punteggioMaxInput" type="number" class="form-control w-100 filter-select" aria-label="Inserisci punteggio massimo" onchange="applyFilters()" placeholder="Massimo punteggio">
+                    <input id="punteggioMaxInput" type="number" class="form-control w-100 filter-select" aria-label="Inserisci punteggio massimo" onchange="applyFilters()" placeholder="{{ __('Massimo punteggio') }}">
                 </div>
                 <div class="col-md-3">
                     <select id="difficoltaInput" class="form-select w-100 filter-select" aria-label="Seleziona difficoltà" onchange="applyFilters()">
@@ -91,7 +91,7 @@
                             <a class="btn btn-warning edit-button" href="{{ route('practices.edit', ['practice' => $practice]) }}"><i class="fas fa-pencil-alt"></i></a>
                         </td>
                         <td>
-                            <form action="{{ route('practices.destroy', ['practice' => $practice]) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questa pratica?');">
+                            <form action="{{ route('practices.destroy', ['practice' => $practice]) }}" method="POST" onsubmit="return confirm({{ __('Sei sicuro di voler eliminare questa pratica?') }});">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>

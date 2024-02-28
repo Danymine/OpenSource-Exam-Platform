@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Delivered;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
+
 
 class Control
 {

@@ -1,7 +1,7 @@
 <section>
     <header class="text-center">
         <h2 class="text-lg font-medium">
-            {{ __('Profile Information') }}
+            {{ __('Profilo') }}
         </h2>
     </header>
 
@@ -20,40 +20,40 @@
                     <!-- Profile picture card-->
                     <div class="card mb-4 mb-xl-0">
                         <div class="card-header">
-                            Profile Picture
+                            {{ __('Immagine del Profilo') }}
                         </div>
                         <div class="card-body text-center">
                             <!-- Profile picture image-->
                             @if( Auth::user()->img_profile == NULL )
 
-                                <img id="avatar-img" class="img-account-profile rounded-circle mb-2" src="/system/avatar_standard.jpg" alt="Profile Image" style="width: 200px; height: 200px; cursor: pointer;">
+                                <img id="avatar-img" class="img-account-profile rounded-circle mb-2" src="/system/avatar_standard.jpg" alt="{{ __('Immagine del Profilo') }}" style="width: 200px; height: 200px; cursor: pointer;">
                             @else
 
-                                <img id="avatar-img" src="{{ Auth::user()->img_profile }}" alt="Profile Image" class="img-account-profile rounded-circle mb-2" alt="Profile Image" style="width: 200px; height: 200px; cursor: pointer;" >
+                                <img id="avatar-img" src="{{ Auth::user()->img_profile }}" class="img-account-profile rounded-circle mb-2" alt="{{ __('Immagine del Profilo') }}"  style="width: 200px; height: 200px; cursor: pointer;" >
                             @endif
                             <!-- Profile picture help block-->
                             <x-text-input id="icon_profile" name="icon_profile" type="file" class="mt-1 block w-full" accept="image/*" style="display: none;"/>
                             <x-input-error class="mt-2" :messages="$errors->get('icon_profile')" />
-                            <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                            <div class="small font-italic text-muted mb-4">{{ __('JPG o PNG e che non sia più grande di 5MB') }}</div>
                         </div>
                     </div>
                 </div>
                 <div class="col-xl-8">
                     <!-- Account details card-->
                     <div class="card mb-4">
-                        <div class="card-header">Account Details</div>
+                        <div class="card-header">{{ __("Informazioni dell'account") }}</div>
                             <div class="card-body">
                                     <!-- Form Row-->
                                     <div class="row gx-3 mb-3">
                                         <!-- Form Group (first name)-->
                                         <div class="col-md-6">
-                                            <x-input-label class="small mb-1" for="name" :value="__('Name')" />
+                                            <x-input-label class="small mb-1" for="name" :value="__('Nome')" />
                                             <x-text-input id="name" name="name" type="text" class="mt-1 form-control" :value="old('name', $user->name)" autofocus required autocomplete="name" />
                                             <x-input-error class="mt-2" :messages="$errors->get('name')" />
                                         </div>
                                         <!-- Form Group (last name)-->
                                         <div class="col-md-6">
-                                            <x-input-label class="small mb-1" for="first_name" :value="__('First Name')" />
+                                            <x-input-label class="small mb-1" for="first_name" :value="__('Cognome')" />
                                             <x-text-input id="first_name" name="first_name" type="text" class="mt-1 form-control" :value="old('first_name', $user->first_name)" required autocomplete="first_name" />
                                             <x-input-error class="mt-2" :messages="$errors->get('first_name')" />
                                         </div>
@@ -63,7 +63,7 @@
                                         <!-- Form Group (phone number)-->
                                         <!-- Form Group (birthday)-->
                                         <div class="col-md-6">
-                                            <x-input-label class="small mb-1" for="date_birth " :value="__('Birthday')" />
+                                            <x-input-label class="small mb-1" for="date_birth " :value="__('Data di Nascita')" />
                                             <x-text-input id="date_birth" name="date_birth " type="date" class="mt-1 form-control" :value="old('date_birth ', $user->date_birth )" required autocomplete="username" />
                                             <x-input-error class="mt-2" :messages="$errors->get('date_birth ')" id="error"/>
                                         </div>
@@ -79,22 +79,22 @@
                                     @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
                                             <div>
                                                 <p class="text-sm mt-2" style="color: black">
-                                                    {{ __('Your email address is unverified.') }}
+                                                    {{ __('Il tuo indirizzo email non è verificato') }}
 
                                                     <button form="send-verification" class="btn btn-warning">
-                                                        {{ __('Click here to re-send the verification email.') }}
+                                                        {{ __("Fare clic qui per inviare nuovamente l'e-mail di verifica") }}
                                                     </button>
                                                 </p>
 
                                                 @if (session('status') === 'verification-link-sent')
                                                     <p class="mt-2 font-medium text-sm" style="color: black">
-                                                        {{ __('A new verification link has been sent to your email address.') }}
+                                                        {{ __('Un nuovo link di verifica è stato inviato al tuo indirizzo email') }}
                                                     </p>
                                                 @endif
                                             </div>
                                     @endif
                                 <!-- Save changes button-->
-                                <button class="btn btn-primary" type="submit">Save changes</button>
+                                <button class="btn btn-primary" type="submit">{{ __('Salva le modifiche') }}</button>
                             </div>
                         </div>
                     </div>

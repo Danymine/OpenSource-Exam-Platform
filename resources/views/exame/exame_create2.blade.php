@@ -40,12 +40,12 @@
         <div class="container" style="max-width: 400px">
             <div class="d-flex justify-content-center">
                 <select class="form-select me-2 mr-2 rounded" aria-label="Seleziona un filtro" id="filtri">
-                    <option selected value="tutto">Seleziona un filtro</option>
-                    <option value="Materia">Materia</option>
-                    <option value="Difficoltà">Difficoltà</option>
-                    <option value="Tipologia">Tipologia</option>
+                    <option selected value="tutto">{{ __('Seleziona un filtro') }}</option>
+                    <option value="Materia">{{ __('Materia') }}</option>
+                    <option value="Difficoltà">{{ __('Difficoltà') }}</option>
+                    <option value="Tipologia">{{ __('Tipologia') }}</option>
                 </select>
-                <input type="text" class="form-control" placeholder="Inserisci un valore" id="valore">
+                <input type="text" class="form-control" placeholder="{{ __('Inserisci un valore') }}" id="valore">
             </div>
         </div>
         <form method="POST" action="{{ route('create_exame_step2') }}">

@@ -40,9 +40,9 @@
                     <div class="form-group">
                         <label for="difficulty">{{ __('Difficoltà') }}:</label>
                         <select class="form-control p-2" name="difficulty" required>
-                            <option value="Bassa" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Bassa' ? 'selected' : '' }}>Bassa</option>
-                            <option value="Media" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Media' ? 'selected' : '' }}>Media</option>
-                            <option value="Alta" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Alta' ? 'selected' : '' }}>Alta</option>
+                            <option value="Bassa" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Bassa' ? 'selected' : '' }}>{{ __('Bassa') }}</option>
+                            <option value="Media" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Media' ? 'selected' : '' }}>{{ __('Media') }}</option>
+                            <option value="Alta" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Alta' ? 'selected' : '' }}>{{ __('Alta') }}</option>
                         </select>
                     </div>
                     <div class="form-group">

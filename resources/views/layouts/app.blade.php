@@ -443,7 +443,7 @@
 
         <footer class="footer mt-5 py-3 text-white" style="background-color: #010039;">
             <div class="container text-center">
-                <span style="color: #FFFFFF">© 2024 ProgettoLaravel Tutti i diritti riservati.</span>
+                <span style="color: #FFFFFF">{{ __('© 2024 ProgettoLaravel Tutti i diritti riservati') }}</span>
             </div>
         </footer>
         

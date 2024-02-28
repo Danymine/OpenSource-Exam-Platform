@@ -2,7 +2,7 @@
   
     <x-slot name="header">
         <h4>
-            {{ __('Crea Esame') }}
+            {{ __('Crea Esercitazione') }}
         </h4>
         <hr stile="border-top: 1px solid #000000; width: 90%;" />
     </x-slot>
@@ -124,15 +124,36 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        var translations = {
+            'it': {
+                'La data deve essere successiva a quella attuale': "La data deve essere successiva a quella attuale",
+            },
+            'en': {
+                'La data deve essere successiva a quella attuale': "The date must be after the current date",
+            }
+        };
         const dataInput = document.getElementById("data_programmazione");
         const errorSpan = document.getElementById("error_date");
+        var currentURL = window.location.href;
+        var languageIndex = currentURL.indexOf('/en/');
+
+        // Se la lingua è presente nell'URL
+        if (languageIndex !== -1) {
+
+            language = 'en';
+        } else {
+
+            // Se la lingua non è 'en', impostala su 'it'
+            language = 'it';
+        }
+
 
         dataInput.addEventListener("change", function() {
             const dataInserita = new Date(dataInput.value);
             const dataAttuale = new Date();
 
             if (dataInserita <= dataAttuale) {
-                errorSpan.textContent = "La data deve essere successiva a quella attuale.";
+                errorSpan.textContent = translations[language]["La data deve essere successiva a quella attuale"];
             } else {
                 errorSpan.textContent = "";
             }

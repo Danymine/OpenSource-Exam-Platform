@@ -1,5 +1,5 @@
 {
-    "Scopri subito ExamSync": "Discover ExamSync now",
+    "Scopri subito ExamSync": "Discover ExamSync Now",
     "Benvenuti alla Piattaforma per la Gestione di Esercitazioni/Esami, il vostro compagno digitale per la creazione, gestione e valutazione di esercizi e test educativi in modo efficiente e intuitivo. Sviluppata con l'obiettivo di semplificare il processo di preparazione e somministrazione di esercitazioni ed esami, la nostra piattaforma offre una vasta gamma di funzionalità progettate per soddisfare le esigenze di docenti, formatori e istituti educativi di ogni livello.": "Welcome to the Exam/Exercise Management Platform, your digital companion for creating, managing, and evaluating educational exercises and tests efficiently and intuitively. Developed with the aim of simplifying the process of preparation and administration of exercises and exams, our platform offers a wide range of features designed to meet the needs of teachers, trainers, and educational institutions at all levels.",
     "Iscriviti Subito": "Sign Up Now",
     "Compito in classe": "In-class Assignment",
@@ -15,7 +15,7 @@
     "Registrati": "Sign Up",
     "Dashboard": "Dashboard",
     "Biblioteca": "Library",
-    "Esercitazioni": "Exercises",
+    "Esercitazioni": "Practices",
     "Esami": "Exams",
     "Profilo": "Profile",
     "Logout": "Logout",
@@ -40,12 +40,162 @@
     "Dimenticata la password? Nessun problema. Fornisci il tuo indirizzo email e ti invieremo un link per il ripristino della password, che ti permetterà di sceglierne una nuova.": "Forgot your password? No problem. Just provide your email address and we will email you a password reset link that will allow you to choose a new one.",
     "Recupera": "Recover",
 
+
     "Questa è un'area protetta dell'applicazione. Conferma la tua password prima di continuare": "This is a secure area of the application. Please confirm your password before continuing.",
     "Conferma": "Confirm",
     "Ripristina Password": "Reset Password",
 
+
+    "Verifica l'Email": "Verify Email",
     "Grazie per esserti registrato! Prima di iniziare, potresti confermare il tuo indirizzo email cliccando sul link che ti abbiamo appena inviato via email? Se non hai ricevuto l'email, saremo lieti di inviartene un'altra.": "Thank you for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.",
     "Rinvia Email di Verifica": "Resend Verification Email",
-    "Un nuovo link di verifica è stato inviato all'indirizzo email fornito durante la registrazione.": "A new verification link has been sent to the email address you provided during registration."   
+    "Un nuovo link di verifica è stato inviato all'indirizzo email fornito durante la registrazione.": "A new verification link has been sent to the email address you provided during registration.",  
     
+
+    "Salve :name, sei nella gestione della waiting room per il test :title condividi con gli utenti la seguente chiave per partecipare. :key": "Hello :name, you are in the management of the waiting room for the :title test, share the following key with users to participate: :key",
+    "Stato": "Status",
+    "Espelli": "Expel",
+    "Approva": "Approve",
+    "Annulla": "Cancel",
+    "Avvia": "Start",
+    "Termina": "Finish",
+    "Rimani in attesa": "Stay in Waiting",
+    "Perfavore aspetti che il test inizi.": "Please wait for the test to start.",
+    "In Attesa": "Pending",
+    "Svolgendo": "Execution",
+
+
+    "Torna Indietro": "Go Back",
+    "Dettagli": "Details",
+    "Descrizione": "Description",
+    "Difficoltà": "Difficulty",
+    "Chiave": "Key",
+    "La chiave è stata eliminata.": "The key has been deleted.",
+    "Copia": "Copy",
+    "Materia": "Subject",
+    "Punteggio Totale": "Total Score",
+    "Feedback Automatico": "Automatic Feedback",
+    "Randomizzazione Domande": "Randomize Questions",
+    "Data di Creazione": "Creation Date",
+    "Data programmata": "Scheduled Date",
+    "Esercizi": "Exercises",
+    "Domanda": "Question",
+    "Punteggio": "Score",
+
+
+    "Modifica": "Edit",
+    "Aggiungi esercizi": "Add Exercises",
+    "Rimuovi esercizio": "Remove Exercise",
+    "Modifica Dettagli": "Edit Details",
+    "Chiudi": "Close",
+    "Salva Modifiche": "Save Changes",
+    "Seleziona gli esercizi da aggiungere": "Select Exercises to Add",
+
+ 
+    "Cancella Account": "Delete Account",
+    "Elimina Account": "Delete Account",
+
+    "Modifica la Password": "Modify Password",
+    "Password Attuale": "Current Password",
+    "Nuova Password": "New Password",
+    "Conferma la Password": "Confirm Password",
+    "Salvato": "Saved",
+    "Salva le modifiche": "Save Changes",
+
+    
+    "Immagine del Profilo": "Profile Picture",
+    "JPG o PNG e che non sia più grande di 5MB": "Must be in JPG or PNG format and not exceed 5MB in size",
+    "Informazioni dell'account": "Account Information",
+    "Il tuo indirizzo email non è verificato": "Your email address is not verified",
+    "Fare clic qui per inviare nuovamente l'e-mail di verifica": "Click here to resend the verification email",
+    "Un nuovo link di verifica è stato inviato al tuo indirizzo email": "A new verification link has been sent to your email address",
+
+    
+    "Elenco delle esercitazioni": "List of Practices",
+    "Cancella Filtri": "Reset Filters",
+    "Filtri": "Filters",
+    "Crea": "Create",
+    "Genera automaticamente": "Generate Automatically",
+    "Crea manualmente": "Create Manually",
+    "Tutte le materie": "All Subjects",
+    "Minimo punteggio": "Minimum Score",
+    "Massimo punteggio": "Maximum Score",
+    "Tutte le difficoltà": "All Difficulties",
+    "Titolo": "Title",
+    "Data": "Date",
+    "Duplica": "Duplicate",
+    "Visualizza": "View",
+    "Elimina": "Delete",
+    "Sei sicuro di voler eliminare questa pratica?": "Are you sure you want to delete this practice?",
+
+    
+    "Bassa": "Low",
+    "Media": "Medium",
+    "Alta": "High",
+
+
+    "Crea Esercitazione": "Create Practice",
+    "Inserisci una Descrizione": "Enter a Description",
+    "Inserisci la Materia": "Enter the Subject",
+    "Inserisci il Titolo": "Enter the Title",
+    "Indietro": "Back",
+    "Avanti": "Next",
+
+
+    "Seleziona un filtro": "Select a filter",
+    "Tipologia": "Type",
+    "Inserisci un valore": "Enter a value",
+    "Aggiungi gli esercizi": "Add exercises",
+
+    
+    "Ultimi Dettagli": "Final Details",
+    "Durata": "Duration",
+    "Inserisci la durata": "Enter duration",
+    "Data di programmazione": "Scheduled Date",
+    "Vuoi abilitare il feedback automatico?": "Do you want to enable automatic feedback?",
+    "Sì": "Yes",
+    "No": "No",
+    "Vuoi abilitare la randomizzazione delle domande?": "Do you want to enable question randomization?",
+      
+
+    "Alunni mancanti": "Missing Students",
+    "Partecipa": "Join",
+    "Inserisci la chiave": "Enter the key",
+    "Voto": "Grade",
+    "Non Valutata": "Not Evaluated",
+    "Insufficiente": "Insufficient",
+    "Ciao, :name": "Hello, :name",
+    "© 2024 ProgettoLaravel Tutti i diritti riservati": "© 2024 ExamSync All rights reserved",
+
+
+    "Sei sicuro di voler eliminare questo esercizio?": "Are you sure you want to delete this exercise?",
+    "Modifica Esercizio": "Edit Exercise",
+    "Risposta Aperta": "Open Answer",
+    "Risposta Multipla": "Multiple Choice",
+    "Vero o Falso": "True or False",
+    "Aggiorna Esercizio": "Update Exercise",
+    "Annulla Modifiche": "Cancel Changes",
+
+
+    "Crea Esercizio": "Create Exercise",
+    "Creerai un esercizio con una risposta aperta, dove gli studenti possono inserire liberamente la loro risposta.": "You will create an exercise with an open-ended response, where students can freely enter their answer.",
+    "Creerai un esercizio a risposta chiusa, dove gli studenti possono selezionare una risposta tra le opzioni fornite.": "You will create a multiple-choice exercise, where students can select an answer from the provided options.",
+    "Creerai un esercizio a vero o falso, dove gli studenti devono scegliere se una dichiarazione è vera o falsa.": "You will create a true or false exercise, where students must choose whether a statement is true or false.",
+    "Tipo di esercizio": "Exercise Type",
+    "Tipo": "Type",
+    "Risposta Corretta": "Correct Answer",
+    "Opzione A": "Option A",
+    "Opzione B": "Option B",
+    "Opzione C": "Option C",
+    "Opzione D": "Option D",
+    "Spiegazione": "Explanation",
+    "Vero": "True",
+    "Falso": "False",
+    "Opzione": "Option",
+    "Inserisci qui la Spiegazione": "Enter the explanation here",
+    "Inserisci il punteggio": "Enter the exercise score here",
+
+    
+    "Elenco degli Esami": "List of Exams",
+    "Crea Esame": "Create Exam"
 }

@@ -3,7 +3,7 @@
     <div class="container-fluid d-flex p-0" style="background-color: #010039;">
         <div class="row m-0 w-100"> <!-- Utilizza la classe w-100 per fare in modo che la riga occupi l'intera larghezza del contenitore -->
             <div class="col-md-6 p-4 mb-3"> <!-- Utilizza la classe col-md-7 per occupare il 60% dello schermo su dispositivi di dimensioni medie e superiori -->
-                <h1 class="text-white">{{ __('Scopri subito ExameSync') }}</h1>
+                <h1 class="text-white">{{ __('Scopri subito ExamSync') }}</h1>
                 <p>
                     {{ __("Benvenuti alla Piattaforma per la Gestione di Esercitazioni/Esami, il vostro compagno digitale per la creazione, gestione e valutazione di esercizi e test educativi in modo efficiente e intuitivo. Sviluppata con l'obiettivo di semplificare il processo di preparazione e somministrazione di esercitazioni ed esami, la nostra piattaforma offre una vasta gamma di funzionalità progettate per soddisfare le esigenze di docenti, formatori e istituti educativi di ogni livello.") }}
                 </p>
@@ -17,7 +17,7 @@
 
     <!-- Schede -->
     <div class="container mt-5">
-        <h2 class="text-center mb-4">{{ __('Perchè scegliere ExameSync?') }}</h2>
+        <h2 class="text-center mb-4">{{ __('Perchè scegliere ExamSync?') }}</h2>
         <div class="row">
             <div class="col-md-4 mb-4">
                 <div class="card text-center"  style="background-color: #010039; border-radius: 30px;">

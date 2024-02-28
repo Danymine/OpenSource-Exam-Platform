@@ -181,7 +181,7 @@
             @endif
         </div>
         <div class="container">
-            <h4>Ciao, {{ Auth::User()->name }}</h4>
+            <h4>{{ __('Ciao, :name', ['name' => Auth::user()->name]) }}</h4>
                 <div class="row">
                     <div class="col">
                         <button id="esamiButton" class="btn btn-primary" onclick="showExamsStudent()">{{ __('Esami') }}</button>
@@ -216,7 +216,7 @@
                                                 @else
 
                                                     <td>{{ $practice->practice_date }}</td>
-                                                    <td>Non valutata</td>
+                                                    <td>{{ __('Non Valutata') }}</td>
                                                 @endif
                                             </tr>
                                         @else
@@ -227,11 +227,11 @@
                                                     @if( $delivered->valutation >= $practice->total_score * 0.6)
                                                         <td>{{ $delivered->valutation }}</td>
                                                     @else
-                                                        <td>Insufficiente</td>
+                                                        <td>{{ __('Insufficiente') }}</td>
                                                     @endif
                                                 @else
                                                     <td>{{ $practice->practice_date }}</td>
-                                                    <td>Non valutata</td>
+                                                    <td>{{ __('Non Valutata') }}</td>
                                                 @endif
                                             </tr>
                                         @endif
@@ -256,6 +256,27 @@
             </div>
 
             <script>
+                
+                var translations = {
+                    'it': {
+                        'Valutazioni': 'Valutazioni'
+                    },
+                    'en': {
+                        "Valutazioni": "Evaluations"
+                    }
+                };
+                var currentURL = window.location.href;
+                var languageIndex = currentURL.indexOf('/en/');
+
+                // Se la lingua è presente nell'URL
+                if (languageIndex !== -1) {
+
+                    language = 'en';
+                } else {
+
+                    // Se la lingua non è 'en', impostala su 'it'
+                    language = 'it';
+                }
 
                 var exameTitles = document.querySelectorAll(".exame_title");
                 var exameValutation = document.querySelectorAll(".exame_valutation");
@@ -273,7 +294,7 @@
                     data: {
                         labels: exameDateArray,
                         datasets: [{
-                            label: 'Valutazioni',
+                            label: translations[language]["Valutazioni"],
                             data: exameValutationArray,
                             backgroundColor: 'rgba(255, 255, 255)', // Sfondo bianco con opacità
                             borderColor: 'rgba(255, 99, 132, 1)', // Colore verde della linea
@@ -326,13 +347,14 @@
                 // Ottieni il contesto del canvas
                 var ctx = document.getElementById(canvasId).getContext('2d');
 
+
                 // Crea il grafico
                 var myChart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: dateArray,
                         datasets: [{
-                            label: 'Valutazioni',
+                            label: translations[language]["Valutazioni"],
                             data: valutationArray,
                             backgroundColor: 'rgba(255, 255, 255)', // Sfondo bianco con opacità
                             borderColor: 'rgba(54, 162, 235, 1))', // Colore verde della linea

@@ -27,7 +27,7 @@
   
   <div class="container">
     <div class="text-right mb-3">
-        <button class="btn btn-primary" onclick="location.href='{{ route('exercise.step1') }}'"><i class="fas fa-plus"></i> {{ __('Aggiungi') }} </button>
+        <button class="btn btn-primary" onclick="location.href='{{ route('exercise.step1') }}'"><i class="fas fa-plus"></i> {{ __('Crea') }} </button>
     </div>
 
     <div class="table-responsive">
@@ -55,8 +55,14 @@
                     <!-- Function -->
                     <td><a class="btn btn-info details-button" onclick="showDetails('{{ $exercise->id }}')"><i class="fas fa-search"></i></a></td>
                     <td><a class="btn btn-warning edit-button" onclick="editExercise('{{ $exercise->id }}')"><i class="fas fa-pencil-alt"></i></a></td>
-                    <td><a class="btn btn-danger" href="{{ route('deleteExercise', ['exercise' => $exercise]) }}" onclick="return confirm('Sei sicuro di voler eliminare questo esercizio?');"><i class="fas fa-trash-alt"></i></a></td>
-                </tr>
+                    <td>
+                        <form action="{{ route('deleteExercise', ['exercise' => $exercise]) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questo esercizio?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </td>                
+                  </tr>
                 @endforeach
             </tbody>
         </table>
@@ -129,7 +135,7 @@
                       <label for="type" class="form-label">{{ __('Tipo') }}:</label><br/>
                       <select id="type" name="type" class="form-select form-select-lg mb-3 rounded p-2" aria-label=".form-select-lg example">
                           <option value="Risposta Aperta" id="type_open">{{ __('Risposta Aperta') }}</option>
-                          <option value="Risposta Multipla" id="type_closed" >{{ __('Risposta Multipla<') }}/option>
+                          <option value="Risposta Multipla" id="type_closed" >{{ __('Risposta Multipla') }}</option>
                           <option value="Vero o Falso" id="type_true" >{{ __('Vero o Falso') }}</option>
                       </select>
                     </div>
@@ -142,7 +148,7 @@
 
                     </div>
 
-                    <button type="button" class="btn btn-primary" onclick="updateExercise()">{{ _('Aggiorna Esercizio') }}</button>
+                    <button type="button" class="btn btn-primary" onclick="updateExercise()">{{ __('Aggiorna Esercizio') }}</button>
                     <button type="button" class="btn btn-danger rounded" data-bs-dismiss="modal" aria-label="Close" onclick="cancelEditExercise()">{{ __('Annulla Modifiche') }}</button>
                 </form>
             </div>

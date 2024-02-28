@@ -23,7 +23,7 @@
 
     <div class="container">
         @if(Auth::user()->roles == "Teacher" && $practice->user_id == Auth::user()->id)
-            <h6>{{ __('Salve') }} {{ Auth::user()->name }}, {{ __('sei nella gestione della waiting room per il test ') }} <b>"{{ $practice->title }}"</b> {{ __('condividi con gli utenti la seguente chiave per partecipare.') }} <b>"{{ $practice->key }}"</b></h6>
+            <h6>{{ __('Salve :name, sei nella gestione della waiting room per il test :title condividi con gli utenti la seguente chiave per partecipare. :key', ['name' => Auth::user()->name, 'title' => $practice->title, 'key' => $practice->key]) }}</b></h6>
         
             @if( $practice->allowed == 0 )
                 <!--Non è stato ancora avviata -->

@@ -132,7 +132,7 @@ Route::prefix('{locale}')
             Route::put('/edit-exercise', [ExerciseController::class, 'update'])->name('exercises.update');
 
             // Elimina un esercizio
-            Route::get('/delete/{exercise}', [ExerciseController::class, 'deleteExercise'])->name('deleteExercise');
+            Route::delete('/delete/{exercise}', [ExerciseController::class, 'deleteExercise'])->name('deleteExercise');
 
         });
 

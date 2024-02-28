@@ -38,7 +38,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label for="titolo">{{ __('Titolo') }}</label>
-                    <input type="text" class="form-control" id="title" name="title" required value="{{ session()->has('exame_step1') ? session('exame_step1')['title'] : '' }}">
+                    <input type="text" class="form-control" id="title" name="title" required value="{{ session()->has('exame_step1') ? session('exame_step1')['title'] : '' }}" placeholder="{{ __('Inserisci il Titolo') }}">
                 </div>
                 </div>
 
@@ -46,7 +46,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="materia">{{ __('Materia') }}</label>
-                        <input type="text" class="form-control" id="materia" name="subject" required value="{{ session()->has('exame_step1') ? session('exame_step1')['subject'] : '' }}">
+                        <input type="text" class="form-control" id="materia" name="subject" required value="{{ session()->has('exame_step1') ? session('exame_step1')['subject'] : '' }}"  placeholder="{{ __('Inserisci la Materia') }}">
                     </div>
                 </div>
             </div>
@@ -54,7 +54,7 @@
             <!-- Textarea Descrizione -->
             <div class="form-group">
                 <label for="descrizione">{{ __('Descrizione') }}</label>
-                <textarea class="form-control" id="descrizione" name="description" rows="3" required> {{ session()->has('exame_step1') ? session('exame_step1')['description'] : '' }} </textarea>
+                <textarea class="form-control" id="descrizione" name="description" rows="3" required placeholder="{{ __('Inserisci una Descrizione') }}"> {{ session()->has('exame_step1') ? session('exame_step1')['description'] : '' }} </textarea>
             </div>
 
 

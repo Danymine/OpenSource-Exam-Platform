@@ -1,13 +1,13 @@
 <x-app-layout>
 <div class="container custom-container mt-4 p-4" style="background-color: #010039;">
-    <h2 class="text-white text-center mb-4"> Verify Email </h2>
+    <h2 class="text-white text-center mb-4"> {{ __("Verifica l'Email") }} </h2>
     <div class="mb-4 text-sm text-white">
-        <p> {{ __('Grazie per esserti registrato! Prima di iniziare, potresti confermare il tuo indirizzo email cliccando sul link che ti abbiamo appena inviato via email? Se non hai ricevuto l'email, saremo lieti di inviartene un'altra.') }} </p>
+        <p> {{ __("Grazie per esserti registrato! Prima di iniziare, potresti confermare il tuo indirizzo email cliccando sul link che ti abbiamo appena inviato via email? Se non hai ricevuto l'email, saremo lieti di inviartene un'altra.") }} </p>
     </div>
 
     @if (session('status') == 'verification-link-sent')
         <div class="mb-4 font-medium text-sm text-success text-white">
-            {{ __('Un nuovo link di verifica è stato inviato all'indirizzo email fornito durante la registrazione.') }}
+            {{ __("Un nuovo link di verifica è stato inviato all'indirizzo email fornito durante la registrazione.") }}
         </div>
     @endif
 

@@ -261,8 +261,9 @@ class ExerciseController extends Controller
     }
 
 
-    public function deleteExercise(Exercise $exercise)
-    {
+    public function deleteExercise( $exercise)
+    {   
+        dd($exercise);
         if( $exercise->user_id == Auth::user()->id ){   //Questo viene fatto per evitare che l'utente possa eliminare esercizi di non sua competenza.
 
             $exerciseWithPractice = Exercise::whereHas('practices')->find($exercise->id);

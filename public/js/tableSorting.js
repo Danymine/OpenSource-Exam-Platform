@@ -1,4 +1,53 @@
 var sortDirection = []; // Array per tenere traccia dell'ordinamento per ciascuna colonna
+var translations = {
+    'it': {
+        "Domanda": "Domanda",
+        "Difficoltà": "Difficoltà",
+        "Materia": "Materia",
+        "Tipo": "Tipo",
+        "Risposta Corretta": "Risposta Corretta",
+        "Opzione A": 'Opzione A',
+        "Opzione B": 'Opzione B',
+        "Opzione C": 'Opzione C',
+        "Opzione D": 'Opzione D',
+        "Spiegazione": "Spiegazione",
+        "Vero": "Vero",
+        "Falso": "Falso",
+        "Opzione": "Opzione",
+        "Inserisci l'opzione": "Inserisci l'opzione",
+        "Inserisci la spiegazione": "Inserisci la spiegazione"
+    },
+    'en': {
+        "Domanda": "Question",
+        "Difficoltà": "Difficulty",
+        "Materia": "Subject",
+        "Tipo": "Type",
+        "Risposta Corretta": "Correct Answer",
+        "Opzione A": 'Option A',
+        "Opzione B": 'Option B',
+        "Opzione C": 'Option C',
+        "Opzione D": 'Option D',
+        "Spiegazione": "Explanation",
+        "Vero": "True",
+        "Falso": "False",
+        "Opzione": "Option",
+        "Inserisci l'opzione": "Enter the option",
+        "Inserisci la spiegazione": "Enter the explanation"
+    }
+};
+
+var currentURL = window.location.href;
+var languageIndex = currentURL.indexOf('/en/');
+
+// Se la lingua è presente nell'URL
+if (languageIndex !== -1) {
+
+    language = 'en';
+} else {
+
+    // Se la lingua non è 'en', impostala su 'it'
+    language = 'it';
+}
 
 //Aggiornata le icone della tabella esercizi.
 function updateSortIcons(columnIndex) {
@@ -93,26 +142,26 @@ function showDetails(exerciseId) {
 
         // Costruisci il contenuto della finestra di dialogo
         var contentHtml = `
-            <p style="color: black;" ><strong>Question:</strong> ${exercise.question}</p>
-            <p style="color: black;" ><strong>Difficoltà:</strong> ${exercise.difficulty}</p>
-            <p style="color: black;" ><strong>Materia:</strong> ${exercise.subject}</p>
-            <p style="color: black;" ><strong>Tipo:</strong> ${exercise.type}</p>
+            <p style="color: black;" ><strong>${translations[language]["Domanda"]}:</strong> ${exercise.question}</p>
+            <p style="color: black;" ><strong>${translations[language]["Difficoltà"]}:</strong> ${exercise.difficulty}</p>
+            <p style="color: black;" ><strong>${translations[language]["Materia"]}:</strong> ${exercise.subject}</p>
+            <p style="color: black;" ><strong>${translations[language]["Tipo"]}:</strong> ${exercise.type}</p>
         `;
 
         // Aggiungi informazioni specifiche in base al tipo di esercizio
         if (exercise.type === 'Vero o Falso') {
             contentHtml += `
-                <p style="color: black;" ><strong>Risposta Corretta:</strong> ${exercise.correct_option}</p>
-                <p style="color: black;" ><strong>Spiegazione:</strong> ${exercise.explanation}</p>
+                <p style="color: black;" ><strong>${translations[language]["Risposta Corretta"]}:</strong> ${exercise.correct_option}</p>
+                <p style="color: black;" ><strong>${translations[language]["Spiegazione"]}:</strong> ${exercise.explanation}</p>
             `;
         } else if (exercise.type === 'Risposta Multipla') {
             contentHtml += `
-                <p style="color: black;"><strong>Risposta Corretta:</strong> ${exercise.correct_option}</p>
-                <p style="color: black;" ><strong>Opzione 1:</strong> ${exercise.option_1}</p>
-                <p style="color: black;" ><strong>Opzione 2:</strong> ${exercise.option_2}</p>
-                <p style="color: black;" ><strong>Opzione 3:</strong> ${exercise.option_3}</p>
-                <p style="color: black;" ><strong>Opzione 4:</strong> ${exercise.option_4}</p>
-                <p style="color: black;" ><strong>Spiegazione:</strong> ${exercise.explanation}</p>
+                <p style="color: black;"><strong>${translations[language]["Risposta Corretta"]}:</strong> ${exercise.correct_option}</p>
+                <p style="color: black;" ><strong>${translations[language]["Opzione A"]}:</strong> ${exercise.option_1}</p>
+                <p style="color: black;" ><strong>${translations[language]["Opzione B"]}:</strong> ${exercise.option_2}</p>
+                <p style="color: black;" ><strong>${translations[language]["Opzione C"]}:</strong> ${exercise.option_3}</p>
+                <p style="color: black;" ><strong>${translations[language]["Opzione D"]}:</strong> ${exercise.option_4}</p>
+                <p style="color: black;" ><strong>${translations[language]["Spiegazione"]}:</strong> ${exercise.explanation}</p>
             `;
         }
 
@@ -144,18 +193,26 @@ function buildMultipleChoiceOptions(exercise, bool) {
         array = [
             exercise.option_1, exercise.option_2, exercise.option_3, exercise.option_2
         ]
+        alpha = ['A', 'B', 'C', 'D'];
         // Ciclo per creare gli input per le opzioni
         for (let i = 1; i <= numOptions; i++) {
             const label = document.createElement('label');
             label.setAttribute('for', `option${i}`);
             label.setAttribute('class', `form-label`);
-            label.textContent = `Opzione ${i}: `;
+            label.textContent = translations[language]["Opzione"] + ": " +  alpha[i-1];
 
             const input = document.createElement('input');
             input.setAttribute('type', 'text');
             input.setAttribute('id', `option${i}`);
             input.setAttribute('name', 'options[]');
-            input.setAttribute('value', array[i-1]);
+            if( array[i-1] != null ){
+
+                input.setAttribute('value', array[i-1]);
+            }
+            else{
+
+                input.setAttribute('placeholder', translations[language]["Inserisci l'opzione"] + " " + alpha[i-1]);
+            }
             input.setAttribute('class', 'form-control mb-3');
 
             multipleChoiceContainer.appendChild(label);
@@ -167,7 +224,7 @@ function buildMultipleChoiceOptions(exercise, bool) {
         const correctOptionLabel = document.createElement('label');
         correctOptionLabel.setAttribute('for', 'correct_option');
         correctOptionLabel.setAttribute('class', `form-label`);
-        correctOptionLabel.textContent = 'Opzione corretta: ';
+        correctOptionLabel.textContent = translations[language]["Risposta Corretta"];
 
         const correctOptionInput = document.createElement('select');
         correctOptionInput.setAttribute('id', 'correct_option');
@@ -198,14 +255,21 @@ function buildMultipleChoiceOptions(exercise, bool) {
         const explanationLabel = document.createElement('label');
         explanationLabel.setAttribute('for', 'explanation');
         explanationLabel.setAttribute('class', `form-label`);
-        explanationLabel.textContent = 'Spiegazione: ';
+        explanationLabel.textContent = translations[language]["Spiegazione"];
 
         const explanationInput = document.createElement('input');
         explanationInput.setAttribute('type', 'text');
         explanationInput.setAttribute('id', 'explanation');
         explanationInput.setAttribute('name', 'explanation');
         explanationInput.setAttribute('class', 'form-control mb-3');
-        explanationInput.setAttribute('value',  exercise.explanation);
+        if( exercise.explanation != null ){
+
+            explanationInput.setAttribute('value',  exercise.explanation);
+        }
+        else{
+
+            explanationInput.setAttribute('placeholder', translations[language]["Inserisci la spiegazione"]);
+        }
 
         multipleChoiceContainer.appendChild(explanationLabel);
         multipleChoiceContainer.appendChild(explanationInput);
@@ -225,7 +289,7 @@ function buildVeroFalso(exercise, bool){
         const correctOptionLabel = document.createElement('label');
         correctOptionLabel.setAttribute('for', 'correct_option');
         correctOptionLabel.setAttribute('class', `form-label`);
-        correctOptionLabel.textContent = 'Opzione corretta: ';
+        correctOptionLabel.textContent = translations[language]["Risposta Corretta"];
 
         const correctOptionInput = document.createElement('select');
         correctOptionInput.setAttribute('id', 'correct_option');
@@ -236,12 +300,12 @@ function buildVeroFalso(exercise, bool){
 
         const option1 = document.createElement('option');
         option1.value = 'Vero';
-        option1.textContent = 'Vero';
+        option1.textContent = translations[language]["Vero"];
         correctOptionInput.appendChild(option1);
 
         const option2 = document.createElement('option');
         option2.value = 'Falso';
-        option2.textContent = 'Falso';
+        option2.textContent = translations[language]["Falso"];
         correctOptionInput.appendChild(option2);
 
         true_false_container.appendChild(correctOptionLabel);
@@ -253,14 +317,21 @@ function buildVeroFalso(exercise, bool){
         const explanationLabel = document.createElement('label');
         explanationLabel.setAttribute('for', 'explanation');
         explanationLabel.setAttribute('class', `form-label`);
-        explanationLabel.textContent = 'Spiegazione: ';
+        explanationLabel.textContent =  translations[language]["Spiegazione"];
 
         const explanationInput = document.createElement('input');
         explanationInput.setAttribute('type', 'text');
         explanationInput.setAttribute('id', 'explanation');
         explanationInput.setAttribute('name', 'explanation');
         explanationInput.setAttribute('class', 'form-control mb-3');
-        explanationInput.setAttribute('value',  exercise.explanation);
+        if( exercise.explanation != null ){
+
+            explanationInput.setAttribute('value',  exercise.explanation);
+        }
+        else{
+
+            explanationInput.setAttribute('placeholder', translations[language]["Inserisci la spiegazione"]);
+        }
 
         true_false_container.appendChild(explanationLabel);
         true_false_container.appendChild(explanationInput);

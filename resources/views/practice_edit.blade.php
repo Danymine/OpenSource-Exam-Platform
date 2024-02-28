@@ -135,9 +135,9 @@
                         <div class="form-group">
                         <label for="difficulty">{{ __('Difficoltà') }}:</label>
                             <select class="form-control p-2" name="difficulty" required>
-                                <option value="Bassa" {{ $practice->difficulty == 'Bassa' ? 'selected' : '' }}>Bassa</option>
-                                <option value="Media" {{ $practice->difficulty== 'Media' ? 'selected' : '' }}>Media</option>
-                                <option value="Alta" {{ $practice->difficulty == 'Alta' ? 'selected' : '' }}>Alta</option>
+                                <option value="Bassa" {{ $practice->difficulty == 'Bassa' ? 'selected' : '' }}>{{ __('Bassa') }}</option>
+                                <option value="Media" {{ $practice->difficulty== 'Media' ? 'selected' : '' }}>{{ __('Media') }}</option>
+                                <option value="Alta" {{ $practice->difficulty == 'Alta' ? 'selected' : '' }}>{{ __('Alta') }}</option>
                             </select>           
                         </div>
                         <!-- Descrizione -->

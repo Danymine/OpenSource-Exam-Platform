@@ -40,7 +40,7 @@ function populateStudentsTable(data) {
         // Aggiungi una riga di avviso nella tabella
         tableBody.innerHTML = `
             <tr>
-                <td colspan="4">Nessuno studente presente</td>
+                <td colspan="4">${__('Nessuno studente presente')}</td>
             </tr>
         `;
     } 
@@ -52,9 +52,9 @@ function populateStudentsTable(data) {
                 <tr id="student-${student.id}">
                     <td style="vertical-align: middle;">${student.name}</td>
                     <td style="vertical-align: middle;">${student.first_name}</td>
-                    <td style="vertical-align: middle;">Pending</td>
+                    <td style="vertical-align: middle;">${__('In Attesa')}</td>
                     <td>
-                        <button class="btn btn-danger" onclick="kickStudent('${student.id}')">Espelli</button>
+                        <button class="btn btn-danger" onclick="kickStudent('${student.id}')">${__('Espelli')}</button>
                     </td>
                 </tr>
             `;
@@ -65,7 +65,7 @@ function populateStudentsTable(data) {
 
 function populateStudentsTable2(data) {
     // Ottieni il riferimento al corpo della tabella
-    tableBody = document.getElementById('students-table-body');
+    const tableBody = document.getElementById('students-table-body');
     
     // Svuota il corpo della tabella
     tableBody.innerHTML = '';
@@ -75,7 +75,7 @@ function populateStudentsTable2(data) {
         // Aggiungi una riga di avviso nella tabella
         tableBody.innerHTML = `
             <tr>
-                <td colspan="5">Nessuno studente presente</td>
+                <td colspan="5">${__('Nessuno studente presente')}</td>
             </tr>
         `;
     } 
@@ -83,28 +83,29 @@ function populateStudentsTable2(data) {
 
         // Itera sui dati degli studenti e crea le righe della tabella
         data.forEach(student => {
-            stats = (student.status === 'wait') ? "Pending" : "Execution";
-            row = `
+            const stats = (student.status === 'wait') ? __('In Attesa') : __('Svolgendo');
+            let row = `
                 <tr id="student-${student.id}">
                     <td style="vertical-align: middle;">${student.name}</td>
                     <td style="vertical-align: middle;">${student.first_name}</td>
                     <td style="vertical-align: middle;">${stats}</td>
                     <td>
-                        <button class="btn btn-danger" onclick="kickStudent('${student.id}')">Espelli</button>
+                        <button class="btn btn-danger" onclick="kickStudent('${student.id}')">${__('Espelli')}</button>
                     </td>
             `;
-            if( student.status == "wait" ){
-               row += `
-                <td>
-                    <button class="btn btn-success" onclick="allowedStudent('${student.id}')">Approva</button>
-                </td>
-                </tr>
-                `
+            if (student.status === "wait") {
+                row += `
+                    <td>
+                        <button class="btn btn-success" onclick="allowedStudent('${student.id}')">${__('Approva')}</button>
+                    </td>
+                `;
             }
+            row += `</tr>`;
             tableBody.innerHTML += row;
         });        
     }
 }
+
 
 
 function kickStudent(studentId) {

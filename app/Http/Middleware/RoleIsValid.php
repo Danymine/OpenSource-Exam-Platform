@@ -6,6 +6,8 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
+
 
 class RoleIsValid
 {
@@ -15,7 +17,8 @@ class RoleIsValid
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
-    {   
+    {  
+        
         if( Auth::User()->roles == 'Admin' or Auth::User()->roles == 'Teacher'){
 
             return $next($request);
