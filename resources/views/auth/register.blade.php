@@ -33,6 +33,7 @@
                             <div class="col-md-6">
                                 <label for="email" class="form-label">{{ __('Email') }}</label>
                                 <input id="email" class="form-control" type="email" name="email" value="{{ old('email') }}" required autocomplete="username">
+                                
                                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
                                 <span id="feedback-email-validate"></span>
                             </div>
@@ -91,4 +92,17 @@
 
 
 </x-app-layout>
+
+<script>
+    var translations = {
+        "it": {
+            "future_date_error": "{{ __('Wow!!!!Vieni dal futuro!') }}",
+            "invalid_email_error": "{{ __('Email non valida. Assicurati che l`email contenga una `@`, seguita da un dominio valido. Evita l`uso di caratteri speciali consecutivi. L`email deve essere lunga da un minimo di 8 a un massimo di 40 caratteri.') }}",
+            "invalid_password_error": "{{ __('Password non valida. Assicurati che contenga almeno una lettera maiuscola, almeno un numero e che abbia una lunghezza minima di 8 caratteri.')}}",
+            "password_mismatch_error": "{{ __('Le password non corrispondono. Assicurati di inserire la stessa password in entrambi i campi.') }}"
+        }
+    };
+
+    console.log(translations);
+</script>
 <script src="/js/validateRegister.js"></script>

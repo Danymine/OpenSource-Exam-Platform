@@ -1,17 +1,5 @@
-var translations = {
-    'it': {
-        'future_date_error': "Wow!!!!Vieni dal futuro!",
-        'invalid_email_error': "Email non valida. Assicurati che l'email contenga una '@', seguita da un dominio valido. Evita l'uso di caratteri speciali consecutivi. L'email deve essere lunga da un minimo di 8 a un massimo di 40 caratteri.",
-        'invalid_password_error': "Password non valida. Assicurati che contenga almeno una lettera maiuscola, almeno un numero e che abbia una lunghezza minima di 8 caratteri.",
-        'password_mismatch_error': "Le password non corrispondono. Assicurati di inserire la stessa password in entrambi i campi."
-    },
-    'en': {
-        'future_date_error': "Wow!!!! You're from the future!",
-        'invalid_email_error': "Invalid email. Make sure the email contains an '@', followed by a valid domain. Avoid the use of consecutive special characters. The email must be between 8 and 40 characters long.",
-        'invalid_password_error': "Invalid password. Make sure it contains at least one uppercase letter, one number, and has a minimum length of 8 characters.",
-        'password_mismatch_error': "Passwords do not match. Make sure to enter the same password in both fields."
-    }
-};
+
+language = 'it';
 
 function mostraPassword(id) {
     var campoPassword = document.getElementById("" + id);
@@ -28,18 +16,6 @@ var email = document.getElementById('email');
 var password = document.getElementById('password');
 var confirmation = document.getElementById('password_confirmation');
 
-var currentURL = window.location.href;
-var languageIndex = currentURL.indexOf('/en/');
-
-// Se la lingua è presente nell'URL
-if (languageIndex !== -1) {
-
-    language = 'en';
-} else {
-
-    // Se la lingua non è 'en', impostala su 'it'
-    language = 'it';
-}
 
 
 date_birth.addEventListener('input', function (){

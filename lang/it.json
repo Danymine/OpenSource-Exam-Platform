@@ -204,5 +204,10 @@
     "L'esercizio è stato creato correttamente.": "L'esercizio è stato creato correttamente.",
     "Non è possibile formare un test con lo score desiderato con gli esercizi disponibili": "Non è possibile formare un test con lo score desiderato con gli esercizi disponibili",
     "Non hai esercizi adatti alla creazione": "Non hai esercizi adatti alla creazione",
-    "Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è: ": "Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è: "
+    "Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è: ": "Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è: ",
+
+    "Wow!!!!Vieni dal futuro!": "Wow!!!!Vieni dal futuro!",
+    "Email non valida. Assicurati che l'email contenga una `@`, seguita da un dominio valido. Evita l'uso di caratteri speciali consecutivi. L'email deve essere lunga da un minimo di 8 a un massimo di 40 caratteri.": "Email non valida. Assicurati che l'email contenga una `@`, seguita da un dominio valido. Evita l'uso di caratteri speciali consecutivi. L'email deve essere lunga da un minimo di 8 a un massimo di 40 caratteri.",
+    "Password non valida. Assicurati che contenga almeno una lettera maiuscola, almeno un numero e che abbia una lunghezza minima di 8 caratteri.": "Password non valida. Assicurati che contenga almeno una lettera maiuscola, almeno un numero e che abbia una lunghezza minima di 8 caratteri.",
+    "Le password non corrispondono. Assicurati di inserire la stessa password in entrambi i campi.": "Le password non corrispondono. Assicurati di inserire la stessa password in entrambi i campi."
 }

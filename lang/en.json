@@ -210,5 +210,10 @@
     "L'esercizio è stato creato correttamente.": "The exercise has been created successfully.",
     "Non è possibile formare un test con lo score desiderato con gli esercizi disponibili": "It is not possible to form a test with the desired score with the available exercises.",   
     "Non hai esercizi adatti alla creazione": "You don't have suitable exercises for creation",
-    "Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è: ": "With the exercises you have available, you can't achieve the desired score. The maximum achievable is: " 
+    "Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è: ": "With the exercises you have available, you can't achieve the desired score. The maximum achievable is: ", 
+
+    "Wow!!!!Vieni dal futuro!": "Wow!!!! You come from the future!",
+    "Email non valida. Assicurati che l'email contenga una `@`, seguita da un dominio valido. Evita l'uso di caratteri speciali consecutivi. L'email deve essere lunga da un minimo di 8 a un massimo di 40 caratteri.": "Invalid email. Make sure the email contains an `@` followed by a valid domain. Avoid the use of consecutive special characters. The email must be between 8 and 40 characters long.",
+    "Password non valida. Assicurati che contenga almeno una lettera maiuscola, almeno un numero e che abbia una lunghezza minima di 8 caratteri.": "Invalid password. Make sure it contains at least one uppercase letter, at least one number, and is at least 8 characters long.",
+    "Le password non corrispondono. Assicurati di inserire la stessa password in entrambi i campi.": "Passwords do not match. Make sure to enter the same password in both fields."
 }
