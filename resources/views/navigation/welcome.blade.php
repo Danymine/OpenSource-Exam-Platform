@@ -29,7 +29,7 @@
                             style="width:150px;height:150px">
                         </lord-icon>
                         <h4 class="card-title mt-3 text-white">{{ __('Assistenza Garantita') }}</h4>
-                        <p class="card-text">{{ __('Assistenza tecnica garantita per ogni problema o necessità ogni giorno dalle 8:00 fino alle 18:00') }}/p>
+                        <p class="card-text">{{ __('Assistenza tecnica garantita per ogni problema o necessità ogni giorno dalle 8:00 fino alle 18:00') }}</p>
                     </div>
                 </div>
             </div>

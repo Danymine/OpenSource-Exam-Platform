@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 showExercise(currentExerciseIndex);
             }
         }
-    });
+    });  
 
 
 

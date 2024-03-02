@@ -1,8 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <h4>
-            {{ __('Lista Consegne') }}
-        </h4>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="font-semibold text-xl leading-tight">
+                {{ __('Lista Consegne') }}
+            </h4>
+            <div>
+                <a href="{{ route('dashboard') }}" class="btn btn-info">{{ __('Torna Indietro') }}</a>
+                <!--Qui si potrebbe aggiungere un stampa gli studenti che hanno consegnato -->
+            </div>
+        </div>
+        <hr stile="border-top: 1px solid #000000; width: 90%;" />
     </x-slot>
 
     <div class="container">
@@ -29,7 +36,7 @@
                 <tr>
                     <th scope="col">{{ __('Studente') }}</th>
                     <th scope="col">{{ __('Data') }}</th>
-                    <th scope="col">{{ __('Valutazione') }}</th>
+                    <th scope="col">{{ __('Voto') }}</th>
                     <th scope="col">{{ __('Dettagli') }}</th>
                 </tr>
             </thead>
@@ -92,7 +99,7 @@
 
                             <td> {{ $delivered->valutation }}</td>
                         @endif
-                        <td><a href="{{ route('view-details-delivered', ['delivered' => $delivered]) }}"><i class="fas fa-search"></i></a></td>
+                        <td><a href="{{ route('show-delivered', ['delivered' => $delivered]) }}"><i class="fas fa-search"></i></a></td>
                     </tr>
                 @endforeach
             </tbody>

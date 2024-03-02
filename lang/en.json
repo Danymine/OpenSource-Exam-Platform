@@ -215,5 +215,23 @@
     "Wow!!!!Vieni dal futuro!": "Wow!!!! You come from the future!",
     "Email non valida. Assicurati che l'email contenga una `@`, seguita da un dominio valido. Evita l'uso di caratteri speciali consecutivi. L'email deve essere lunga da un minimo di 8 a un massimo di 40 caratteri.": "Invalid email. Make sure the email contains an `@` followed by a valid domain. Avoid the use of consecutive special characters. The email must be between 8 and 40 characters long.",
     "Password non valida. Assicurati che contenga almeno una lettera maiuscola, almeno un numero e che abbia una lunghezza minima di 8 caratteri.": "Invalid password. Make sure it contains at least one uppercase letter, at least one number, and is at least 8 characters long.",
-    "Le password non corrispondono. Assicurati di inserire la stessa password in entrambi i campi.": "Passwords do not match. Make sure to enter the same password in both fields."
+    "Le password non corrispondono. Assicurati di inserire la stessa password in entrambi i campi.": "Passwords do not match. Make sure to enter the same password in both fields.",
+
+
+    "Correzione": "Correction",
+    "Valutazione": "Evaluation (Maximum Score: :score)",
+    "Assegna un punteggio": "Assign a score",
+    "Note": "Notes",
+
+    "Lista Consegne": "Delivery List",
+    "Nessuna Valutazione": "No Evaluation",
+    "Superato": "Passed",
+    "Non Superato": "Not Passed",
+    "Stampa consegna": "Print delivery",
+    "Stampa consegna corretta": "Print correct delivery",
+    "Correggi": "Correct",
+    "Riscontro": "Feedback",
+    "Ci sono ancora consegne senza valutazione.": "There are still submissions without evaluation.",
+    "Valutazioni pubblicate con successo": "Successfully published evaluations",
+    "Problemi con il file": "Issues with the file"
 }

@@ -73,12 +73,17 @@ Route::middleware(Localization::class)
 
         Route::get('/status/{practice}', [WaitingRoomController::class, 'status'])->name('status');
 
-        //Mostra i dettagli della consegna. (Le risposte e se presenti voti o altro.)
+        //Incomincia la correzione
         Route::get('/view-details-delivered/{delivered}', [DeliveredController::class, 'show'])->name('view-details-delivered')->middleware('control'); //Il middleware permette di vedere i dettagli della consegna solo per gli utenti che l'hanno consegnata o per il docente che ha creato la practice alla quale si riferisce
         
+         //Si occupa di mostrare la consegna quindi risposte, correzioni e voto se prensenti.
+         Route::get('/show-delivered/{delivered}', [DeliveredController::class, 'show_total'])->name('show-delivered')->middleware('control');
+
         Route::get('/download-details-delivered/{delivered}', [DeliveredController::class, 'print'])->name('download-details-delivered')->middleware('control');
         
         Route::get('/download-correct-delivered/{delivered}', [DeliveredController::class, 'printCorrect'])->name('download-correct-delivered');
+
+        Route::get('/download-delivered/{delivered}', [DeliveredController::class, 'printDeliveredWithCorrect'])->name('download-delivered-with-correct');
 
         Route::get('/aggiungi-utente', [UserController::class, 'showAddUserForm'])->name('show-add-user-form');
 

@@ -68,45 +68,29 @@
                                     <tbody>
                                         @foreach( Auth::user()->practices()->withTrashed()->get() as $practice )
 
-                                            @foreach( $practice->delivereds as $delivered )
+                                            @if( $practice->public === 0 && $practice->delivereds->isNotEmpty() )
 
-                                                @if( $delivered->valutation === NULL )
+                                                @if ( $practice->type  == "Exam" )
 
-                                                    @if ( $practice->type  == "Exam" )
-
-                                                        <tr class="exame">
-                                                            <td>
-                                                                <a href="{{ route('view-delivered', ['practice' => $practice]) }}">
-                                                                    {{ $practice->title }}
-                                                                </a>
-                                                            </td>
-                                                            <td>{{ $practice->practice_date }}</td>
-                                                            <td>
-                                                                {{ count($practice->delivereds->filter(function ($delivered) {
-                                                                    return $delivered->valutation === NULL;
-                                                                })) }}
-                                                            </td>
-                                                        </tr>
-                                                    @else
-                                                        
-                                                        <tr class="practice" style="display: none">
-                                                            <td>
-                                                                <a href="{{ route('view-delivered', ['practice' => $practice]) }}">{{ $practice->title }}</a>
-                                                            </td>
-                                                            <td>{{ $practice->practice_date  }}</td>
-                                                            <td>
-                                                                {{ 
-                                                                    count($practice->delivereds->filter(function ($delivered) {
-                                                                        return $delivered->valutation === NULL;
-                                                                    }));
-                                                                }}
-                                                            </td>
-                                                        </tr>
-                                                    @endif
-                                                    @break   
-
+                                                    <tr class="exame">
+                                                        <td>
+                                                            <a href="{{ route('view-delivered', ['practice' => $practice]) }}">
+                                                                {{ $practice->title }}
+                                                            </a>
+                                                        </td>
+                                                        <td>{{ $practice->practice_date }}</td>
+                                                        <td>
+                                                            {{ count($practice->delivereds->filter(function ($delivered) {
+                                                                return $delivered->valutation === NULL;
+                                                            })) }}
+                                                        </td>
+                                                    </tr>
+                                                @else
+                                                    
                                                     <tr class="practice" style="display: none">
-                                                        <td>{{ $practice->title }}e</td>
+                                                        <td>
+                                                            <a href="{{ route('view-delivered', ['practice' => $practice]) }}">{{ $practice->title }}</a>
+                                                        </td>
                                                         <td>{{ $practice->practice_date  }}</td>
                                                         <td>
                                                             {{ 
@@ -117,8 +101,8 @@
                                                         </td>
                                                     </tr>
                                                 @endif
-                                                @break
-                                            @endforeach
+                                                
+                                            @endif
                                         @endforeach
                                             
                                     </tbody>
@@ -208,9 +192,9 @@
 
                                         @if( $practice->type == "Practice")
 
-                                            <tr class="clickable row-type row-practice" onclick="window.location='{{ route('view-details-delivered', ['delivered' =>  $delivered ] ) }}'">
+                                            <tr class="clickable row-type row-practice" onclick="window.location='{{ route('show-delivered', ['delivered' =>  $delivered ] ) }}'">
                                                 <td>{{  $practice->title }}</td>
-                                                @if( $delivered->valutation != NULL and $practice->public == 1 )
+                                                @if( $delivered->valutation !== NULL and $practice->public == 1 )
                                                     <td>{{ $practice->practice_date }}</td>
                                                     <td>{{ $delivered->valutation }}</td>
                                                 @else
@@ -220,9 +204,9 @@
                                                 @endif
                                             </tr>
                                         @else
-                                            <tr class="clickable row-type row-exame" onclick="window.location='{{ route('view-details-delivered', ['delivered' =>  $delivered ] ) }}'">
+                                            <tr class="clickable row-type row-exame" onclick="window.location='{{ route('show-delivered', ['delivered' =>  $delivered ] ) }}'">
                                                 <td>{{ $practice->title }}</td>
-                                                @if( $delivered->valutation != NULL and $practice->public == 1)
+                                                @if( $delivered->valutation !== NULL and $practice->public == 1)
                                                     <td>{{ $practice->practice_date }}</td>
                                                     @if( $delivered->valutation >= $practice->total_score * 0.6)
                                                         <td>{{ $delivered->valutation }}</td>

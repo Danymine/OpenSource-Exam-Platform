@@ -75,7 +75,7 @@ class TestSeeder extends Seeder
                 'randomize_questions' => rand(0, 1),
                 'generated_at' => Carbon::now(),
                 'allowed' => 0,
-                'practice_date' => Carbon::now()->addDay(),
+                'practice_date' => Carbon::now()->addDays(rand(1, 30)), // Aggiunge un numero variabile di giorni
                 'type' => $type[$typeIndex],
                 'public' => 0,
                 'time' => rand(10,180)

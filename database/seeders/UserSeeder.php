@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
                 'email' => 'pseudoemail_' . Str::random(5) . $i + 1 . '@example.com',
                 'email_verified_at' => Carbon::now(),
                 'password' => Hash::make('ciao1234'), 
-                'roles'=> "Studente"
+                'roles'=> "Student"
             ]);
         }
         $this->command->info("Terminato l'inserimento");
