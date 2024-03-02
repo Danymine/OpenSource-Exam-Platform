@@ -44,6 +44,16 @@
                     <a class="nav-link" href="{{ route('ciao') }}">{{ __('Logout') }}</a>
                 </li>
             @endauth
+            <div class="dropdown d-flex justify-content-center align-items-center">
+                <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: #010039; color: #CCCCCC; font-size: 1.5em;">
+                    {{ __('Lingua') }}
+                </button>
+                <div class="dropdown-menu dropdown-menu-center text-center" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="{{ route('localization', ['locale' => 'en']) }}">{{ __('Inglese') }}</a>
+                    <a class="dropdown-item" href="{{ route('localization', ['locale' => 'it']) }}">{{ __('Italiano')}}</a>
+                </div>
+            </div>
+
         </ul>
         @auth
             <!-- Icona per aprire il menu a comparsa -->

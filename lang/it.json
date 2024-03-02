@@ -189,5 +189,20 @@
 
     
     "Elenco degli Esami": "Elenco degli Esami",
-    "Crea Esame": "Crea Esame"
+    "Crea Esame": "Crea Esame",
+
+    "Italiano": "Italiano",
+    "Inglese": "Inglese",
+
+    "Creazione Automatica": "Creazione Automatica",
+    
+
+    "La data deve essere successiva a quella attuale.": "La data deve essere successiva a quella attuale.",
+    "L'esercizio è stato modificato con successo.": "L'esercizio è stato modificato con successo.",
+    "Non hai il permesso.": "Non hai il permesso.",
+    "L'esercizio è stato eliminato con successo.": "L'esercizio è stato eliminato con successo.",
+    "L'esercizio è stato creato correttamente.": "L'esercizio è stato creato correttamente.",
+    "Non è possibile formare un test con lo score desiderato con gli esercizi disponibili": "Non è possibile formare un test con lo score desiderato con gli esercizi disponibili",
+    "Non hai esercizi adatti alla creazione": "Non hai esercizi adatti alla creazione",
+    "Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è: ": "Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è: "
 }

@@ -159,6 +159,25 @@
 
   <script>
     var exercises = @json($exercises);
+    var translations = {
+      'translate': {
+          "Domanda": "{{ __('Domanda') }}",
+          "Difficoltà": "{{ __('Difficoltà') }}",
+          "Materia": "{{ __('Materia') }}",
+          "Tipo": "{{ __('Tipo') }}",
+          "Risposta Corretta": "{{ __('Risposta Corretta') }}",
+          "Opzione A": "{{ __('Opzione A') }}",
+          "Opzione B": "{{ __('Opzione B') }}",
+          "Opzione C": "{{ __('Opzione C') }}",
+          "Opzione D": "{{ __('Opzione D') }}",
+          "Spiegazione": "{{ __('Spiegazione') }}",
+          "Vero": "{{ __('Vero') }}",
+          "Falso": "{{ __('Falso') }}",
+          "Opzione": "{{ __('Opzione') }}",
+          "Inserisci l'opzione": '{{ __("Opzione") }}',
+          "Inserisci la spiegazione": "{{ __('Inserisci la spiegazione') }}"
+      }
+  };
   </script>
   <script src="/js/tableSorting.js"></script>
 

@@ -1,53 +1,7 @@
 var sortDirection = []; // Array per tenere traccia dell'ordinamento per ciascuna colonna
-var translations = {
-    'it': {
-        "Domanda": "Domanda",
-        "Difficoltà": "Difficoltà",
-        "Materia": "Materia",
-        "Tipo": "Tipo",
-        "Risposta Corretta": "Risposta Corretta",
-        "Opzione A": 'Opzione A',
-        "Opzione B": 'Opzione B',
-        "Opzione C": 'Opzione C',
-        "Opzione D": 'Opzione D',
-        "Spiegazione": "Spiegazione",
-        "Vero": "Vero",
-        "Falso": "Falso",
-        "Opzione": "Opzione",
-        "Inserisci l'opzione": "Inserisci l'opzione",
-        "Inserisci la spiegazione": "Inserisci la spiegazione"
-    },
-    'en': {
-        "Domanda": "Question",
-        "Difficoltà": "Difficulty",
-        "Materia": "Subject",
-        "Tipo": "Type",
-        "Risposta Corretta": "Correct Answer",
-        "Opzione A": 'Option A',
-        "Opzione B": 'Option B',
-        "Opzione C": 'Option C',
-        "Opzione D": 'Option D',
-        "Spiegazione": "Explanation",
-        "Vero": "True",
-        "Falso": "False",
-        "Opzione": "Option",
-        "Inserisci l'opzione": "Enter the option",
-        "Inserisci la spiegazione": "Enter the explanation"
-    }
-};
 
-var currentURL = window.location.href;
-var languageIndex = currentURL.indexOf('/en/');
-
-// Se la lingua è presente nell'URL
-if (languageIndex !== -1) {
-
-    language = 'en';
-} else {
-
-    // Se la lingua non è 'en', impostala su 'it'
-    language = 'it';
-}
+language = "translate";
+console.log(translations);
 
 //Aggiornata le icone della tabella esercizi.
 function updateSortIcons(columnIndex) {

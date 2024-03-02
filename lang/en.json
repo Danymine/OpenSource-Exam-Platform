@@ -197,5 +197,18 @@
 
     
     "Elenco degli Esami": "List of Exams",
-    "Crea Esame": "Create Exam"
+    "Crea Esame": "Create Exam",
+
+    "Italiano": "Italian",
+    "Inglese": "English",
+
+    "Creazione Automatica": "Automatic Creation",
+    "La data deve essere successiva a quella attuale.": "The date must be after the current one.",
+    "L'esercizio è stato modificato con successo.": "The exercise has been successfully updated.",
+    "Non hai il permesso.": "You don't have permission.",
+    "L'esercizio è stato eliminato con successo.": "The exercise has been successfully deleted.",
+    "L'esercizio è stato creato correttamente.": "The exercise has been created successfully.",
+    "Non è possibile formare un test con lo score desiderato con gli esercizi disponibili": "It is not possible to form a test with the desired score with the available exercises.",   
+    "Non hai esercizi adatti alla creazione": "You don't have suitable exercises for creation",
+    "Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è: ": "With the exercises you have available, you can't achieve the desired score. The maximum achievable is: " 
 }

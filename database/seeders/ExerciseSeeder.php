@@ -209,5 +209,6 @@ class ExerciseSeeder extends Seeder
             ]);
         }
 
+        $this->command->info("Terminata la creazione esercizi.");
     }
 }

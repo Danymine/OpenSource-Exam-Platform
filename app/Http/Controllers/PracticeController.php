@@ -98,7 +98,7 @@ class PracticeController extends Controller
             'randomize_questions' => 'required|numeric|min:0|max:1',
             'difficulty' => 'required|string|in:Bassa,Media,Alta',
             'total_score' => 'required|numeric|min:1|max:1000',
-            'type' => 'required|string|in:exame,practice',
+            'type' => 'required|string|in:Exam,Practice',
         ]);
 
         $exerciseQuery = Auth::user()->exercises()
@@ -140,23 +140,24 @@ class PracticeController extends Controller
                         $newPractice->exercises()->attach($exercise->id);
                     }
 
-                    return "Successo!";
+                    if($newPractice->type == "Exam") return redirect()->route('exam.index');
 
+                    return redirect()->route('practices.index');
                 } 
                 else {
 
-                    return back()->withErrors('Non è possibile formare un test con lo score desiderato con gli esercizi disponibili')->withInput();
+                    return back()->withErrors(trans('Non è possibile formare un test con lo score desiderato con gli esercizi disponibili'))->withInput();
                 }
 
             }
             else{
 
-                return back()->withErrors('Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è: ' . $totalScoreFiltered)->withInput();
+                return back()->withErrors(trans('Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è: ') . $totalScoreFiltered)->withInput();
             }
         }
         else{
 
-            return back()->withErrors('Non hai esercizi adatti alla creazione')->withInput();
+            return back()->withErrors(trans('Non hai esercizi adatti alla creazione'))->withInput();
         }
                 
     } 
@@ -207,7 +208,7 @@ class PracticeController extends Controller
 
     public function create_exame3()
     {
-        if(session()->has('exame_step1') && array_key_exists('total_score', $request->session()->get('exame_step1'))) return view('exame.exame_create3'); abort('403', "Non autorizzato.");
+        if(session()->has('exame_step1') && array_key_exists('total_score', session()->get('exame_step1'))) return view('exame.exame_create3'); abort('403', "Non autorizzato.");
     }
 
     public function store_exame(Request $request){

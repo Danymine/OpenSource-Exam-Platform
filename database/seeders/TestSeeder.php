@@ -44,6 +44,9 @@ class TestSeeder extends Seeder
 
     public function run(): void
     {
+
+        $this->command->info("Incomincio la creazione di Test. (Sia Esami che Esercitazioni)");
+
         $possibleTotalScores = [10, 30, 100];
         $difficulties = ['Alta', 'Media', 'Bassa'];
         $type = ['Exam', 'Practice'];
@@ -103,5 +106,7 @@ class TestSeeder extends Seeder
                 }
             }      
         }
+
+        $this->command->info("Test correttamente creati.");
     }    
 }

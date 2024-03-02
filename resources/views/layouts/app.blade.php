@@ -408,6 +408,16 @@
                 height: 38px;
             }
 
+            #dropdownMenuButton:hover{
+
+                font-weight: bold;
+            }
+
+            .dropdown-item:hover{
+
+                background-color: #cccccc;
+            }
+
     </style>
 </head>
 <body>

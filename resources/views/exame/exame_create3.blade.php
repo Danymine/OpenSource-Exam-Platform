@@ -96,9 +96,9 @@
                     <div class="mb-3">
                         <label for="difficulty">{{ __('Difficoltà') }}:</label>
                         <select class="form-control p-2" name="difficulty" required>
-                            <option value="Bassa" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Bassa' ? 'selected' : '' }}>Bassa</option>
-                            <option value="Media" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Media' ? 'selected' : '' }}>Media</option>
-                            <option value="Alta" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Alta' ? 'selected' : '' }}>Alta</option>
+                            <option value="Bassa" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Bassa' ? 'selected' : '' }}>{{ __('Bassa') }}</option>
+                            <option value="Media" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Media' ? 'selected' : '' }}>{{ __('Media') }}</option>
+                            <option value="Alta" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Alta' ? 'selected' : '' }}>{{ __('Alta') }}</option>
                         </select>
                     </div>
 
@@ -123,6 +123,7 @@
 </x-app-layout>
 
 <script>
+    prova = "{{ __('La data deve essere successiva a quella attuale.') }}";
     document.addEventListener("DOMContentLoaded", function() {
         const dataInput = document.getElementById("data_programmazione");
         const errorSpan = document.getElementById("error_date");
@@ -132,7 +133,7 @@
             const dataAttuale = new Date();
 
             if (dataInserita <= dataAttuale) {
-                errorSpan.textContent = "La data deve essere successiva a quella attuale.";
+                errorSpan.textContent = prova;
             } else {
                 errorSpan.textContent = "";
             }

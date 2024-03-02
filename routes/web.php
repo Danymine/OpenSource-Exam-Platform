@@ -9,6 +9,7 @@ use App\Http\Controllers\DeliveredController;
 use App\Http\Controllers\AdminRequestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RequestController;
+use App\Http\Controllers\LocalizationController;
 
 
 //Temporanea
@@ -32,18 +33,17 @@ Route::get('/errore2', function (){
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', function(){
 
-    return redirect('it');
-});
+//Questo controller è un controller particolare in quanto al suo interno è presente un "metodo" __invoke quindi quando proverò a richiamare l'oggetto, in questo caso il controller, sarà richiamato quel metodo.
+Route::get('/localization/{locale}', LocalizationController::class)->name('localization');
 
-Route::prefix('{locale}')
-    ->middleware(Localization::class)
+Route::middleware(Localization::class)
     ->group(function (){
 
     Route::get('/', function () {
         return view('navigation.welcome');
     })->name('ciao');
+
 
     //Rotta per raggiungere la propria dashboard questa si occupera di fornire SOLO la dashboard visibile al tipo di utente che la richiede
     Route::get('/dashboard', function () {
@@ -79,9 +79,9 @@ Route::prefix('{locale}')
         Route::get('/download-details-delivered/{delivered}', [DeliveredController::class, 'print'])->name('download-details-delivered')->middleware('control');
         
         Route::get('/download-correct-delivered/{delivered}', [DeliveredController::class, 'printCorrect'])->name('download-correct-delivered');
-    
+
         Route::get('/aggiungi-utente', [UserController::class, 'showAddUserForm'])->name('show-add-user-form');
-    
+
         Route::post('/aggiungi-utente', [UserController::class, 'aggiungiUtente'])->name('aggiungi-utente');
         
         Route::get('/user-list', [UserController::class, 'showUserList'])->name('user-list');
@@ -136,7 +136,7 @@ Route::prefix('{locale}')
 
         });
 
-    
+
         Route::prefix('exam')->group(function () {
             
             //Pagina iniziale mostra tutti gli esami
@@ -241,5 +241,4 @@ Route::prefix('{locale}')
     });
 
     require __DIR__.'/auth.php';    //Istruzione per includere tutte le rotte definite nel file auth.php
-    
 });

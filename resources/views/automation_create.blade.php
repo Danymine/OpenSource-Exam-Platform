@@ -4,6 +4,23 @@
             {{ __('Creazione Automatica') }}
         </h2>
     </x-slot>
+    <div class="container">
+        @if($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
+        @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+        @endif
+    </div>
     
     <div class="container p-4 rounded" style="background-color: #fff; box-shadow: 0.15rem 0.25rem 0 rgb(33 40 50 / 15%); border: 1px solid rgba(0,0,0,.125);">
         <form method="POST" action="{{ route('save_automation') }}">
@@ -38,7 +55,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="practice_date">{{ __('Data della prova') }}</label>
+                        <label for="practice_date">{{ __('Data programmata') }}</label>
                         <input type="date" class="form-control" id="practice_date" name="practice_date" value="{{ old('practice_date') }}" required>
                     </div>
                     <div class="form-group">
@@ -49,12 +66,12 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="time">{{ __('Tempo in minuti') }}</label>
+                        <label for="time">{{ __('Durata') }}</label>
                         <input type="number" class="form-control" id="time" name="time" value="{{ old('practice_date') }}" required>
                     </div>
                     <div class="form-check">
                         <label class="form-check-label" for="randomize_questions">
-                            {{ __("Vuoi che l'ordine delle domande sia casuale?") }}
+                            {{ __("Vuoi abilitare la randomizzazione delle domande?") }}
                         </label>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="randomize_questions" id="randomize_questionssi" value="1" required>
@@ -80,7 +97,7 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Salva</button>
+            <button type="submit" class="btn btn-primary">{{ __('Crea') }}</button>
         </form>
     </div>
 
