@@ -228,6 +228,11 @@
     "Riscontro": "Riscontro",
     "Ci sono ancora consegne senza valutazione.": "Ci sono ancora consegne senza valutazione.",
     "Valutazioni pubblicate con successo": "Valutazioni pubblicate con successo",
-    "Problemi con il file": "Problemi con il file"
+    "Problemi con il file": "Problemi con il file",
+
+    "Statistiche": "Statistiche :title",
+    "Valutazioni Partecipanti": "Valutazioni Partecipanti",
+    "Valutazioni Generale": "Valutazioni Generale",
+    "Storico": "Storico"
 
 }

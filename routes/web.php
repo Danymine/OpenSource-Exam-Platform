@@ -231,11 +231,14 @@ Route::middleware(Localization::class)
         //Annulla l'avvio di un test kikkando tutti gli studenti che tentavano di partecipare.
         Route::get('/finish-test/{practice}', [PracticeController::class, 'finish'])->name('finish-test');
 
-        Route::get('/view-exame-passed', [PracticeController::class, 'showHistoryExame'])->name('exame-passed');
-        Route::get('/view-practice-passed', [PracticeController::class, 'showHistoryPractice'])->name('practice-passed');
+        //Storico degli esami (Mostra gli esami che sono passati(ma che sono stati anche sottoposti))
+        Route::get('/view-exame-passed', [PracticeController::class, 'story_exame'])->name('exame-passed');
 
+        //Storico delle esercitazioni (Mostra le esercitazioni che sono passate(ma che sono stati anche sottoposte))
+        Route::get('/view-practice-passed', [PracticeController::class, 'story_practice'])->name('practice-passed');
+
+        //Statistiche
         Route::get('/stats-practice/{practice}', [PracticeController::class, 'stats'])->name('stats');
-
 
     });
 

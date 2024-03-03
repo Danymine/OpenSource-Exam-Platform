@@ -1,40 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charts</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-        .chart-container {
-            flex-basis: 48%; /* Imposta la larghezza massima del contenitore del grafico */
-            margin-bottom: 20px; /* Spazio tra i grafici */
-        }
-
-    </style>
-</head>
-<body>
-    <div class="container mt-5">
-        <div class="chart-container">
-            <h1 class="mb-4">Bars</h1>
-            <canvas id="barChart"></canvas>
+<x-app-layout>
+    <x-slot name="header">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="font-semibold text-xl leading-tight">
+                {{ __('Statistiche', ['title' => $practice->title]) }}
+            </h4>
+            <div>
+                @if( $practice->type == "Exam")
+                    <a href="{{ route('exame-passed') }}" class="btn btn-info">{{ __('Torna Indietro') }}</a>
+                @else
+                    <a href="{{ route('practice-passed') }}" class="btn btn-info">{{ __('Torna Indietro') }}</a>
+                @endif
+            </div>
         </div>
-        <div class="chart-container">
-            <h1 class="mb-4">Torta</h1>
-            <canvas id="pieChart"></canvas>
+        <hr stile="border-top: 1px solid #000000; width: 90%;" />
+    </x-slot>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5 class="mb-4">{{ __('Valutazioni Partecipanti') }}</h5>
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5 class="mb-4">{{ __('Valutazioni Generale') }}</h5>
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
+
 
     <script>
         // Ottieni i dati dalla variabile PHP
         var delivereds = <?php echo json_encode($delivereds); ?>;
         var totalValuations = {{ $delivereds->pluck('valutation')->sum() }};
-        var averageValuation = totalValuations / {{ $delivereds->count() }};    
+        var averageValuation = totalValuations / {{ $delivereds->count() }}; 
+        var str = "{{ __('Voto') }}";   
 
         // Prepara i dati per il grafico
         var labels = [];
@@ -42,7 +46,8 @@
 
         // Estrai i dati dalle delivereds
         delivereds.forEach(function(delivered) {
-            labels.push(delivered.user.name); 
+            name = delivered.user.name + " " +  delivered.user.first_name;
+            labels.push(name); 
             scores.push(delivered.valutation);
         });
 
@@ -53,7 +58,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Voto',
+                    label: str,
                     data: scores,
                     backgroundColor: 'rgba(54, 162, 235, 0.2)',
                     borderColor: 'rgba(54, 162, 235, 1)',
@@ -79,6 +84,21 @@
 
 
     <script>
+        
+        function generateSoftColors(count) {
+            var softColors = [];
+            
+            for (var i = 0; i < count; i++) {
+                var hue = Math.floor(Math.random() * 360); // genera un valore casuale per l'HSL
+                var saturation = Math.floor(Math.random() * 30) + 70; // saturazione in una gamma meno vivace (70-100)
+                var lightness = Math.floor(Math.random() * 20) + 60; // luminosità in una gamma più scura (60-80)
+                
+                var color = 'hsla(' + hue + ',' + saturation + '%,' + lightness + '%, 0.8)';
+                softColors.push(color);
+            }
+
+            return softColors;
+        }
         var pieCanvas = document.getElementById('pieChart').getContext('2d');
         
         /*
@@ -94,11 +114,7 @@
 
         */
         var colorCount = new Set({{ $delivereds->pluck('valutation')->toJson() }}).size;
-        var colors = [];
-        for ( var i = 0; i < colorCount; i++ ) {
-
-            colors.push('rgba(' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ', 0.8)');
-        }
+        var colors = generateSoftColors(colorCount);
 
         var colorsJson = JSON.stringify(colors);
 
@@ -124,5 +140,4 @@
             }
         });
     </script>
-</body>
-</html>
+</x-app-layout>

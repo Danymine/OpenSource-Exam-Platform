@@ -104,9 +104,11 @@
                 @endforeach
             </tbody>
         </table>
-        <div>
-            <a class="btn btn-primary" href="{{ route('public', ['practice' => $practice]) }}">{{ __('Pubblica') }}</a>
-        </div>
+        @if( $delivered->practice->public == 0 )
+            <div>
+                <a class="btn btn-primary" href="{{ route('public', ['practice' => $practice]) }}">{{ __('Pubblica') }}</a>
+            </div>
+        @endif
     </div>
 
     <script>

@@ -233,5 +233,10 @@
     "Riscontro": "Feedback",
     "Ci sono ancora consegne senza valutazione.": "There are still submissions without evaluation.",
     "Valutazioni pubblicate con successo": "Successfully published evaluations",
-    "Problemi con il file": "Issues with the file"
+    "Problemi con il file": "Issues with the file",
+
+    "Statistiche": "Statistics :title",
+    "Valutazioni Partecipanti": "Participant Ratings",
+    "Valutazioni Generale": "Overall Ratings",
+    "Storico": "History"
 }

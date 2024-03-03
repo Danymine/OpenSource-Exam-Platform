@@ -13,10 +13,20 @@
             </div>
             <hr stile="border-top: 1px solid #000000; width: 90%;" />
         @else
-            <x-slot name="header">
-            <h4>
-                {{ __('Dashboard') }}
-            </h4>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="font-semibold text-xl leading-tight">
+                    {{ __('Dashboard') }}
+                </h4>
+                <div class="dropdown">
+                    <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ __('Storici') }}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{{ route('exame-passed') }}">{{ __('Storico Esami') }}</a>
+                        <a class="dropdown-item" href="{{ route('practice-passed') }}">{{ __('Storico Esercitazioni') }}</a>
+                    </div>
+                </div>
+            </div>
             <hr stile="border-top: 1px solid #000000; width: 90%;" />
         @endif
     </x-slot>

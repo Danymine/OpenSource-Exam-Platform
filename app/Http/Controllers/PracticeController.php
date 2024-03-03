@@ -284,6 +284,16 @@ class PracticeController extends Controller
         return redirect()->route('exam.index');
     }
 
+    public function story_exame(){
+
+        $practices = Practice::where('type', 'Exam')
+            ->where('public', 1)
+            ->where('user_id', Auth::user()->id)
+            ->has('delivereds')
+            ->get();
+        return view('practice_history', ['practices' => $practices]);
+    }
+
     /* NOTE: INIZIO AREA ESERCITAZIONI
     ///
     ///
@@ -404,6 +414,16 @@ class PracticeController extends Controller
         }
     
         return redirect()->route('practices.index');
+    }
+
+    public function story_practice(){
+
+        $practices = Practice::where('type', 'Practice')
+            ->where('public', 1)
+            ->where('user_id', Auth::user()->id)
+            ->has('delivered')
+            ->get();
+        return view('practice_history', ['practices' => $practices]);
     }
 
 
@@ -914,7 +934,12 @@ class PracticeController extends Controller
     public function stats( Practice $practice ){
         
         //Servono tutte le consegne con i rispettivi utenti che hanno consegnato
-        $delivereds = $practice->delivereds()->with('user')->get();
-        return view('stats', ['practice' => $practice, 'delivereds' => $delivereds]);
+        if( Auth::user()->id == $practice->user_id ){
+
+            $delivereds = $practice->delivereds()->with('user')->get();
+            return view('stats', ['practice' => $practice, 'delivereds' => $delivereds]);
+        }
+        
+        abort('403', "Non autorizzato");
     }
 }
