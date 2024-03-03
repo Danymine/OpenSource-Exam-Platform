@@ -134,7 +134,7 @@ class ExerciceCloseSeeder extends Seeder
         for( $i = 0; $i < 10; $i++ ){
 
             DB::table('exercises')->insert([
-                'user_id' => 5,
+                'user_id' => 1,
                 'name' => $domande[$i]["testo"],
                 'question' => $domande[$i]["testo"],
                 'score' => rand(1,10),

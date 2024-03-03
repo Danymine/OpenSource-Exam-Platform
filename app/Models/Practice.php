@@ -53,6 +53,8 @@ class Practice extends Model
 
         return $this->hasMany(Delivered::class);
     }
+    
+
 
     /* Non vi è più la necessità di questa relazione.
     public function answers() : HasMany
