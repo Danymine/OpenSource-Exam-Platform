@@ -38,7 +38,10 @@
         var delivereds = <?php echo json_encode($delivereds); ?>;
         var totalValuations = {{ $delivereds->pluck('valutation')->sum() }};
         var averageValuation = totalValuations / {{ $delivereds->count() }}; 
-        var str = "{{ __('Voto') }}";   
+        var str = "{{ __('Voto') }}";
+        var max = {!! $practice->total_score !!};
+
+        console.log(max);
 
         // Prepara i dati per il grafico
         var labels = [];
@@ -64,20 +67,20 @@
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1
                 }]
-            },
+            },      
             options: {
                 scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: {!! $practice->total_score !!}, // Valore massimo per l'asse Y
-                        grid: {
-                            drawBorder: false,
-                            lineWidth: 2,
-                            color: 'rgba(255,255,255, 0.9)',
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            max: max
+                        },
+                        gridLines: {
+                            display: false // Rimuove la griglia
                         }
-                    }
+                    }]
                 },
-                barPercentage: 0.1,
+                barPercentage: 0.8,
             }
         });
     </script>
