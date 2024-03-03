@@ -44,6 +44,9 @@ class TestSeeder extends Seeder
 
     public function run(): void
     {
+
+        $this->command->info("Incomincio la creazione di Test. (Sia Esami che Esercitazioni)");
+
         $possibleTotalScores = [10, 30, 100];
         $difficulties = ['Alta', 'Media', 'Bassa'];
         $type = ['Exam', 'Practice'];
@@ -67,14 +70,15 @@ class TestSeeder extends Seeder
                 'subject' => $subject,
                 'total_score' => $totalScore,
                 'key' => $key,
-                'user_id' => 5,
+                'user_id' => 1,
                 'feedback_enabled' => rand(0, 1),
                 'randomize_questions' => rand(0, 1),
                 'generated_at' => Carbon::now(),
                 'allowed' => 0,
-                'practice_date' => Carbon::now()->addDay(),
+                'practice_date' => Carbon::now()->addDays(rand(1, 30)), // Aggiunge un numero variabile di giorni
                 'type' => $type[$typeIndex],
-                'public' => 0
+                'public' => 0,
+                'time' => rand(10,180)
             ]);
     
             $practice->save();
@@ -92,10 +96,7 @@ class TestSeeder extends Seeder
                     break;
                 }
     
-                // Calcola il punteggio proporzionato per ciascun esercizio rispetto al max_score
-                $customScore = round(($exercise->score / $totalScore) * $totalScore, 2);
-                $sumScore += $customScore;
-                $practice->exercises()->attach($exercise->id, ['custom_score' => $customScore]);
+                $practice->exercises()->attach($exercise->id);
                 
                 // Incrementa il contatore degli esercizi aggiunti
                 $exerciseCount++;
@@ -105,5 +106,7 @@ class TestSeeder extends Seeder
                 }
             }      
         }
+
+        $this->command->info("Test correttamente creati.");
     }    
 }

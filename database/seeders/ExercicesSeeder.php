@@ -14,6 +14,8 @@ class ExercicesSeeder extends Seeder
      */
     public function run(): void
     {   
+        $this->command->info("Incomincio la creazione esercizi. (Saranno creati esercizi di tutti e tre i tipi.)");
+        
         $domande_scolastiche = array(
             // Matematica
             ["Risolvi l'equazione x^2 - 4 = 0.", "Matematica"],

@@ -1,110 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Waiting Room</title>
-    <style>
+<x-app-layout>
+    <x-slot name="header">
+        <h4 class="text-2xl font-bold text-black mb-4">{{ $practice->title }}</h4>
+    </x-slot>
 
-        .waiting-container {
-            text-align: center;
-        }
-
-        .waiting-message {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        .loading-spinner {
-            border: 6px solid #f3f3f3;
-            border-top: 6px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
-</head>
-<body>
-    @if(Auth::user()->roles == "Teacher" and $practices->user_id == Auth::user()->id)
-        <div class="waiting-container">
-            <div class="waiting-message">Salve docente sei nella gestione della waiting room per il test {{ $practices->title }}</div>
+    <div class="container">
+        @if($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
-        <p id="prova"></p>
-        @if (\Session::has('success'))
-            <div class="alert alert-success">
-                <p><b>{{ \Session::get('success') }}</b></p>
+        @endif
+
+        @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+        @endif
+    </div>
+
+    <div class="container">
+        @if(Auth::user()->roles == "Teacher" && $practice->user_id == Auth::user()->id)
+            <h6>{{ __('Salve :name, sei nella gestione della waiting room per il test :title condividi con gli utenti la seguente chiave per partecipare. :key', ['name' => Auth::user()->name, 'title' => $practice->title, 'key' => $practice->key]) }}</b></h6>
+        
+            @if( $practice->allowed == 0 )
+                <!--Non è stato ancora avviata -->
+                <table class="table" id="students-table">
+                    <thead>
+                        <tr>
+                            <th>{{ __('Nome') }}</th>
+                            <th>{{ __('Cognome') }}</th>
+                            <th>{{ __('Stato') }} </th>
+                            <th>{{ __('Espelli') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-table-body">
+                    </tbody>
+                </table>
+                <a href="{{ route('cancel-start', ['practice' => $practice]) }}" class="btn btn-info">{{ __('Annulla') }}</a>
+                <a href="{{ route('start-test', ['practice' => $practice]) }}" class="btn btn-primary">{{ __('Avvia') }}</a>
+            @else
+                
+                <table class="table" id="students-table">
+                    <thead>
+                        <tr>
+                            <th>{{ __('Nome') }}</th>
+                            <th>{{ __('Cognome') }}</th>
+                            <th>{{ __('Stato') }} </th>
+                            <th>{{ __('Espelli') }}</th>
+                            <th>{{ __('Approva') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-table-body">
+                    </tbody>
+                </table>
+
+                <a href="{{ route('finish-test', ['practice' => $practice]) }}" class="btn btn-danger">{{ __('Termina') }}</a>
+            @endif
+        @else
+
+            <div class="waiting-container">
+                <h4 class="text-center mb-4">{{ __('Rimani in attesa') }}</h4>
+                <div class="loader"></div>
+                <p class="text-center mt-4" style="color: black;">{{ __('Perfavore aspetti che il test inizi.') }}</p>
             </div>
         @endif
-        <div>
-            <a href="{{ route('empower', ['test' => $practices]) }}">Consenti Accesso</a>
-        </div>
+    </div>
+    @if( Auth::user()->roles == "Teacher" )
+        <script>
+            route = "{!! route('fetch-partecipants', ['practice' => $practice]) !!}";
+        </script>
+        <script src="/js/waitingRoomTeacher.js"></script>
     @else
-        <div class="waiting-container">
-                <div class="waiting-message">Attendi che il test inizi...</div>
-                <div class="loading-spinner"></div>
-        </div>
+        <script>
+            route = "{!! route('status', ['practice' => $practice]) !!}";
+            routeNext = "{!! route('view-test', ['key' => $practice->key]) !!}";
+            routeDashboard = "{!! route('dashboard') !!}";
+        </script>
+        <script src="/js/waitingRoomStudent.js"></script>
     @endif
-<script>
-    
-    // Avvia il processo di aggiornamento
-    @if( Auth::user()->roles != "Teacher" or Auth::user()->id != $practices->user_id)
-        function fetchStatus() {
-            fetch("{{ route('status', ['test' => $practices]) }}", {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Aggiorna la pagina o apporta altre modifiche in base alla risposta del server
-                if (data.status === 1) {
-                    // Reindirizza l'utente alla view test
-                    window.location.href = "{{ route('view-test', ['key' => $practices->key]) }}";
-                }
-                else{
-                    // Chiama nuovamente la funzione dopo 5 secondi (5000 millisecondi)
-                    setTimeout(fetchStatus, 5000);
-                }
-            })
-            .catch(error => console.error("Errore nell'aggiornamento ", error));
-        }
-
-        fetchStatus(); 
-    @else
-
-    function fetchUser() {
-            fetch("{{ route('user', ['test' => $practices]) }}", {
-                method: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Aggiorna la pagina o apporta altre modifiche in base alla risposta del server
-               
-                document.getElementById('prova').innerHTML = data.user;
-                setTimeout(fetchUser, 5000);
-                
-            })
-            .catch(error => console.error("Errore nell'aggiornamento ", error));
-        }
-
-        fetchUser(); 
-    @endif
-
-</script>
-</body>
-</html>
+</x-app-layout>

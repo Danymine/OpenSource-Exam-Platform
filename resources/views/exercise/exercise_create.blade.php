@@ -37,11 +37,11 @@
                 <div class="col-md-6">
                         <div class="form-group">
                             <label for="titolo">{{ __('Titolo') }}:</label>
-                            <input type="text" class="form-control" id="titolo" placeholder="Inserisci il titolo" name="name" required minlength="5" maxlength="30" value="{{ session()->has('exercise_step1') ? session('exercise_step1')['name'] : '' }}">
+                            <input type="text" class="form-control" id="titolo" placeholder="{{ __('Inserisci il Titolo') }}" name="name" required minlength="5" maxlength="30" value="{{ session()->has('exercise_step1') ? session('exercise_step1')['name'] : '' }}">
                         </div>
                         <div class="form-group">
                             <label for="materia">{{ __('Materia') }}:</label>
-                            <input type="text" class="form-control" id="materia" placeholder="Inserisci la materia" name="subject" required minlength="5" maxlength="30" value="{{ session()->has('exercise_step1') ? session('exercise_step1')['subject'] : '' }}">
+                            <input type="text" class="form-control" id="materia" placeholder="{{ __('Inserisci la Materia') }}" name="subject" required minlength="5" maxlength="30" value="{{ session()->has('exercise_step1') ? session('exercise_step1')['subject'] : '' }}">
                         </div>
                 </div>
                 <div class="col-md-6 p-3">

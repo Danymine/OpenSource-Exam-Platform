@@ -28,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'roles',
         'img_profile',
+        'email_verified_at',
     ];
 
     /**
@@ -57,7 +58,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function waitingroom() : BelongsToMany   //Partecipare vedi schema
     {
-        return $this->belongsToMany(Practice::class, 'waiting_rooms', 'user_id', 'practice_id');
+        return $this->belongsToMany(Practice::class, 'waiting_rooms', 'user_id', 'practice_id')->withPivot('status');
     }
 
     public function delivereds() : HasMany  // Relazione fra User e Consegna vedi schema
@@ -69,11 +70,4 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Exercise::class);
     }
-
-    /* Non vi è più la necessità
-    public function answers() : HasMany
-    {
-        return $this->hasMany(Answer::class);
-    }
-    */
 }

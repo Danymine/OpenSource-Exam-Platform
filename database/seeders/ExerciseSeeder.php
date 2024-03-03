@@ -194,13 +194,13 @@ class ExerciseSeeder extends Seeder
         for( $i = 0; $i < 10; $i++ ){
 
             DB::table('exercises')->insert([
-                'user_id' => 5,
+                'user_id' => 1,
                 'name' => $domande[$i]["testo"],
                 'question' => $domande[$i]["testo"],
                 'score' => rand(1,10),
                 'difficulty' => $diff[rand(0,2)],
                 'subject' => $domande[$i]["materia"],
-                'type' => 'Risposta Multipla',
+                'type' => 'Risposta Aperta',
                 'correct_option' => $domande[$i]["risposta_corretta"],
                 'option_1' => $domande[$i]["opzioni"]['a'],
                 'option_2' => $domande[$i]["opzioni"]['b'],
@@ -209,5 +209,6 @@ class ExerciseSeeder extends Seeder
             ]);
         }
 
+        $this->command->info("Terminata la creazione esercizi.");
     }
 }

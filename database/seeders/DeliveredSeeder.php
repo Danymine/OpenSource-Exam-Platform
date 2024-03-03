@@ -20,24 +20,10 @@ class DeliveredSeeder extends Seeder
      */
     public function run(): void
     {
-        
-        $this->command->info("Inizio inserendo 100 utenti.");
-        for( $i = 0; $i < 100;  $i++ ){
-
-            DB::table('users')->insert([
-                'name' => "Nome" . $i + 1,
-                'first_name' => "Cognome" . $i + 1,
-                'email' => 'pseudoemail_' . Str::random(5) . $i + 1 . '@example.com',
-                'email_verified_at' => Carbon::now(),
-                'password' => Hash::make('ciao1234'), 
-                'roles'=> 'Student',
-            ]);
-        }
-        $this->command->info("Terminato l'inserimento");
 
         $this->command->info("Incomincio l'inserimento delle consegne da parte degli utenti.");
 
-        $practices = Practice::where('user_id', '=' , 5)->with('exercises')->get();
+        $practices = Practice::where('user_id', '=' , 1)->with('exercises')->get();
         $users = User::all();
         
         foreach( $practices as $practice ){

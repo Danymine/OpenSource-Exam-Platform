@@ -5,6 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\URL;
+
 
 class VerifyUserWait
 {
@@ -18,7 +20,7 @@ class VerifyUserWait
         /*
         Middleware che verifica se un utente ha lasciato una waiting room e quindi sarà rimosso anche dal database
         */
-
+        
         $practice = Practice::where('key', '=', $request->key)->first();
         if( $practice != NULL and $practice->practice_date == now()){
 

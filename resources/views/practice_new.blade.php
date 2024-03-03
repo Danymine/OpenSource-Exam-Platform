@@ -1,152 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generated Practice</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f9f9f9;
-            color: #333;
-        }
+<x-app-layout>
+    <x-slot name="header">
+        <h4 class="text-2xl font-bold text-black mb-4">{{ $practice->title }}</h4>
+        <hr stile="border-top: 1px solid #000000; width: 90%;" />
+    </x-slot>
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+    <div class="container mx-auto mt-5">
+        <div class="practice-details">
+            <!-- Description -->
+            <p class="mb-3"><strong class="text-black">Descrizione:</strong> {{ $practice->description }}</p>
 
-        .practice-info, .exercise, .generated-key {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
+            <!-- Difficulty -->
+            <p class="mb-3"><strong class="text-black">Difficoltà:</strong> {{ $practice->difficulty }}</p>
 
-        h1, h2, h3 {
-            margin-bottom: 10px;
-        }
+            <!-- Subject -->
+            <p class="mb-3"><strong class="text-black">Materia:</strong> {{ $practice->subject }}</p>
 
-        h2 {
-            margin-top: 20px;
-        }
+            <!-- Total Score -->
+            <p class="mb-3"><strong class="text-black">Punteggio Totale:</strong> {{ $practice->total_score }}</p>
 
-        .generated-key {
-            display: flex;
-            align-items: center;
-        }
+            <!-- Feedback Enabled -->
+            <p class="mb-3">
+                <input type="checkbox" id="feedbackEnabled" disabled {{ $practice->feedback_enabled ? 'checked' : '' }}>
+                <label for="feedbackEnabled" class="text-black">Feedback Automatico</label>
+            </p>
 
-        .generated-key button {
-            margin-left: 10px;
-            padding: 8px 12px;
-            border-radius: 4px;
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+            <!-- Randomize Questions -->
+            <p class="mb-3">
+                <input type="checkbox" id="randomizeQuestions" disabled {{ $practice->randomize_questions ? 'checked' : '' }}>
+                <label for="randomizeQuestions" class="text-black">Randomizzazione Domande</label>
+            </p>
 
-        .generated-key button:hover {
-            background-color: #2980b9;
-        }
+            <!-- Creation Date -->
+            <p class="mb-3"><strong class="text-black">Data di Creazione:</strong> {{ $practice->created_at }}</p>
 
-        .back-button {
-            margin-top: 20px;
-        }
+            <!-- Practice Date -->
+            <p class="mb-3"><strong class="text-black">Data programmata:</strong> {{ \Carbon\Carbon::parse($practice->practice_date)->format('d-m-Y') }}</p>
+        </div>
 
-        .back-button a button {
-            padding: 10px 20px;
-            background-color: #e74c3c;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+        <!-- Linea di separazione -->
+        <hr class="my-5">
 
-        .back-button a button:hover {
-            background-color: #c0392b;
-        }
-    </style>
-</head>
-<body>
+        <h2 class="mt-5 mb-3 text-xl font-bold text-black">Esercizi:</h2>
 
-    <div class="container">
-        @if(isset($newPractice))
-            <div class="practice-info">
-                <h1>
-                    @if ($type === 'Exam')
-                        Esame generato
-                    @elseif ($type === 'Practice')
-                        Esercitazione generata
-                    @endif
-                </h1>
-                <p><strong>Titolo:</strong> {{ $newPractice->title }}</p>
-                <p><strong>Descrizione:</strong> {{ $newPractice->description }}</p>
-                <p><strong>Difficoltà:</strong> {{ $newPractice->difficulty }}</p>
-                <p><strong>Materia:</strong> {{ $newPractice->subject }}</p>
-                <p><strong>Punteggio Totale:</strong> {{ $newPractice->total_score }}</p>
-                
-                <!-- Nuove informazioni sul feedback e randomizzazione -->
-                <p class="checkbox-info">
-                    <input type="checkbox" id="feedbackEnabled" disabled {{ $newPractice->feedback_enabled ? 'checked' : '' }}>
-                    <label for="feedbackEnabled">Feedback Automatico</label>
-                </p>
-                <p class="checkbox-info">
-                    <input type="checkbox" id="randomizeQuestions" disabled {{ $newPractice->randomize_questions ? 'checked' : '' }}>
-                    <label for="randomizeQuestions">Randomizzazione Domande</label>
-                </p>
+        @foreach($practice->exercises as $exercise)
+            <div class="exercise border-b-2 border-gray-200 pb-3 mb-4">
+                <!-- Exercise Name -->
+                <h3 class="text-lg font-semibold text-black">{{ $exercise->name }}</h3>
 
-                <!-- Mostra la data di creazione -->
-                <p><strong>Data di Creazione:</strong> {{ $newPractice->created_at }}</p>
-                
-                <!-- Mostra la data in cui si terrà l'esercitazione -->
-                <p><strong>Data programmata:</strong> {{ \Carbon\Carbon::parse($newPractice->practice_date)->format('d-m-Y') }}</p>
+                <!-- Question -->
+                <p class="mb-1"><strong class="text-black">Domanda:</strong> {{ $exercise->question }}</p>
+
+                <!-- Score -->
+                <p class="mb-1"><strong class="text-black">Punteggio:</strong> {{ $exercise->score }}</p>
             </div>
+        @endforeach
 
-            <h2>Esercizi:</h2>
-            @foreach($newPractice->exercises as $exercise)
-                <div class="exercise">
-                    <h3>{{ $exercise->name }}</h3>
-                    <p><strong>Domanda:</strong> {{ $exercise->question }}</p>
-                    <!-- Accedi al custom_score attraverso la relazione pivot -->
-                    <p><strong>Punteggio:</strong> {{ $exercise->score }}</p>
-                    <!-- Altri dettagli dell'esercizio -->
-                </div>
-            @endforeach
+        <!-- Linea di separazione -->
+        <hr class="my-5">
 
-            <div class="generated-key">
-                <strong>Chiave Generata:</strong>
-                <span id="generatedKey">{{ $newPractice->key }}</span>
-                <button onclick="copyKey()">Copia</button>
-            </div>
+        <div class="key-section mt-5">
+            <!-- Key Title -->
+            <strong class="text-black">Chiave:</strong>
 
-            <!-- Bottone per tornare alla lista -->
-            <div class="back-button">
-                <a href="{{ route('practices.index', ['type' => $type]) }}">
-                    <button>Torna alla lista </button>
-                </a>
-            </div>
-        @endif
+            <!-- Key Content -->
+            <span id="generatedKey" class="text-black">{{ $practice->key }}</span>
 
-        <script>
-            function copyKey() {
-                var keyElement = document.getElementById('generatedKey');
-                var tempTextArea = document.createElement('textarea');
-                tempTextArea.value = keyElement.innerText;
+            <!-- Copy Key Button -->
+            <button onclick="copyKey()" class="btn btn-primary ml-3">Copia</button>
+        </div>
 
-                document.body.appendChild(tempTextArea);
-                tempTextArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempTextArea);
-
-                alert('Chiave copiata negli appunti!');
-            }
-        </script>
     </div>
-</body>
-</html>
+
+    <script>
+        function copyKey() {
+            var keyElement = document.getElementById('generatedKey');
+            var tempTextArea = document.createElement('textarea');
+            tempTextArea.value = keyElement.innerText;
+
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            alert('Chiave copiata negli appunti!');
+        }
+    </script>
+</x-app-layout>

@@ -112,7 +112,7 @@ class ExerciseController extends Controller
         
         $exercise->save();
         
-        return redirect()->route('showAllExercises')->with('success', trans("L'esercizio è stato creato correttamente"));
+        return redirect()->route('showAllExercises')->with('success', trans("L'esercizio è stato creato correttamente."));
     }
 
     // Gestisce il caso in cui l'utente esca dal processo di creazione.
@@ -254,7 +254,7 @@ class ExerciseController extends Controller
             }
             else{
 
-                return back()->withErrors('Non hai il permesso.');
+                return back()->withErrors(trans('Non hai il permesso.'));
             }
         }
 
@@ -262,7 +262,7 @@ class ExerciseController extends Controller
 
 
     public function deleteExercise(Exercise $exercise)
-    {
+    {   
         if( $exercise->user_id == Auth::user()->id ){   //Questo viene fatto per evitare che l'utente possa eliminare esercizi di non sua competenza.
 
             $exerciseWithPractice = Exercise::whereHas('practices')->find($exercise->id);

@@ -14,36 +14,46 @@
             </li>
             @guest
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('login') }}">Accedi</a>
+                    <a class="nav-link" href="{{ route('login') }}">{{ __('Accedi') }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('register') }}">Registrati</a>
+                    <a class="nav-link" href="{{ route('register') }}">{{ __('Registrati') }}</a>
                 </li>
             @endguest
             @auth
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
+                    <a class="nav-link" href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
                 </li>
         
                 @if(Auth::user()->roles == "Teacher")
                     <li class="nav-item hide">
-                        <a class="nav-link" href="{{ route('showAllExercises') }}">Biblioteca</a>
+                        <a class="nav-link" href="{{ route('showAllExercises') }}">{{ __('Biblioteca') }}</a>
                     </li>
+                    <li class="nav-item hide">
+                        <a class="nav-link" href="{{ route('practices.index') }}">{{ __("Esercitazioni") }}</a>
+                    </li>
+                    <li class="nav-item hide">
+                        <a class="nav-link" href="{{ route('exam.index') }}">{{ __('Esami') }}</a>
+                    </li>
+                    <hr class="menu-divider"/>
                 @endif
                 <li class="nav-item hide">
-                    <a class="nav-link" >{{ __("Esercitazioni") }}</a>
+                    <a class="nav-link" href="{{ route('profile.edit') }}">{{ __('Profilo') }}</a>
                 </li>
                 <li class="nav-item hide">
-                    <a class="nav-link">Esami</a>
-                </li>
-                <hr class="menu-divider"/>
-                <li class="nav-item hide">
-                    <a class="nav-link" href="{{ route('profile.edit') }}">Profilo</a>
-                </li>
-                <li class="nav-item hide">
-                    <a class="nav-link" href="{{ route('ciao') }}">Logout</a>
+                    <a class="nav-link" href="{{ route('ciao') }}">{{ __('Logout') }}</a>
                 </li>
             @endauth
+            <div class="dropdown d-flex justify-content-center align-items-center">
+                <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: #010039; color: #CCCCCC; font-size: 1.5em;">
+                    {{ __('Lingua') }}
+                </button>
+                <div class="dropdown-menu dropdown-menu-center text-center" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="{{ route('localization', ['locale' => 'en']) }}">{{ __('Inglese') }}</a>
+                    <a class="dropdown-item" href="{{ route('localization', ['locale' => 'it']) }}">{{ __('Italiano')}}</a>
+                </div>
+            </div>
+
         </ul>
         @auth
             <!-- Icona per aprire il menu a comparsa -->
@@ -82,24 +92,24 @@
                     <ul class="nav-secret">
                         @if(Auth::user()->roles == "Teacher")
                             <li class="nav-link">
-                                <a class="nav-link" href="{{ route('showAllExercises') }}">Biblioteca</a>
+                                <a class="nav-link" href="{{ route('showAllExercises') }}">{{ __('Biblioteca') }}</a>
                             </li>
+                            <li>
+                                <a class="nav-link" href="{{ route('practices.index') }}">{{ __('Esercitazioni') }}</a>
+                            </li>
+                            <li class="nav-link">
+                                <a class="nav-link" href="{{ route('exam.index') }}">{{ __('Esami') }}</a>
+                            </li>
+                            <hr class="menu-divider"/>
                         @endif
-                        <li>
-                            <a class="nav-link" href="{{ route('practices.index', ['type' => 'Esercitazioni']) }}">Esercitazioni</a>
-                        </li>
                         <li class="nav-link">
-                            <a class="nav-link" href="{{ route('practices.index', ['type' => 'Esami']) }}">Esami</a>
-                        </li>
-                        <hr class="menu-divider"/>
-                        <li class="nav-link">
-                            <a class="nav-link" href="{{ route('profile.edit') }}">Profilo</a>
+                            <a class="nav-link" href="{{ route('profile.edit') }}">{{ __('Profilo') }}</a>
                         </li>
                         <li class="nav-link">
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
-                            <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                            <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('Logout') }}</a>
                         </li>
                     </ul>
                 </div>

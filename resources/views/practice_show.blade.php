@@ -1,125 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ ucfirst($type) }}: {{ $practice->title }}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f9f9f9;
-            color: #333;
-        }
+<x-app-layout>
+    <x-slot name="header">
+        <div class="row">
+            <div class="col-6">
+                <h4 class="text-2xl font-bold text-black mb-4">{{ $practice->title }}</h4>
+            </div>
+            <div class="col-6 text-right">
+                @if( $practice->type == "Exam")
+                    <a href="{{ route('exam.index') }}" class="btn btn-info">{{ __('Torna Indietro') }}</a>
+                @else
+                    <a href="{{ route('practices.index') }}" class="btn btn-info">{{ __('Torna Indietro') }}</a>
+                @endif
+            </div>
+        </div>
+        <hr stile="border-top: 1px solid #000000; width: 90%;" />
+    </x-slot>
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .practice-details, .exercise, .key-section, .back-button {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        h1, h2, h3 {
-            margin-bottom: 10px;
-        }
-
-        h2 {
-            margin-top: 20px;
-        }
-
-        .key-section {
-            display: flex;
-            align-items: center;
-        }
-
-        .key-section button {
-            margin-left: 10px;
-            padding: 8px 12px;
-            border-radius: 4px;
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .key-section button:hover {
-            background-color: #2980b9;
-        }
-
-        .back-button {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .back-button a button {
-            padding: 10px 20px;
-            background-color: #e74c3c;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .back-button a button:hover {
-            background-color: #c0392b;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
+    <div class="container p-4 rounded" style="background-color: #fff; box-shadow: 0.15rem 0.25rem 0 rgb(33 40 50 / 15%); border: 1px solid rgba(0,0,0,.125);">
+        <h3 class="mb-4">{{ __('Dettagli') }}:</h3>
         <div class="practice-details">
-            <h1>{{ $practice->title }}</h1>
-            <p><strong>Descrizione:</strong> {{ $practice->description }}</p>
-            <p><strong>Difficoltà:</strong> {{ $practice->difficulty }}</p>
-            <p><strong>Materia:</strong> {{ $practice->subject }}</p>
-            <p><strong>Punteggio Totale:</strong> {{ $practice->total_score }}</p>
-            <p class="checkbox-info">
+            <!-- Description -->
+            <p class="mb-3 text-black"><strong>{{ __('Descrizione') }}:</strong> {{ $practice->description }}</p>
+
+            <!-- Difficulty -->
+            <p class="mb-3 text-black"><strong>{{ __('Difficoltà') }}:</strong> {{ $practice->difficulty }}</p>
+          
+            <p class="mb-3 text-black">
+                <strong class="text-black">{{ __('Chiave') }}:</strong>
+                @if( $practice->key != NULL )
+                    <!-- Key Content -->
+                    <span id="generatedKey" class="text-black">{{ $practice->key }}</span>
+                @else
+                    <span id="generatedKey" class="text-black">{{ __('La chiave è stata eliminata.') }}</span>
+                @endif
+                
+                <!-- Copy Key Button -->
+                <button onclick="copyKey()" class="btn btn-primary ml-3">{{ __('Copia') }}</button>
+
+            <!-- Subject -->
+            <p class="mb-3 text-black"><strong>{{ __('Materia') }}:</strong> {{ $practice->subject }}</p>
+
+            <!-- Total Score -->
+            <p class="mb-3 text-black"><strong>{{ __('Punteggio Totale') }}:</strong> {{ $practice->total_score }}</p>
+
+            <!-- Feedback Enabled -->
+            <p class="mb-3 text-black">
                 <input type="checkbox" id="feedbackEnabled" disabled {{ $practice->feedback_enabled ? 'checked' : '' }}>
-                <label for="feedbackEnabled">Feedback Automatico</label>
-            </p>
-            <p class="checkbox-info">
-                <input type="checkbox" id="randomizeQuestions" disabled {{ $practice->randomize_questions ? 'checked' : '' }}>
-                <label for="randomizeQuestions">Randomizzazione Domande</label>
+                <label for="feedbackEnabled" class="text-black">{{ __('Feedback Automatico') }}</label>
             </p>
 
-            <!-- Mostra la data di creazione -->
-            <p><strong>Data di Creazione:</strong> {{ $practice->created_at }}</p>
-            
-            <!-- Mostra la data in cui si terrà l'esercitazione -->
-            <p><strong>Data programmata:</strong> {{ \Carbon\Carbon::parse($practice->practice_date)->format('d-m-Y') }}</p>
+            <!-- Randomize Questions -->
+            <p class="mb-3">
+                <input type="checkbox" id="randomizeQuestions" disabled {{ $practice->randomize_questions ? 'checked' : '' }}>
+                <label for="randomizeQuestions" class="text-black">{{ __('Randomizzazione Domande') }}</label>
+            </p>
+
+            <!-- Creation Date -->
+            <p class="mb-3 text-black"><strong>{{ __('Data di Creazione') }}:</strong> {{ $practice->created_at }}</p>
+
+            <!-- Practice Date -->
+            <p class="mb-3 text-black"><strong>{{ __('Data programmata') }}:</strong> {{ \Carbon\Carbon::parse($practice->practice_date)->format('d-m-Y') }}</p>
         </div>
 
-        <h2>Esercizi:</h2>
+        <!-- Linea di separazione -->
+        <hr class="my-5">
+
+        <h2 class="mt-5 mb-3 text-xl font-bold text-black">{{ __('Esercizi') }}:</h2>
+
         @foreach($practice->exercises as $exercise)
-            <div class="exercise">
-                <h3>{{ $exercise->name }}</h3>
-                <p><strong>Domanda:</strong> {{ $exercise->question }}</p>
-                <p><strong>Punteggio:</strong> {{ $exercise->score }}</p>
+            <div class="exercise border-b-2 border-gray-200 pb-3 mb-4">
+                <!-- Exercise Name -->
+                <h4 class="text-lg font-semibold text-black">{{ $exercise->name }}</h4>
+
+                <!-- Question -->
+                <p class="mb-1 text-black "><strong>{{ __('Domanda') }}:</strong> {{ $exercise->question }}</p>
+
+                <!-- Score -->
+                <p class="mb-1 text-black"><strong>{{ __('Punteggio') }}:</strong> {{ $exercise->score }}</p>
             </div>
+            <hr stile="border-top: 1px solid #000000; width: 90%;" />
         @endforeach
 
-        <div class="key-section">
-            <strong>Chiave:</strong>
-            <span id="generatedKey">{{ $practice->key }}</span>
-            <button onclick="copyKey()">Copia</button>
-        </div>
-
-        <!-- Bottone per tornare alla lista delle esercitazioni -->
-        <div class="back-button">
-            <a href="{{ route('practices.index', ['type' => $type]) }}">
-                <button>Torna alla lista delle {{ $type }}</button>
-            </a>
-        </div>
     </div>
 
     <script>
@@ -136,5 +96,4 @@
             alert('Chiave copiata negli appunti!');
         }
     </script>
-</body>
-</html>
+</x-app-layout>

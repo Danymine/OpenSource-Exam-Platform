@@ -28,6 +28,7 @@ class Practice extends Model
         'practice_date',
         'type',
         'public',
+        'time',
     ];
 
     public function user() : BelongsTo  //Relazione crea fra user e practice 
@@ -39,13 +40,13 @@ class Practice extends Model
     public function exercises() : BelongsToMany //L'esercizio compone practice relazione N a N (Vedi Schema)
     {
 
-        return $this->belongsToMany(Exercise::class)->withPivot('custom_score');
+        return $this->belongsToMany(Exercise::class);
     }
 
     public function userwaiting() : BelongsToMany   //Lo studente partecipa all'esame. Relazione N a N fra User e Practice. Useremo questa relazione come waiting_rooms
     {
 
-        return $this->belongsToMany(User::class, 'waiting_rooms', 'practice_id', 'user_id',);
+        return $this->belongsToMany(User::class, 'waiting_rooms', 'practice_id', 'user_id',)->withPivot('status');;
     }
 
     public function delivereds() : HasMany  //Consegne relative ad un practice vedi schema
@@ -53,14 +54,6 @@ class Practice extends Model
 
         return $this->hasMany(Delivered::class);
     }
-    
 
-
-    /* Non vi è più la necessità di questa relazione.
-    public function answers() : HasMany
-    {
-        return $this->hasMany(Answer::class);
-    }
-    */
 }
 

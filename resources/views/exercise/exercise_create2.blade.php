@@ -24,7 +24,7 @@
         <div class="small-container">
             <div class="circle-container">
                 <div class="circle"><i class="fas fa-check-circle text-success"></i></div>
-                <div class="circle active-circl">2</div>
+                <div class="circle active-circle">2</div>
                 <div class="circle">3</div>
                 <div class="connector-line"></div>
                 <div class="connector-line"></div>
@@ -47,7 +47,7 @@
 
                     <div class="form-group">
                         <label for="spiegazione">{{ __('Spiegazione') }}:</label>
-                        <input type="text" class="form-control" id="spiegazione" name="explanation" maxlength="255" placeholder="{{ __('Spiegazione') }}" value="{{ session()->has('exercise_step1') && array_key_exists('explanation', session('exercise_step1')) ? session('exercise_step1')['explanation'] : '' }}">
+                        <input type="text" class="form-control" id="spiegazione" name="explanation" maxlength="255" placeholder="{{ __('Inserisci qui la Spiegazione') }}" value="{{ session()->has('exercise_step1') && array_key_exists('explanation', session('exercise_step1')) ? session('exercise_step1')['explanation'] : '' }}">
                     </div>
                 
                 @elseif ( $exerciseData["type"] == "Risposta Multipla" )
@@ -74,7 +74,7 @@
                     </div>
                     <!-- Opzione corretta -->
                     <div class="form-group">
-                        <label>{{ __('Opzione corretta') }}:</label>
+                        <label>{{ __('Opzione Corretta') }}:</label>
                         <select class="form-control p-2" name="correct_option" required>
                             <option value="a" {{ session()->has('exercise_step1') && array_key_exists('correct_option', session('exercise_step1')) && session('exercise_step1')['correct_option'] == 'a' ? 'selected' : '' }}>A</option>
                             <option value="b" {{ session()->has('exercise_step1') && array_key_exists('correct_option', session('exercise_step1')) && session('exercise_step1')['correct_option'] == 'b' ? 'selected' : '' }}>B</option>
@@ -85,7 +85,7 @@
 
                     <div class="form-group">
                         <label for="spiegazione">{{ __('Spiegazione') }}:</label>
-                        <input type="text" class="form-control" id="spiegazione" name="explanation" maxlength="255" placeholder="{{ __('Spiegazione') }}" value="{{ session()->has('exercise_step1') && array_key_exists('explanation', session('exercise_step1')) ? session('exercise_step1')['explanation'] : '' }}">
+                        <input type="text" class="form-control" id="spiegazione" name="explanation" maxlength="255" placeholder="{{ __('Inserisci qui la Spiegazione') }}" value="{{ session()->has('exercise_step1') && array_key_exists('explanation', session('exercise_step1')) ? session('exercise_step1')['explanation'] : '' }}">
                     </div>
                 
                 @else
@@ -97,7 +97,7 @@
 
                     <!-- Opzione corretta -->
                     <div class="form-group">
-                        <label>{{ __('Opzione corretta') }}:</label>
+                        <label>{{ __('Opzione Corretta') }}:</label>
                         <select class="form-control p-2" name="correct_option" required>
                             <option value="vero" {{ session()->has('exercise_step1') && array_key_exists('correct_option', session('exercise_step1')) && session('exercise_step1')['correct_option'] == 'vero' ? 'selected' : '' }}>{{ __('Vero') }}</option>
                             <option value="falso" {{ session()->has('exercise_step1') && array_key_exists('correct_option', session('exercise_step1')) && session('exercise_step1')['correct_option'] == 'falso' ? 'selected' : '' }}>{{ __('Falso') }}</option>
@@ -106,7 +106,7 @@
 
                     <div class="form-group">
                         <label for="spiegazione">{{ __('Spiegazione') }}:</label>
-                        <input type="text" class="form-control" id="spiegazione" name="explanation" maxlength="255" placeholder="{{ __('Spiegazione') }}" value="{{ session()->has('exercise_step1') && array_key_exists('explanation', session('exercise_step1')) ? session('exercise_step1')['explanation'] : '' }}">
+                        <input type="text" class="form-control" id="spiegazione" name="explanation" maxlength="255" placeholder="{{ __('Inserisci qui la Spiegazione') }}" value="{{ session()->has('exercise_step1') && array_key_exists('explanation', session('exercise_step1')) ? session('exercise_step1')['explanation'] : '' }}">
                     </div>
                 @endif     
 

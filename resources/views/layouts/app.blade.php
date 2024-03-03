@@ -5,11 +5,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>ExamSync</title>
+        <link rel="icon" href="/system/Logo.jpg" type="image/png">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
         <!-- Fonts -->
         <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
         <script src="https://cdn.lordicon.com/lordicon.js"></script>
+
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -288,10 +292,139 @@
                 max-width: 400px; /* Larghezza massima del container interno */
                 margin: 0 auto; /* Centrare il container */
             }
+
+            .filter-select {
+                height: calc(2.25rem + 2px);
+                padding: 0.375rem 0.75rem;
+                font-size: 1rem;
+                font-weight: 400;
+                line-height: 1.5;
+                color: #495057;
+                background-color: #fff;
+                background-image: none;
+                border: 1px solid #ced4da;
+                border-radius: 0.25rem;
+                transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            }
+
+            .range-labels {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 5px;
+            }
+
+            .range-label {
+                font-size: 12px;
+                position: absolute;
+                pointer-events: none;
+            }
+
+            #punteggioMinLabel {
+                left: 0;
+            }
+
+            #punteggioMaxLabel {
+                right: 0;
+            }
+
+            .text-black{
+
+                color: black !important;
+            }
+
+            .overlay-chart {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            }
+            
+            .aggiungiModulo {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: white;
+                padding: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+                border-radius: 10px;
+                max-width: 600px; /* Imposta la larghezza massima del riquadro */
+                width: 100%;
+            }
+
+            .hide-total{
+
+                display: none;
+            }
+            
+            .waiting-container{
+                max-width: 400px;
+                margin: 100px auto;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .loader {
+                border: 8px solid #f3f3f3; /* Light grey */
+                border-top: 8px solid #3498db; /* Blue */
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                animation: spin 2s linear infinite;
+                margin: 0 auto;
+                margin-top: 20px;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            @media screen and (max-width: 425px) {
+                .d-flex {
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                }
+                .form-inline {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+                .form-control {
+                    width: 100%;
+                    margin-bottom: 10px;
+                }
+            }
+
+            .equal-height {
+                height: 38px;
+            }
+
+            #dropdownMenuButton:hover{
+
+                font-weight: bold;
+            }
+
+            .dropdown-item:hover{
+
+                background-color: #cccccc;
+            }
+
+    </style>
+</head>
+<body>
+
         </style>
     </head>
     <body>
-
         @include('layouts.navigation')
 
         <!-- Page Heading -->
@@ -320,7 +453,7 @@
 
         <footer class="footer mt-5 py-3 text-white" style="background-color: #010039;">
             <div class="container text-center">
-                <span style="color: #FFFFFF">© 2024 ProgettoLaravel Tutti i diritti riservati.</span>
+                <span style="color: #FFFFFF">{{ __('© 2024 ProgettoLaravel Tutti i diritti riservati') }}</span>
             </div>
         </footer>
         

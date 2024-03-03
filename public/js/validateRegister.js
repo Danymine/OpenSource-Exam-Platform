@@ -1,3 +1,6 @@
+
+language = 'it';
+
 function mostraPassword(id) {
     var campoPassword = document.getElementById("" + id);
     campoPassword.type = "text";
@@ -13,6 +16,8 @@ var email = document.getElementById('email');
 var password = document.getElementById('password');
 var confirmation = document.getElementById('password_confirmation');
 
+
+
 date_birth.addEventListener('input', function (){
     
     var feedback = document.getElementById('feedback-date-validate'); 
@@ -21,7 +26,7 @@ date_birth.addEventListener('input', function (){
     
     if (inputDate > currentDate) {
 
-        feedback.textContent = "Wow!!!!Vieni dal futuro!";
+        feedback.textContent = translations[language]['future_date_error'];
         feedback.style.display = 'block';
         feedback.style.color = 'red';
     } 
@@ -46,7 +51,7 @@ email.addEventListener('input', function (){
         }
         else{
             
-            feedback.textContent = "Email non valida. Assicurati che l'email contenga una '@', seguita da un dominio valido. Evita l'uso di caratteri speciali consecutivi. L'email deve essere lunga da un minimo di 8 a un massimo di 40 caratteri.";
+            feedback.textContent = translations[language]['invalid_email_error'];
             feedback.style.display = 'block';
             feedback.style.color = 'red';
         }
@@ -71,8 +76,8 @@ password.addEventListener('input', function(){
         }
         else{
 
-            feedback.textContent = "Password non valida. Assicurati che contenga almeno una lettera maiuscola, almeno un numero e che abbia una lunghezza minima di 8 caratteri.";
-            feedback.style.display = 'block'; 
+            feedback.textContent = translations[language]['invalid_password_error'];
+            feedback.style.display = 'block';
             feedback.style.color = 'red';
         }
     }
@@ -96,8 +101,8 @@ confirmation.addEventListener('input', function(){
         }
         else{
 
-            feedback.textContent = "Le password non corrispondono. Assicurati di inserire la stessa password in entrambi i campi.";
-            feedback.style.display = 'block'; 
+            feedback.textContent = translations[language]['password_mismatch_error'];
+            feedback.style.display = 'block';
             feedback.style.color = 'red';
         
         }
