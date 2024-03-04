@@ -6,16 +6,16 @@ use Illuminate\Http\Request;
 use App\Models\AssistanceRequest;
 use Illuminate\Support\Facades\Auth;
 
-class RequestController extends Controller
+class AssistanceRequestController extends Controller
 {
 
-    public function showAssistanceRequestForm()
+    public function index()
     {
         // Visualizza il form di richiesta assistenza
         return view('create-request');
     }
 
-    public function createAssistanceRequest(Request $request)
+    public function store(Request $request)
     {
 
         // Validazione dei dati del form
@@ -32,5 +32,10 @@ class RequestController extends Controller
         ]);
 
         return redirect()->route('dashboard')->with('success', 'Richiesta di assistenza inviata con successo.');
+    }
+
+    public function show(AssistanceRequest $assistance ){
+
+        return view('show-request', ['assistence' => $assistance ]);
     }
 }

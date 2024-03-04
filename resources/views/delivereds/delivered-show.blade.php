@@ -12,8 +12,7 @@
                     <a href="{{ route('view-delivered', ['practice' => $delivered->practice]) }}" class="btn btn-info">{{ __('Torna Indietro') }}</a>
                     <a href="{{ route('download-details-delivered', ['delivered' => $delivered]) }}" class="btn btn-sm btn-warning" title="{{ __('Stampa consegna') }}" style="height: 38px; width: 40px; text-align: center; padding: 0;">
                         <i class="fas fa-print" style="line-height: 38px;"></i>
-                    </a>
-                    
+                    </a>     
                 </div>
             </div>
         @else
@@ -31,7 +30,7 @@
             </div>
              
         @endif
-        <hr stile="border-top: 1px solid #000000; width: 90%;" />
+        <hr style="border-top: 1px solid #0000004a width: 90%;" />
     </x-slot>
 
     @if( ($delivered->practice->public == 1 || (Auth::user()->roles == "Teacher" && $delivered->valutation != NULL)) )

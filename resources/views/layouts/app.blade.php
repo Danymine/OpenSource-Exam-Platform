@@ -329,7 +329,7 @@
 
             .text-black{
 
-                color: black !important;
+                color: #212529 !important;
             }
 
             .overlay-chart {

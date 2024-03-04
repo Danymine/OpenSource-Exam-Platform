@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             ExercicesSeeder::class,
             ExerciceCloseSeeder::class,
             ExerciseSeeder::class,
+            RequestSeeder::class,
             TestSeeder::class,
             DeliveredSeeder::class,
             AdminSeeder::class,

@@ -11,23 +11,25 @@
                     <button type="submit" class="btn btn-primary equal-height">{{ __('Partecipa') }}</button>
                 </form>
             </div>
-            <hr stile="border-top: 1px solid #000000; width: 90%;" />
+            <hr style="border-top: 1px solid #0000004a width: 90%;" />
         @else
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h4 class="font-semibold text-xl leading-tight">
                     {{ __('Dashboard') }}
                 </h4>
-                <div class="dropdown">
-                    <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{ __('Storici') }}
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ route('exame-passed') }}">{{ __('Storico Esami') }}</a>
-                        <a class="dropdown-item" href="{{ route('practice-passed') }}">{{ __('Storico Esercitazioni') }}</a>
+                @if( Auth::user()->roles == "Teacher" )
+                    <div class="dropdown">
+                        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ __('Storici') }}
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="{{ route('exame-passed') }}">{{ __('Storico Esami') }}</a>
+                            <a class="dropdown-item" href="{{ route('practice-passed') }}">{{ __('Storico Esercitazioni') }}</a>
+                        </div>
                     </div>
-                </div>
+                @endif
             </div>
-            <hr stile="border-top: 1px solid #000000; width: 90%;" />
+            <hr style="border-top: 1px solid #0000004a width: 90%;" />
         @endif
     </x-slot>
 
@@ -387,12 +389,51 @@
         </div>
         
     @else
+        
+        <div class="container">
+            @if($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
+            @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+            @endif
+        </div>
         <!--Amministratore -->
-        <h2>Benvenuto Amministratore {{ Auth::User()->name }}</h2>
-                                       
-        <div>
-            <a href="{{ route('show-add-user-form') }}" class="button">Aggiungi Utente</a>
-            <a href="{{ route('user-list') }}" class="button">Gestione Utenti</a>
+        <div class="container">
+            <h2>{{ __('Benvenuto') }}, {{ Auth::User()->name }}</h2>
+                  
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{{ __('Utente') }}</th>
+                        <th>{{ __('Oggetto') }}</th>
+                        <th>{{ __('Data') }}</th>
+                        <th></th> <!-- Colonna per il pulsante Dettagli -->
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($Assistances as $assistance)
+                        <tr>
+                            <td>{{ $assistance->user->name }} {{ $assistance->user->first_name }}</td>
+                            <td>{{ $assistance->subject }}</td>
+                            <td>{{ $assistance->created_at->format('d/m/Y') }}</td>
+                            <td>
+                                <a href="{{ route('view-request', ['assistance' => $assistance]) }}" class="btn btn-info"><i class="fas fa-search"></i></a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            {{ $Assistances->links() }}
         </div>
     @endif
                     
@@ -427,43 +468,43 @@
 </script>
 <script>
 
-function showExamsStudent() {
-    
+    function showExamsStudent() {
         
+            
 
-    var chart = document.getElementById("Chartpractice");
-    if( chart != null ){
+        var chart = document.getElementById("Chartpractice");
+        if( chart != null ){
 
-        chart.style.display = "none";
-        chart = document.getElementById("Chartexame").style.display = "block";
-    }
-    showRows("exame");
-
-}
-
-function showPracticesStudent() {
-
-    var chart = document.getElementById("Chartexame");
-    if( chart != null ){
-
-        chart.style.display = "none";
-        chart = document.getElementById("Chartpractice").style.display = "block";
-    }
-    showRows("practice");
-}
-
-function showRows(type) {
-
-    var rows = document.querySelectorAll(".row-type");
-
-    rows.forEach(function(row) {
-
-        if (row.classList.contains("row-" + type)) {
-
-            row.style.display = "table-row";
-        } else {
-            row.style.display = "none";
+            chart.style.display = "none";
+            chart = document.getElementById("Chartexame").style.display = "block";
         }
-    });
-}
+        showRows("exame");
+
+    }
+
+    function showPracticesStudent() {
+
+        var chart = document.getElementById("Chartexame");
+        if( chart != null ){
+
+            chart.style.display = "none";
+            chart = document.getElementById("Chartpractice").style.display = "block";
+        }
+        showRows("practice");
+    }
+
+    function showRows(type) {
+
+        var rows = document.querySelectorAll(".row-type");
+
+        rows.forEach(function(row) {
+
+            if (row.classList.contains("row-" + type)) {
+
+                row.style.display = "table-row";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
 </script>

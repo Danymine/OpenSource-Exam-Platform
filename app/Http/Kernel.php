@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
         'checkLocalStorage' => \App\Http\Middleware\CheckLocalStorageMiddleware::class,
         'checkStep' => \App\Http\Middleware\CheckStep::class,
         'Localization' => \App\Http\Middleware\Locale::class,
+        'Admin' => \App\Http\Middleware\Admin::class,
     ];
 }

@@ -30,6 +30,8 @@
     "Ruolo": "Ruolo",
     "Studente": "Studente",
     "Insegnante": "Insegnante",
+    "Utente": "Utente",
+    "Amministratore": "Amministratore",
     
 
     "Ricordami": "Ricordami",
@@ -233,6 +235,23 @@
     "Statistiche": "Statistiche :title",
     "Valutazioni Partecipanti": "Valutazioni Partecipanti",
     "Valutazioni Generale": "Valutazioni Generale",
-    "Storico": "Storico"
+    "Storico": "Storico",
+
+    "Benvenuto": "Benvenuto",
+    "Lingua": "Lingua",
+    "Eliminazione": "Sicuro di voler eliminare l`account?",
+    "Oggetto": "Oggetto",
+
+
+    "Aggiungi Utente": "Aggiungi Utente",
+    "Inserisci il nome": "Inserisci il nome",
+    "Inserisci il cognome": "Inserisci il cognome",
+    "Inserisci l`indirizzo email":  "Inserisci l`indirizzo email",
+    "Inserisci la password": "Inserisci la password",
+
+    "Gestione Utenti": "Gestione Utenti",
+    "Cerca": "Cerca",
+    "Lista Utenti": "Lista Utenti",
+    "Sei sicuro di voler eliminare questo utente?": "Sei sicuro di voler eliminare questo utente?"
 
 }

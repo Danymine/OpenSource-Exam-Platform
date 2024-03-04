@@ -19,11 +19,18 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('register') }}">{{ __('Registrati') }}</a>
                 </li>
+                <hr style="border-top: 1px solid #cccccc38; width: 90%;" />
             @endguest
             @auth
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('dashboard') }}">{{ __('Dashboard') }}</a>
                 </li>
+
+                <li class="nav-item hide">
+                    <a class="nav-link" href="{{ route('profile.edit') }}">{{ __('Profilo') }}</a>
+                </li>
+
+                <hr style="border-top: 1px solid #cccccc38; width: 90%;" />
         
                 @if(Auth::user()->roles == "Teacher")
                     <li class="nav-item hide">
@@ -35,17 +42,25 @@
                     <li class="nav-item hide">
                         <a class="nav-link" href="{{ route('exam.index') }}">{{ __('Esami') }}</a>
                     </li>
-                    <hr class="menu-divider"/>
+                @elseif( Auth::user()->roles == 'Admin')
+                    <li class="nav-item hide">
+                        <a class="nav-link" href="{{ route('show-add-user-form') }}">{{ __('Aggiungi Utente') }}</a>
+                    </li>
+                    <li class="nav-item hide">
+                        <a class="nav-link" href="{{ route('user-list') }}">{{ __('Gestisci Utenti') }}</a>
+                    </li>
                 @endif
-                <li class="nav-item hide">
-                    <a class="nav-link" href="{{ route('profile.edit') }}">{{ __('Profilo') }}</a>
-                </li>
-                <li class="nav-item hide">
-                    <a class="nav-link" href="{{ route('ciao') }}">{{ __('Logout') }}</a>
+
+                <hr style="border-top: 1px solid #cccccc38; width: 90%;" />
+                <li class="nav-link hide">
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                    <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">{{ __('Logout') }}</a>
                 </li>
             @endauth
-            <div class="dropdown d-flex justify-content-center align-items-center">
-                <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: #010039; color: #CCCCCC; font-size: 1.5em;">
+            <div class="dropdown d-flex">
+                <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: #010039; color: #CCCCCC; font-size: 1.5em; padding: 0px;">
                     {{ __('Lingua') }}
                 </button>
                 <div class="dropdown-menu dropdown-menu-center text-center" aria-labelledby="dropdownMenuButton">
@@ -100,7 +115,15 @@
                             <li class="nav-link">
                                 <a class="nav-link" href="{{ route('exam.index') }}">{{ __('Esami') }}</a>
                             </li>
-                            <hr class="menu-divider"/>
+                            <hr style="border-top: 1px solid #cccccc38; width: 90%;" />
+                        @elseif( Auth::user()->roles == "Admin" )
+                            <li class="nav-link">
+                                <a class="nav-link" href="{{ route('show-add-user-form') }}">{{ __('Aggiungi Utente') }}</a>
+                            </li>
+                            <li class="nav-link">
+                                <a class="nav-link" href="{{ route('user-list') }}">{{ __('Gestisci Utenti') }}</a>
+                            </li>
+                            <hr style="border-top: 1px solid #cccccc38; width: 90%;" />
                         @endif
                         <li class="nav-link">
                             <a class="nav-link" href="{{ route('profile.edit') }}">{{ __('Profilo') }}</a>

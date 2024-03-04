@@ -238,5 +238,23 @@
     "Statistiche": "Statistics :title",
     "Valutazioni Partecipanti": "Participant Ratings",
     "Valutazioni Generale": "Overall Ratings",
-    "Storico": "History"
+    "Storico": "History",
+
+    "Benvenuto": "Welcome",
+    "Lingua": "Language",
+    "Eliminazione": "Are you sure you want to delete your account?",
+    "Utente": "User",
+    "Oggetto": "Subject",
+
+    "Amministratore": "Admin",
+    "Aggiungi Utente": "Add User",
+    "Inserisci il nome": "Enter the name",
+    "Inserisci il cognome": "Enter the surname",
+    "Inserisci l`indirizzo email": "Enter the email address",
+    "Inserisci la password": "Enter the password",
+
+    "Gestisci Utenti": "User Management",
+    "Cerca": "Search",
+    "Lista Utenti": "Users List",
+    "Sei sicuro di voler eliminare questo utente?": "Are you sure you want to delete this user?"
 }

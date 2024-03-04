@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('assistance_requests', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('roles');
-            $table->text('description');
+            $table->string('subject');
+            $table->string('description');
+            $table->integer('status');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }

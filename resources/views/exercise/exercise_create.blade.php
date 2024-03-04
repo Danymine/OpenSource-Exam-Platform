@@ -4,7 +4,7 @@
         <h4>
             {{ __('Crea Esercizio') }}
         </h4>
-        <hr stile="border-top: 1px solid #000000; width: 90%;" />
+        <hr style="border-top: 1px solid #0000004a width: 90%;" />
     </x-slot>
 
     <div class="container">
