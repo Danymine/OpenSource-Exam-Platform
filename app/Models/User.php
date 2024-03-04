@@ -75,4 +75,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(AssistanceRequest::class);
     }
+
+    public function responses(): HasMany
+    {
+        return $this->hasMany(AssistanceRequest::class, 'admin_id');
+    }
 }

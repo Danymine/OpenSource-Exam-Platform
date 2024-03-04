@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Date;
+
 
 class UserController extends Controller
 {
     public function showAddUserForm()
     {
-        return view('Ordinare.aggiungi_utente'); 
+        return view('support-admin.aggiungi_utente'); 
     }
 
     public function store_user(Request $request)
@@ -38,36 +41,51 @@ class UserController extends Controller
 
         return redirect()->back()->with('success', trans('Utente aggiunto con successo!'));
     }
-    public function showUserList() //Deve essere migliorata
+    public function showUserList()
     {
-        return view('Ordinare.user-list');
+        return view('support-admin.user-list');
     }
 
-    public function destroy(User $user)
+    public function update(Request $request, User $user)
     {
-        $user->delete();
-
-        return back()->with('success', trans('Utente eliminato con successo.'));
-    }
-
-    public function update(Request $request)
-    {
-        $validate = $request->validate([
+        //Diamo la possibilità di modificare tutto ma la password deve essere generata e inviata tramite email (SOLO SE L'EMAIL è verificata)
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'first_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8',
+            'email' => 'required|email',
             'roles' => 'required|in:Admin,Teacher,Student',
-            'date_birth' => 'required|nullable|date'
+            'date_birth' => [
+                'required',
+                'nullable',
+                'date',
+                'before_or_equal:' . Date::now()->subYears(14)->format('Y-m-d'),
+            ],
         ]);
+        if ($validator->fails()) {
+            return redirect()->route('user-list')
+                        ->withErrors($validator);
+        }
     
-        $user = User::where('email', $request->input('email'))->first();
-    
-        $user->update($validate);
-    
-        $user->save();
-    
-        return redirect()->route('user-list')->with('success', trans('Utente aggiornato con successo.'));
+        $user = User::findOrFail($user->id);
+
+        if (!$user) {
+            return redirect()->route('user-list')
+                        ->withErrors(['errors' => trans('Utente non trovato')]);
+        }
+
+        if( $user->email != $validator->validated()['email'] ){
+
+            //è stata modificata l'email quindi oltre che ad aggiornare questo settiamo anche $user->email_verified_at a NULL così la prossima volta che effettua il login dovrà verificare l'email
+            $user->update($validator->validated());
+            $user->email_verified_at = NULL;
+            $user->save();
+        }
+        else{
+
+            $user->update($validator->validated());
+        }
+
+        return redirect()->route('user-list')->with('success', 'Utente aggiornato con successo');
     }
     
     public function search(Request $request)
@@ -76,12 +94,21 @@ class UserController extends Controller
         $users = User::where('email', $email)->first();
         if( $users != NULL ){
 
-            return view('Ordinare.user-list', ['user' => $users]);
+            return view('support-admin.user-list', ['user' => $users]);
         }
         else{
 
-            return back()->with('error', trans("Non esiste un account associato all'email inserita"));
+            return redirect()->route('user-list')
+                ->withErrors(['errors' => trans("Non esiste un account associato all'email inserita")]);
+
         }
+    }
+
+    public function destroy(User $user)
+    {
+        $user->delete();
+
+        return redirect()->route('user-list')->with('success', trans('Utente eliminato con successo.'));
     }
 
     public function destroy_account(User $user){
@@ -96,7 +123,9 @@ class UserController extends Controller
         }
         else{
 
-            return back()->withErrors('error', trans("Non puoi cancellare questo account."));
+            return redirect()->route('user-list')
+                ->withErrors(['errors' => trans("Non puoi cancellare questo account.")]);
+
         }
     }
 
