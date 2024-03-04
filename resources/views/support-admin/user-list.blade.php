@@ -7,17 +7,22 @@
     </x-slot>
 
     <div class="container">
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ session('error') }}
-            </div>
-        @endif
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 {{ session('success') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
         @endif
     </div>
@@ -90,38 +95,38 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('update-user') }}" method="POST">
+                        <form action="{{ route('update-user', ['user' => $user]) }}" method="POST">
                             @csrf
                             @method('PUT')
                             <!-- Input per i campi dell'utente -->
                             <div class="form-group">
-                                <label for="name">Nome:</label>
+                                <label for="name">{{ __('Nome') }}:</label>
                                 <input type="text" id="name" name="name" class="form-control" value="{{ $user->name }}">
                             </div>
                             <div class="form-group">
-                                <label for="first_name">Cognome:</label>
+                                <label for="first_name">{{ __('Cognome') }}:</label>
                                 <input type="text" id="first_name" name="first_name" class="form-control" value="{{ $user->first_name }}">
                             </div>
                             <div class="form-group">
-                                <label for="date_birth">Data di Nascita:</label>
+                                <label for="date_birth">{{ __('Data di Nascita') }}:</label>
                                 <input type="date" id="date_birth" name="date_birth" class="form-control" value="{{ $user->date_birth }}">
                             </div>
                             <div class="form-group">
-                                <label for="edit_email">Email:</label>
-                                <input type="email" id="edit_email" name="edit_email" class="form-control" value="{{ $user->email }}">
+                                <label for="edit_email">{{ __('Email') }}:</label>
+                                <input type="email" id="edit_email" name="email" class="form-control" value="{{ $user->email }}">
                             </div>
                             <div class="form-group">
-                                <label for="roles">Ruolo:</label>
+                                <label for="roles">{{ __('Ruolo') }}:</label>
                                 <select id="roles" name="roles" class="form-control p-0">
-                                    <option value="admin" {{ $user->roles == 'admin' ? 'selected' : '' }}>Amministratore</option>
-                                    <option value="Teacher" {{ $user->roles == 'Teacher' ? 'selected' : '' }}>Professore</option>
-                                    <option value="Student" {{ $user->roles == 'Student' ? 'selected' : '' }}>Studente</option>
+                                    <option value="admin" {{ $user->roles == 'admin' ? 'selected' : '' }}>{{ __('Amministratore') }}</option>
+                                    <option value="Teacher" {{ $user->roles == 'Teacher' ? 'selected' : '' }}>{{ __('Professore') }}</option>
+                                    <option value="Student" {{ $user->roles == 'Student' ? 'selected' : '' }}>{{ __('Studente') }}</option>
                                 </select>
                             </div>
                             <!-- Pulsante di invio per il form di modifica -->
-                            <button type="submit" class="btn btn-secondary">{{ __('Salva') }}</button>
+                            <button type="submit" class="btn btn-primary">{{ __('Salva') }}</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Chiudi') }}</button>
                         </form>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Chiudi') }}</button>
                     </div>
                 </div>
             </div>

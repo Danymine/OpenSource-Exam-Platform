@@ -55,7 +55,7 @@ Route::middleware(Localization::class)
             return view('navigation.dashboard');
         }
 
-        return view('navigation.dashboard', ['Assistances' => AssistanceRequest::where('status', 0)->SimplePaginate(10)]);
+        return view('navigation.dashboard', ['Assistances' => AssistanceRequest::where('status', 0)->where('admin_id', Auth::user()->id)->simplePaginate(10)]);
 
     })->middleware(['auth','verified'])->name('dashboard');
 
@@ -91,6 +91,8 @@ Route::middleware(Localization::class)
         Route::get('/download-correct-delivered/{delivered}', [DeliveredController::class, 'printCorrect'])->name('download-correct-delivered');
 
         Route::get('/download-delivered/{delivered}', [DeliveredController::class, 'printDeliveredWithCorrect'])->name('download-delivered-with-correct');
+
+        Route::post('/response-request/{AssistanceRequest}', [AssistanceRequestController::class, 'store_response'])->name('store-response');
 
     });
 
@@ -251,7 +253,9 @@ Route::middleware(Localization::class)
         Route::delete('/delete-user/{user}', [UserController::class, 'destroy'])->name('delete-user');
         
         //Aggiorna dei dati degli utenti
-        Route::put('/update-user', [UserController::class, 'update'])->name('update-user');
+        Route::put('/update-user/{user}', [UserController::class, 'update'])->name('update-user');
+
+        Route::get('/close-request/{assistance}', [AssistanceRequestController::class, 'close'])->name('close-request');
 
     });
 
