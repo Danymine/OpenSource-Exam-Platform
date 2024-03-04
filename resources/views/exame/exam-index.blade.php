@@ -70,10 +70,11 @@
             <table id="practice-table" class="table table-bordered table-striped">
                 <colgroup>
                     <col style="width: 20%;">
-                    <col style="width: 20%;">
+                    <col style="width: 10%;">
                     <col style="width: 15%;">
                     <col style="width: 15%;">
                     <col style="width: 15%;">
+                    <col style="width: 5%;">
                     <col style="width: 5%;">
                     <col style="width: 5%;">
                     <col style="width: 5%;">
@@ -91,7 +92,7 @@
                         <th>{{ __('Elimina') }}</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="table-body">
                     @foreach ($practices as $practice)
                     <tr>
                         <td>{{ $practice->title }}</td>
@@ -195,45 +196,75 @@
             }
         }
 
-        function sortTable(n) {
-            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-            table = document.getElementById("practice-table");
-            switching = true;
-            dir = "asc";
+    </script>
 
-            while (switching) {
-                switching = false;
-                rows = table.rows;
+    <script>
+        var currentSortColumn = -1;
+        var currentSortDirection = 1; // 1 per ascendente, -1 per discendente
 
-                for (i = 1; i < (rows.length - 1); i++) {
-                    shouldSwitch = false;
-                    x = rows[i].getElementsByTagName("td")[n];
-                    y = rows[i + 1].getElementsByTagName("td")[n];
+        function sortTable(columnIndex) {
+            var tbody = document.getElementById('table-body');
+            var rows = Array.from(tbody.getElementsByTagName('tr'));
 
-                    if (dir == "asc") {
-                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                            shouldSwitch = true;
-                            break;
-                        }
-                    } else if (dir == "desc") {
-                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                            shouldSwitch = true;
-                            break;
-                        }
-                    }
-                }
+            // Imposta la direzione di ordinamento in base alla colonna cliccata
+            if (currentSortColumn === columnIndex) {
+                currentSortDirection *= -1; // Cambia la direzione di ordinamento se la stessa colonna viene cliccata di nuovo
+            } else {
+                currentSortColumn = columnIndex;
+                currentSortDirection = 1;
+            }
 
-                if (shouldSwitch) {
-                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                    switching = true;
-                    switchcount++;
-                } else {
-                    if (switchcount == 0 && dir == "asc") {
-                        dir = "desc";
-                        switching = true;
-                    }
-                }
+            // Effettua l'ordinamento delle righe
+            rows.sort(function (a, b) {
+                var aValue = getValueFromCell(a.cells[columnIndex]);
+                var bValue = getValueFromCell(b.cells[columnIndex]);
+
+                if (aValue < bValue) return -1 * currentSortDirection;
+                if (aValue > bValue) return 1 * currentSortDirection;
+                return 0;
+            });
+
+            // Rimuovi le righe dalla tabella
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
+            }
+
+            // Riaggiungi le righe nella nuova sequenza ordinata
+            rows.forEach(function (row) {
+                tbody.appendChild(row);
+            });
+        }
+
+        function getValueFromCell(cell) {
+            // Ottiene il valore dalla cella della tabella
+            var value = cell.textContent.trim();
+
+            // Gestisce il caso delle colonne 'Punteggio' e 'Data' per ordinamento numerico
+            if (currentSortColumn === 3 || currentSortColumn === 4) {
+                return parseFloat(value.replace(',', '.'));
+            }
+
+            // Gestisce il caso della colonna 'Difficoltà' per ordinamento personalizzato
+            if (currentSortColumn === 2) {
+                return getDifficultyValue(value.toLowerCase());
+            }
+
+            return value;
+        }
+
+        function getDifficultyValue(difficulty) {
+            // Assegna un valore numerico alle difficoltà per poterle ordinare
+            switch (difficulty) {
+                case 'bassa':
+                    return 1;
+                case 'media':
+                    return 2;
+                case 'alta':
+                    return 3;
+                default:
+                    return 0;
             }
         }
     </script>
+
 </x-app-layout>

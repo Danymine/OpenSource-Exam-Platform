@@ -13,8 +13,11 @@ class ExerciseController extends Controller
     public function showAllExercises()
     {
         $exercises = Exercise::where('user_id', Auth::user()->id)->get();
-        return view('exercise.esercizi_biblioteca', ['exercises' => $exercises]);
-    }
+        $subjects = Exercise::distinct()->pluck('subject');
+        $types = Exercise::distinct()->pluck('type');
+    
+        return view('exercise.esercizi_biblioteca', ['exercises' => $exercises, 'subjects' => $subjects, 'types' => $types]);
+    }    
 
     /* NOTE: Processo di creazione di un esercizio:
         Il processo di creazione di un esercizio è diviso in tre fasi: create, create2, e create3. In ciascuna di queste fasi, vengono raccolti dati diversi (indicati come x, y, z) che 
