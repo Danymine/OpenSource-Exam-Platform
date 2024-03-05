@@ -18,8 +18,7 @@ use Illuminate\Support\Arr;
 class PracticeController extends Controller
 {
     //Funzione interna di generazione Key.
-    private function generateKey()
-    {
+    private function generateKey(){
         $alphabet = array_merge(range('a', 'z'), range('A', 'Z'));
         $key = "";
         $found = false;
@@ -170,8 +169,7 @@ class PracticeController extends Controller
     ///
     */
 
-    public function examIndex() 
-    {
+    public function examIndex(){
         // Determina il tipo di pratica come "exam"
         $type = 'Exam';
     
@@ -190,13 +188,11 @@ class PracticeController extends Controller
         ]);
     }  
 
-    public function create_exame()
-    {
+    public function create_exame(){
         return view('exame.exame_create1');
     }
 
-    public function create_exame2()
-    {
+    public function create_exame2(){
         if(session()->has('exame_step1')){
 
             $exercises = Exercise::where('user_id', Auth::user()->id)->get();
@@ -206,8 +202,7 @@ class PracticeController extends Controller
         abort('403', "Non autorizzato.");
     }
 
-    public function create_exame3()
-    {
+    public function create_exame3(){
         if(session()->has('exame_step1') && array_key_exists('total_score', session()->get('exame_step1'))) return view('exame.exame_create3'); abort('403', "Non autorizzato.");
     }
 
@@ -300,8 +295,7 @@ class PracticeController extends Controller
     ///
     */
 
-    public function practiceIndex() 
-    {
+    public function practiceIndex(){
         // Determina il tipo di pratica come "practice"
         $type = 'Practice';
     
@@ -322,13 +316,11 @@ class PracticeController extends Controller
     }
 
 
-    public function create_practice()
-    {
+    public function create_practice(){
         return view('practice.practice_create1');
     }
 
-    public function create_practice2()
-    {
+    public function create_practice2(){
         if (session()->has('exame_step1')) {
 
             $exercises = Exercise::where('user_id', Auth::user()->id)->get();
@@ -338,8 +330,7 @@ class PracticeController extends Controller
         abort('403', "Non autorizzato.");
     }
 
-    public function create_practice3()
-    {
+    public function create_practice3(){
         if (session()->has('exame_step1') && array_key_exists('total_score', session()->get('exame_step1'))) return view('practice.practice_create3'); abort('403', "Non autorizzato.");
     }
 
@@ -426,7 +417,6 @@ class PracticeController extends Controller
         return view('practice_history', ['practices' => $practices]);
     }
 
-
     /* NOTE:: Comuni. Funzioni che hanno valenza per entrambe
     ///
     ///
@@ -434,8 +424,7 @@ class PracticeController extends Controller
     ///
     */
     
-    public function show(Practice $practice)
-    {   
+    public function show(Practice $practice){   
         if( $practice->user_id == Auth::user()->id ){
 
             $practice->load('exercises'); // Carica gli esercizi associati alla pratica
@@ -447,8 +436,7 @@ class PracticeController extends Controller
         }
     }
 
-    public function edit(Practice $practice)
-    {
+    public function edit(Practice $practice){
         if( Auth::user()->id == $practice->user_id ){
 
             return view('practice_edit', ['practice' => $practice, 'availableExercises' => Auth::user()->exercises]);
@@ -457,8 +445,7 @@ class PracticeController extends Controller
         abort('403', "Non autorizzato");
     }    
 
-    public function update_details(Request $request)
-    {
+    public function update_details(Request $request){
         $validatedData = $request->validate([
             'id' => 'required|numeric|min:1',
             'title' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
@@ -621,8 +608,7 @@ class PracticeController extends Controller
         abort('403', "Non autorizzato");
     }
        
-    public function duplicate(Practice $practice)
-    {
+    public function duplicate(Practice $practice){
         // Duplica la pratica
         $newPractice = $practice->replicate();
         $newPractice->title = $practice->title . ' (Copia)';
@@ -638,8 +624,7 @@ class PracticeController extends Controller
         return redirect()->route('exam.index')->with('success', trans("La duplicazione è andata a buon termine"));
     }    
 
-    public function destroy(Practice $practice)
-    {
+    public function destroy(Practice $practice){
         //Elimino definitivamente se non è mai stata utilizzata.
         if( $practice->user_id == Auth::user()->id ){   //Questo viene fatto per evitare che l'utente possa eliminare practice di non sua competenza.
 
