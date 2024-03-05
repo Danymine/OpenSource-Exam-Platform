@@ -10,6 +10,8 @@ use App\Http\Controllers\AdminRequestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\LocalizationController;
+use App\Models\AssistanceRequest;
+use App\Http\Controllers\AssistanceRequestController;
 
 
 //Temporanea
@@ -48,7 +50,12 @@ Route::middleware(Localization::class)
     //Rotta per raggiungere la propria dashboard questa si occupera di fornire SOLO la dashboard visibile al tipo di utente che la richiede
     Route::get('/dashboard', function () {
 
-        return view('navigation.dashboard');
+        if( Auth::user()->roles != 'Admin' ){
+
+            return view('navigation.dashboard');
+        }
+
+        return view('navigation.dashboard', ['Assistances' => AssistanceRequest::where('status', 0)->where('admin_id', Auth::user()->id)->simplePaginate(10)]);
 
     })->middleware(['auth','verified'])->name('dashboard');
 
@@ -85,24 +92,7 @@ Route::middleware(Localization::class)
 
         Route::get('/download-delivered/{delivered}', [DeliveredController::class, 'printDeliveredWithCorrect'])->name('download-delivered-with-correct');
 
-        Route::get('/aggiungi-utente', [UserController::class, 'showAddUserForm'])->name('show-add-user-form');
-
-        Route::post('/aggiungi-utente', [UserController::class, 'aggiungiUtente'])->name('aggiungi-utente');
-        
-        Route::get('/user-list', [UserController::class, 'showUserList'])->name('user-list');
-        
-        Route::delete('/utenti/{id}', [UserController::class, 'destroy'])->name('delete-user');
-
-        Route::get('/lista-utenti', [UserController::class, 'showUserListFromDb'])->name('users-list');
-
-        Route::get('/modifica-utente/{id}', [UserController::class, 'editUserForm'])->name('edit-user-form');
-
-
-        Route::post('/aggiorna-utente/{id}', [UserController::class, 'updateUser'])->name('update-user');
-
-        Route::get('/annulla-modifiche', [UserController::class, 'cancelEdit'])->name('cancel-edit');
-
-        Route::get('/search-user', [UserController::class, 'search'])->name('search-user');
+        Route::post('/response-request/{AssistanceRequest}', [AssistanceRequestController::class, 'store_response'])->name('store-response');
 
     });
 
@@ -242,11 +232,35 @@ Route::middleware(Localization::class)
 
     });
 
-    Route::prefix('admin')->group(function () {
-        Route::get('/richiedi-assistenza', [RequestController::class, 'showAssistanceRequestForm'])->name('createAssistanceRequest');
-        Route::post('/richiedi-assistenza', [RequestController::class, 'createAssistanceRequest'])->name('storeAssistanceRequest'); 
-        Route::get('/admin/requests', [AdminRequestController::class, 'index'])->name('admin.requests.index');
+    Route::prefix('admin')->middleware('Admin')->group(function () {
+
+        //Mostra le richieste di assistenza
+        Route::get('/view-request/{assistance}', [AssistanceRequestController::class, 'show'])->name('view-request');
+
+        //Mostra il form necessario per cercare gli utenti sulla quale effettuare operazioni
+        Route::get('/user-list', [UserController::class, 'showUserList'])->name('user-list');
+
+        //Cerca Utenti
+        Route::post('/search-user', [UserController::class, 'search'])->name('search-user');
+
+        //Mostra la pagina per la creazione di utenti
+        Route::get('/add-user', [UserController::class, 'showAddUserForm'])->name('show-add-user-form');
+
+        //Inserisce nel DB l'utente
+        Route::post('/add-user', [UserController::class, 'store_user'])->name('aggiungi-utente');
+
+        //Cancella l'account dell'utente
+        Route::delete('/delete-user/{user}', [UserController::class, 'destroy'])->name('delete-user');
+        
+        //Aggiorna dei dati degli utenti
+        Route::put('/update-user/{user}', [UserController::class, 'update'])->name('update-user');
+
+        Route::get('/close-request/{assistance}', [AssistanceRequestController::class, 'close'])->name('close-request');
+
     });
 
     require __DIR__.'/auth.php';    //Istruzione per includere tutte le rotte definite nel file auth.php
 });
+
+Route::get('/richiedi-assistenza', [RequestController::class, 'showAssistanceRequestForm'])->name('createAssistanceRequest');
+Route::post('/richiedi-assistenza', [RequestController::class, 'createAssistanceRequest'])->name('storeAssistanceRequest'); 

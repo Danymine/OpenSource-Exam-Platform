@@ -4,96 +4,111 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Date;
+
 
 class UserController extends Controller
 {
     public function showAddUserForm()
     {
-        return view('aggiungi_utente'); 
+        return view('support-admin.aggiungi_utente'); 
     }
 
-    public function aggiungiUtente(Request $request)
+    public function store_user(Request $request)
     {
         // Validazione dei dati del form
         $request->validate([
             'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8',
-            'roles' => 'required|in:admin,Teacher,Student',
+            'roles' => 'required|in:Admin,Teacher,Student',
         ]);
 
         // Creazione dell'utente
         $user = new User([
             'name' => $request->input('name'),
+            'first_name' => $request->input('first_name'),
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password')),
             'roles' => $request->input('roles'),
+            'created_at' => now(),
         ]);
 
         // Salvataggio dell'utente nel database
         $user->save();
 
-        return redirect()->back()->with('success', 'Utente aggiunto con successo!');
+        return redirect()->back()->with('success', trans('Utente aggiunto con successo!'));
     }
     public function showUserList()
     {
-        $users = User::all();
-        return view('user-list', compact('users'));
+        return view('support-admin.user-list');
     }
 
-    public function destroy($id)
+    public function update(Request $request, User $user)
     {
-        $user = User::find($id);
-    
-        if ($user) {
-            $user->delete();
-            return redirect()->back()->with('success', 'Utente eliminato con successo.');
-        } else {
-            return redirect()->back()->with('error', 'Utente non trovato.');
-        }
-    }
-    public function updateUser(Request $request, $id)
-    {
-        $request->validate([
+        //Diamo la possibilità di modificare tutto ma la password deve essere generata e inviata tramite email (SOLO SE L'EMAIL è verificata)
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'roles' => 'required|in:Studente,Amministratore,Professore',
+            'first_name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'roles' => 'required|in:Admin,Teacher,Student',
+            'date_birth' => [
+                'required',
+                'nullable',
+                'date',
+                'before_or_equal:' . Date::now()->subYears(14)->format('Y-m-d'),
+            ],
         ]);
+        if ($validator->fails()) {
+            return redirect()->route('user-list')
+                        ->withErrors($validator);
+        }
     
-        $user = User::findOrFail($id);
+        $user = User::findOrFail($user->id);
+
+        if (!$user) {
+            return redirect()->route('user-list')
+                        ->withErrors(['errors' => trans('Utente non trovato')]);
+        }
+
+        if( $user->email != $validator->validated()['email'] ){
+
+            //è stata modificata l'email quindi oltre che ad aggiornare questo settiamo anche $user->email_verified_at a NULL così la prossima volta che effettua il login dovrà verificare l'email
+            $user->update($validator->validated());
+            $user->email_verified_at = NULL;
+            $user->save();
+        }
+        else{
+
+            $user->update($validator->validated());
+        }
+
+        return redirect()->route('user-list')->with('success', 'Utente aggiornato con successo');
+    }
     
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-        $user->roles = $request->input('roles');
-    
-        $user->save();
-    
-        return redirect()->route('user-list')->with('success', 'Utente aggiornato con successo.');
-    }
-
-    public function editUserForm($id)
-    {
-        $user = User::findOrFail($id);
-        return view('edit', compact('user'));
-    }
-
-
-    public function cancelEdit()
-    {
-        return redirect()->route('users-list');
-    }
-    public function showUserListFromDb()
-    {
-        $users = User::all();
-        return view('user-list', compact('users'));
-    }
-
     public function search(Request $request)
     {
         $email = $request->input('email');
-        $users = User::where('email', 'like', "%$email%")->get();
+        $users = User::where('email', $email)->first();
+        if( $users != NULL ){
 
-        return view('user-list', ['users' => $users]);
+            return view('support-admin.user-list', ['user' => $users]);
+        }
+        else{
+
+            return redirect()->route('user-list')
+                ->withErrors(['errors' => trans("Non esiste un account associato all'email inserita")]);
+
+        }
+    }
+
+    public function destroy(User $user)
+    {
+        $user->delete();
+
+        return redirect()->route('user-list')->with('success', trans('Utente eliminato con successo.'));
     }
 
     public function destroy_account(User $user){
@@ -108,7 +123,9 @@ class UserController extends Controller
         }
         else{
 
-            return back()->withErrors('msg',"Non puoi cancellare questo account.");
+            return redirect()->route('user-list')
+                ->withErrors(['errors' => trans("Non puoi cancellare questo account.")]);
+
         }
     }
 

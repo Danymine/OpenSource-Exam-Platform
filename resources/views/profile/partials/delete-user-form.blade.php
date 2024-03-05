@@ -25,33 +25,15 @@
 
 
 <script>
-    var translations = {
-    'it': {
-       'conferma_eliminazione': "Sicuro di voler eliminare l'account?"
-    },
-    'en': {
-        'conferma_eliminazione': "Are you sure you want to delete your account?"
-    }
-    };
+    str= "{{ __('Eliminazione') }}"
     // Ottieni il riferimento al bottone "Delete Account"
     const deleteBtn = document.getElementById('delete-account-btn');
-    var currentURL = window.location.href;
-    var languageIndex = currentURL.indexOf('/en/');
-
-    // Se la lingua è presente nell'URL
-    if (languageIndex !== -1) {
-
-        language = 'en';
-    } else {
-
-        // Se la lingua non è 'en', impostala su 'it'
-        language = 'it';
-    }
+    
 
     // Aggiungi un gestore di eventi per il click sul bottone
     deleteBtn.addEventListener('click', function() {
         // Mostra il popup di conferma
-        const isConfirmed = confirm(translations[language]['conferma_eliminazione']);
+        const isConfirmed = confirm(str);
 
         // Se l'utente conferma, esegui l'azione
         if (isConfirmed) {

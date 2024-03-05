@@ -3,83 +3,85 @@ var sortDirection = []; // Array per tenere traccia dell'ordinamento per ciascun
 language = "translate";
 console.log(translations);
 
-//Aggiornata le icone della tabella esercizi.
-function updateSortIcons(columnIndex) {
-
-    var header = document.getElementsByTagName("th")[columnIndex];
-    var icon = header.getElementsByTagName("i")[0];
-
-    // Rimuovi le classi delle icone di ordinamento
-    icon.classList.remove("fa-chevron-up", "fa-chevron-down");
-
-    if (sortDirection[columnIndex] === "asc") {
-
-        icon.classList.add("fa-chevron-up");
-    } else {
-
-        icon.classList.add("fa-chevron-down");
-    }
-}
-
-//Ordina la tabella esercizi
 function sortTable(columnIndex) {
-
     var table, rows, switching, i, x, y, shouldSwitch;
     table = document.getElementById("exercise-table");
     switching = true;
 
-    // Inizializza la direzione di ordinamento per la colonna se non è già presente
     if (!sortDirection[columnIndex]) {
-
         sortDirection[columnIndex] = "asc";
     } else {
-
-        // Se la direzione di ordinamento esiste, inverti l'ordine
         sortDirection[columnIndex] = sortDirection[columnIndex] === "asc" ? "desc" : "asc";
     }
 
-    while ( switching ) {
-
+    while (switching) {
         switching = false;
         rows = table.rows;
 
-        for ( i = 1; i < (rows.length - 1); i++ ) {
-
+        for (i = 1; i < (rows.length - 1); i++) {
             shouldSwitch = false;
-            x = rows[i].getElementsByTagName("td")[columnIndex];
-            y = rows[i + 1].getElementsByTagName("td")[columnIndex];
 
-            var xValue = x.innerHTML.toLowerCase();
-            var yValue = y.innerHTML.toLowerCase();
+            if (columnIndex === 2) { // Indica l'indice della colonna della difficoltà
+                x = difficultyToNumber(rows[i].getElementsByTagName("td")[columnIndex].innerHTML);
+                y = difficultyToNumber(rows[i + 1].getElementsByTagName("td")[columnIndex].innerHTML);
+            } else {
+                x = rows[i].getElementsByTagName("td")[columnIndex].innerHTML.toLowerCase();
+                y = rows[i + 1].getElementsByTagName("td")[columnIndex].innerHTML.toLowerCase();
+            }
 
-            // Inverti la logica di ordinamento se la direzione è "desc"
             if (sortDirection[columnIndex] === "desc") {
-
-                if (xValue < yValue) {
-
+                if (x < y) {
                     shouldSwitch = true;
                     break;
-                }       
-            } 
-            else {
-
-                if (xValue > yValue) {
-
+                }
+            } else {
+                if (x > y) {
                     shouldSwitch = true;
                     break;
                 }
             }
         }
 
-        if ( shouldSwitch ) {
-
+        if (shouldSwitch) {
             rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
             switching = true;
         }
     }
 
-    // Aggiorna le icone di ordinamento per mostrare la direzione corrente
     updateSortIcons(columnIndex);
+}
+
+function difficultyToNumber(difficulty) {
+    switch (difficulty.toLowerCase()) {
+        case "bassa":
+            return 1;
+        case "media":
+            return 2;
+        case "alta":
+            return 3;
+        default:
+            return 0;
+    }
+}
+
+function updateSortIcons(columnIndex) {
+    var header = document.getElementsByTagName("th")[columnIndex];
+    var icon = header.getElementsByTagName("i")[0];
+    icon.classList.remove("fa-chevron-up", "fa-chevron-down");
+
+    if (columnIndex === 2) {
+        if (sortDirection[columnIndex] === "asc") {
+            icon.classList.add("fa-chevron-down"); // Ordine inverso per la difficoltà
+        } else {
+            icon.classList.add("fa-chevron-up"); // Ordine ascendente per la difficoltà
+        }
+    } else {
+        if (sortDirection[columnIndex] === "asc") {
+            icon.classList.add("fa-chevron-up");
+        } else {
+            icon.classList.add("fa-chevron-down");
+        }
+    }
 }
 
 function showDetails(exerciseId) {

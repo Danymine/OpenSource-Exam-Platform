@@ -12,7 +12,7 @@
                 @endif
             </div>
         </div>
-        <hr stile="border-top: 1px solid #000000; width: 90%;" />
+        <hr style="border-top: 1px solid #0000004a width: 90%;" />
     </x-slot>
 
     <div class="container p-4 rounded" style="background-color: #fff; box-shadow: 0.15rem 0.25rem 0 rgb(33 40 50 / 15%); border: 1px solid rgba(0,0,0,.125);">

@@ -1,6 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h4 class="text-2xl font-bold text-black mb-4">{{ $practice->title }}</h4>
+        <hr style="border-top: 1px solid #0000004a width: 90%;" />
     </x-slot>
 
     <div class="container">

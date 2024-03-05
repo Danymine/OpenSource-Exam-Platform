@@ -9,23 +9,22 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('assistance_requests', function (Blueprint $table) {
+        Schema::create('responses', function (Blueprint $table) {
             $table->id();
-            $table->string('subject');
-            $table->string('description');
-            $table->integer('status');
+            $table->string('response');
+            $table->foreignId('assistance_request_id')->constrained();
             $table->foreignId('user_id')->constrained();
-            $table->foreignId('admin_id')->constrained('users');
             $table->timestamps();
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('assistance_requests');
+        Schema::dropIfExists('responses');
     }
 };

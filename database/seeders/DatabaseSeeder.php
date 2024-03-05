@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             TestSeeder::class,
             DeliveredSeeder::class,
             AdminSeeder::class,
+            RequestSeeder::class,
+            ResponseSeeder::class,
         ]);
     }
 }
