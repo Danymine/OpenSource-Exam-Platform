@@ -33,7 +33,7 @@
         <hr style="border-top: 1px solid #0000004a width: 90%;" />
     </x-slot>
 
-    @if( ($delivered->practice->public == 1 || (Auth::user()->roles == "Teacher" && $delivered->valutation != NULL)) )
+    @if( ($delivered->practice->public == 1 || (Auth::user()->roles == "Teacher" && $delivered->valutation !== NULL)) )
         <!-- La prova è stata sicuramente corretta -->
         <div class="container">
             <div class="row">
@@ -50,7 +50,7 @@
                                 <div>
                                     @if( $response[$exercise->id][0]["note"] != NULL )
                                         <div class="alert alert-info" role="alert">
-                                            <strong>Note:</strong> {{ $response[$exercise->id][0]["note"] }}
+                                            <strong>{{ __('Nota') }}:</strong> {{ $response[$exercise->id][0]["note"] }}
                                         </div>
                                     @endif
                                 </div>
@@ -93,7 +93,7 @@
 
                             <!-- Link per scaricare la correzione, se disponibile -->
                             @if($delivered->path != NULL)
-                                <a href="#" class="btn btn-sm btn-success">Scarica correzione</a>
+                                <a href="#" class="btn btn-sm btn-success"> {{ __('Scarica correzione') }}</a>
                             @else
                                 <a href="{{ route('download-delivered-with-correct', ['delivered' => $delivered]) }}"  class="btn btn-sm btn-warning" title="{{ __('Stampa consegna corretta') }}" style="height: 38px; width: 40px; text-align: center; padding: 0;">
                                     <i class="fas fa-print" style="line-height: 38px;"></i>

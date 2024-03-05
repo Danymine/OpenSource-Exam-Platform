@@ -5,7 +5,7 @@
     "Compito in classe": "In-class Assignment",
     "Perchè scegliere ExamSync?": "Why Choose ExamSync?",
     "Assistenza Garantita": "Guaranteed Support",
-    "Assistenza tecnica garantita per ogni problema o necessità ogni giorno dalle 8:00 fino alle 18:00": "Guaranteed technical support for any problem or need every day from 8:00 am to 6:00 pm",
+    "Assistenza tecnica garantita per ogni problema o necessità ogni giorno dalle 8:00 fino alle 18:00": "Guaranteed technical support for any problem or need every day from 8:00 am until 6:00 pm",
     "Semplice Utilizzo": "Simple Usage",
     "La nostra piattaforma ha ottenuto ottimi risultati con i propri utenti certificandosi tripla A": "Our platform has achieved excellent results with its users, certifying triple A",
     "Sicurezza dei Dati": "Data Security",
@@ -63,6 +63,7 @@
     "Perfavore aspetti che il test inizi.": "Please wait for the test to start.",
     "In Attesa": "Pending",
     "Svolgendo": "Execution",
+    "Nessuno studente presente": "No students present",
 
 
     "Torna Indietro": "Go Back",
@@ -258,5 +259,13 @@
     "Lista Utenti": "Users List",
     "Sei sicuro di voler eliminare questo utente?": "Are you sure you want to delete this user?",
     "Non esiste un account associato all'email inserita": "Incorrect email. There is no account associated with the email provided.",
-    "Rispondi": "Respond"
+    "Rispondi": "Respond",
+
+    "Le tue notifiche": "Your notifications",
+    "Storico Esami": "Exam History",
+    "Storico Esercitazioni": "Practice History",
+    "Tutte le tipologie": "All types",
+    "Azioni": "Actions",
+    "Nota": "Note",
+    "Esito": "Outcome"
 }

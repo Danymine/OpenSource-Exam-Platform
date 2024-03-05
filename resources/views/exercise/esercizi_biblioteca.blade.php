@@ -62,12 +62,10 @@
     <div class="table-responsive">
       <table id="exercise-table" class="table table-bordered table-striped">
         <colgroup>
-          <col style="width: 35%;">
+          <col style="width: 45%;">
           <col style="width: 20%;">
           <col style="width: 15%;">
           <col style="width: 15%;">
-          <col style="width: 5%;">
-          <col style="width: 5%;">
           <col style="width: 5%;">
         </colgroup>
         <thead>
@@ -77,9 +75,7 @@
             <th onclick="sortTable(1)">{{ __('Tipo') }} <i class="fas fa-chevron-down"></i></th>
             <th onclick="sortTable(2)">{{ __('Difficoltà') }} <i class="fas fa-chevron-down"></i></th>
             <th onclick="sortTable(3)">{{ __('Materia') }} <i class="fas fa-chevron-down"></i></th>
-            <th>{{ __('Dettagli') }}</th>
-            <th>{{ __('Modifica') }}</th>
-            <th>{{ __('Elimina') }}</th>
+            <th>{{ __('Azioni') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -91,15 +87,17 @@
                 <td class="align-middle" >{{ $exercise->difficulty }}</td>
                 <td class="align-middle" >{{ $exercise->subject }}</td>
                 <!-- Function -->
-                <td><a class="btn btn-info details-button" onclick="showDetails('{{ $exercise->id }}')"><i class="fas fa-search"></i></a></td>
-                <td><a class="btn btn-warning edit-button" onclick="editExercise('{{ $exercise->id }}')"><i class="fas fa-pencil-alt"></i></a></td>
-                <td>
-                  <form action="{{ route('deleteExercise', ['exercise' => $exercise]) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questo esercizio?');">
-                      @csrf
-                      @method('DELETE')
+                <td class="align-middle">
+                  <div class="d-flex justify-content-between">
+                    <a class="btn btn-info details-button mr-2" onclick="showDetails('{{ $exercise->id }}')"><i class="fas fa-search"></i></a>
+                    <a class="btn btn-warning edit-button mr-2" onclick="editExercise('{{ $exercise->id }}')"><i class="fas fa-pencil-alt"></i></a>
+                    <form action="{{ route('deleteExercise', ['exercise' => $exercise]) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questo esercizio?');">
+                        @csrf
+                        @method('DELETE')
                       <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
-                  </form>
-                </td>                
+                    </form>
+                  </div>
+                </td>
               </tr>
             @endforeach
         </tbody>

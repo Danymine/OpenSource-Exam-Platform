@@ -125,10 +125,12 @@
         </form>
     </div>
 
-    <script src="/js/ValutaEsame.js"></script>
-    
+    <script>
+        str="{{ __('Note finali') }}";
+        dmd="{{ __('Domana') }}";
+    </script>
 
-    
+    <script src="/js/ValutaEsame.js"></script>    
 </x-app-layout>
 
 

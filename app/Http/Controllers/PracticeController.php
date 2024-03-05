@@ -487,6 +487,24 @@ class PracticeController extends Controller
             else{
 
                 $newPractice = new Practice($validatedDataWithoutId);
+                $newPractice->total_score=$practice->total_score;
+                $newPractice->user_id=$practice->user_id;
+                $newPractice->allowed=0;
+                $newPractice->type=$practice->type;
+                $newPractice->public=0;
+
+                if($practice->key == NULL){
+
+                    $newPractice->key=$this->generateKey();
+                }else{
+                    $key=$practice->key;
+                    
+                    $practice->key=NULL;
+                    $practice->save();
+                    
+                    $newPractice->key=$key;
+                }
+
                 $newPractice->save();
 
                 $newPractice->exercises()->attach($practice->exercises->pluck('id')); //pluck viene utilizzato per estrarre una singola key da una collezione in questo caso id

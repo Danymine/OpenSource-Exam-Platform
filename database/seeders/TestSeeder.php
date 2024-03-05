@@ -47,7 +47,6 @@ class TestSeeder extends Seeder
 
         $this->command->info("Incomincio la creazione di Test. (Sia Esami che Esercitazioni)");
 
-        $possibleTotalScores = [10, 30, 100];
         $difficulties = ['Alta', 'Media', 'Bassa'];
         $type = ['Exam', 'Practice'];
     
@@ -56,7 +55,6 @@ class TestSeeder extends Seeder
     
         for ($i = 0; $i < 50; $i++) {
             $key = $this->generateKey();
-            $totalScore = $possibleTotalScores[array_rand($possibleTotalScores)];
             $difficulty = $difficulties[array_rand($difficulties)];
             $typeIndex = array_rand($type);
     
@@ -68,43 +66,44 @@ class TestSeeder extends Seeder
                 'description' => $subject, // Imposta la descrizione come il nome della materia
                 'difficulty' => $difficulty,
                 'subject' => $subject,
-                'total_score' => $totalScore,
+                'total_score' => 0,
                 'key' => $key,
                 'user_id' => 1,
                 'feedback_enabled' => rand(0, 1),
                 'randomize_questions' => rand(0, 1),
-                'generated_at' => Carbon::now(),
                 'allowed' => 0,
                 'practice_date' => Carbon::now()->addDays(rand(1, 30)), // Aggiunge un numero variabile di giorni
                 'type' => $type[$typeIndex],
                 'public' => 0,
                 'time' => rand(10,180)
             ]);
-    
+            
             $practice->save();
-    
-            // Modifica dei punteggi personalizzati degli esercizi nella pratica
-            $sumScore = 0;
-            $exerciseCount = 0;
     
             // Ottenere gli esercizi corrispondenti alla materia selezionata
             $exercises = Exercise::where('subject', $subject)->get();
-    
+            $numExercise= rand(1,10);
+            $sumScore=0;
+            $exerciseCount=0;
+
             foreach ($exercises as $exercise) {
+                
                 // Assicurati di non aggiungere troppi esercizi alla pratica
-                if ($exerciseCount >= 10) {
+                if ($exerciseCount >= $numExercise) {
                     break;
                 }
     
                 $practice->exercises()->attach($exercise->id);
                 
+                $sumScore += $exercise->score;
                 // Incrementa il contatore degli esercizi aggiunti
                 $exerciseCount++;
-    
-                if ($sumScore > $totalScore) {
-                    break;
-                }
-            }      
+
+            }  
+            
+            $practice->total_score= $sumScore;
+
+            $practice->save();
         }
 
         $this->command->info("Test correttamente creati.");

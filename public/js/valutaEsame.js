@@ -44,8 +44,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });  
 
-
-
     // Nascondi l'esercizio corrente
     function hideExercise(index) {
         exercises[index].classList.add('hide-total');
@@ -58,11 +56,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Mostra il blocco finish
     function showFinish() {
+        // Cambia il testo dell'elemento <h4> a "Note finali"
+        document.querySelector('#cont').innerText = str;
+        // Mostra il blocco .finish
         document.querySelector('.finish').classList.remove('hide-total');
     }
 
     // Nascondi il blocco finish
     function hideFinish() {
+        // Cambia il testo dell'elemento <h4> a "Note finali"
+        document.querySelector('#cont').innerText = dmd;
         document.querySelector('.finish').classList.add('hide-total');
     }
 });
