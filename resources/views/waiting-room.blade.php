@@ -72,6 +72,12 @@
     @if( Auth::user()->roles == "Teacher" )
         <script>
             route = "{!! route('fetch-partecipants', ['practice' => $practice]) !!}";
+            esp="{{ __('Espelli') }}";
+            nsp="{{ __('Nessuno studente presente') }}";
+            ina="{{ __('In Attesa') }}";
+            svl="{{ __('Svolgendo') }}";
+            apr="{{ __( 'Approva' )}}";
+            cgt="{{ __( 'Consegnato' )}}";
         </script>
         <script src="/js/waitingRoomTeacher.js"></script>
     @else

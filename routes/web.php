@@ -83,17 +83,26 @@ Route::middleware(Localization::class)
         //Incomincia la correzione
         Route::get('/view-details-delivered/{delivered}', [DeliveredController::class, 'show'])->name('view-details-delivered')->middleware('control'); //Il middleware permette di vedere i dettagli della consegna solo per gli utenti che l'hanno consegnata o per il docente che ha creato la practice alla quale si riferisce
         
-         //Si occupa di mostrare la consegna quindi risposte, correzioni e voto se prensenti.
-         Route::get('/show-delivered/{delivered}', [DeliveredController::class, 'show_total'])->name('show-delivered')->middleware('control');
+        //Si occupa di mostrare la consegna quindi risposte, correzioni e voto se prensenti.
+        Route::get('/show-delivered/{delivered}', [DeliveredController::class, 'show_total'])->name('show-delivered')->middleware('control');
 
-        Route::get('/download-details-delivered/{delivered}', [DeliveredController::class, 'print'])->name('download-details-delivered')->middleware('control');
+        //Si occupano di permettere agli utenti di scaricare le consegne. (Si differenziano in base a ciò che stampano)
+        Route::get('/download-details-delivered/{delivered}', [DeliveredController::class, 'print'])->name('download-details-delivered')->middleware('control');    //Solo la delivered con risposte
         
-        Route::get('/download-correct-delivered/{delivered}', [DeliveredController::class, 'printCorrect'])->name('download-correct-delivered');
+        Route::get('/download-correct-delivered/{delivered}', [DeliveredController::class, 'printCorrect'])->name('download-correct-delivered');    //Il file di correzione del docente
 
-        Route::get('/download-delivered/{delivered}', [DeliveredController::class, 'printDeliveredWithCorrect'])->name('download-delivered-with-correct');
+        Route::get('/download-delivered/{delivered}', [DeliveredController::class, 'printDeliveredWithCorrect'])->name('download-delivered-with-correct');  //Deliverd con risposte e le correzioni
+
+        //Si occupano di mostrare il form per il supporto e l'invio del form
+        Route::get('/richiedi-assistenza', [AssistanceRequestController::class, 'index'])->name('view-create');
+
+        Route::post('/richiedi-assistenza', [AssistanceRequestController::class, 'store'])->name('storeAssistanceRequest'); 
 
         Route::post('/response-request/{AssistanceRequest}', [AssistanceRequestController::class, 'store_response'])->name('store-response');
 
+        //Mostra la richiesta di assistenza
+        Route::get('/view-request/{assistance}', [AssistanceRequestController::class, 'show'])->name('view-request');
+        
     });
 
     Route::middleware('auth', 'role')->group(function (){
@@ -234,8 +243,6 @@ Route::middleware(Localization::class)
 
     Route::prefix('admin')->middleware('Admin')->group(function () {
 
-        //Mostra le richieste di assistenza
-        Route::get('/view-request/{assistance}', [AssistanceRequestController::class, 'show'])->name('view-request');
 
         //Mostra il form necessario per cercare gli utenti sulla quale effettuare operazioni
         Route::get('/user-list', [UserController::class, 'showUserList'])->name('user-list');
@@ -261,6 +268,3 @@ Route::middleware(Localization::class)
 
     require __DIR__.'/auth.php';    //Istruzione per includere tutte le rotte definite nel file auth.php
 });
-
-Route::get('/richiedi-assistenza', [RequestController::class, 'showAssistanceRequestForm'])->name('createAssistanceRequest');
-Route::post('/richiedi-assistenza', [RequestController::class, 'createAssistanceRequest'])->name('storeAssistanceRequest'); 

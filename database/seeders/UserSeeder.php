@@ -25,6 +25,15 @@ class UserSeeder extends Seeder
             'password' => Hash::make('docente'), 
             'roles'=> "Teacher"
         ]);
+        $this->command->info("Account studente disponibile con le seguenti credenziali: Email studente@studente.com Password: studente");
+        DB::table('users')->insert([
+            'name' => "NomeStudente",
+            'first_name' => "CognomeStudente",
+            'email' => "studente@studente.com",
+            'email_verified_at' => Carbon::now(),
+            'password' => Hash::make('studente'), 
+            'roles'=> "Student"
+        ]);
         for( $i = 0; $i < 100;  $i++ ){
 
             DB::table('users')->insert([

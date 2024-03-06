@@ -30,8 +30,12 @@ class WaitingRoomController extends Controller
 
     public function status(Practice $practice)
     {
-        $status = Auth::user()->waitingroom()->where('practice_id', $practice->id)->first()->pivot->status;
-        $kicked = DB::table('waiting_rooms')->where('user_id', Auth::user()->id)->exists();
+
+        $status = NULL;
+        $waitingRoom = Auth::user()->waitingroom()->where('practice_id', $practice->id)->first();
+        if ($waitingRoom) {
+            $status = $waitingRoom->pivot->status;
+        }
         
         if (!$practice) {
             // Se la pratica non esiste, restituisci un errore 404
@@ -39,12 +43,13 @@ class WaitingRoomController extends Controller
         }
 
         $allowed = $practice->allowed;
-        if( $allowed == 1 && $status != "wait"){
+        if( $allowed == 1 && $status == "execute"){ //Dai l'accesso solo nel caso in cui la pratica sia stata avviata lo status dell'utente che fa la richiesta sia in execute
 
             return response()->json(['status' => 'allowed']);
         }
 
-        if (!$kicked) {
+        if ($status == NULL) {
+
             return response()->json(['status' => 'kicked']);
         }
 
@@ -62,13 +67,24 @@ class WaitingRoomController extends Controller
             $delivered = $user->delivereds()->where('practice_id', $practice->id)->exists();
             $deliveredStatus = $delivered ? "Consegnato" : "Non Consegnato";
 
-            $userData = [
-                'id' => $user->id,
-                'name' => $user->name,
-                'first_name' => $user->first_name,
-                'status' => $user->pivot->status,
-                'delivered' => $deliveredStatus,
-            ];
+            if( $deliveredStatus == "Consegnato" ){
+
+                $userData = [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'first_name' => $user->first_name,
+                    'status' => $deliveredStatus,
+                ];
+            }
+            else{
+
+                $userData = [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'first_name' => $user->first_name,
+                    'status' => $user->pivot->status,
+                ];
+            }
 
             array_push($participants['data'], $userData);
         }

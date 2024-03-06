@@ -76,13 +76,18 @@
                         <!-- Contenuto del menu a tendina -->
                         <h3 class="dropdown-title" style="font-size: 1.2em; color: #333; text-align: center; padding: 10px 0;">{{ __('Le tue notifiche') }}</h3>
                         <hr class="dropdown-divider">
-                        <a class="dropdown-item" href="#">Notifica 1</a>
-                        <a class="dropdown-item" href="#">Notifica 2</a>
-                        <a class="dropdown-item" href="#">Notifica 3</a>
+                        @foreach(Auth::user()->assistanceRequest->sortByDesc('created_at') as $request)
+                            <a class="dropdown-item" href="{{ route('view-request', ['assistance' => $request]) }}">
+                                <div class="d-flex justify-content-between">
+                                    <span>{{ $request->subject }}</span>
+                                    <span>{{ $request->created_at->format('d/m/Y') }}</span>
+                                </div>
+                            </a>
+                        @endforeach
                         @if(Auth::user()->roles != "Admin")
                             <hr class="dropdown-divider">
-                            <a class="dropdown-item" href="#">
-                                <i class="fas fa-question-circle"></i> Richiedi assistenza
+                            <a class="dropdown-item" href="{{ route('view-create') }}">
+                                <i class="fas fa-question-circle"></i> {{ __('Richiedi assistenza') }}
                             </a>
                         @endif
                     </div>

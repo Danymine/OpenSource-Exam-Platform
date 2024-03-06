@@ -253,6 +253,31 @@
     "Cerca": "Cerca",
     "Lista Utenti": "Lista Utenti",
     "Sei sicuro di voler eliminare questo utente?": "Sei sicuro di voler eliminare questo utente?",
-    "Rispondi": "Rispondi"
+    "Rispondi": "Rispondi",
 
+    "Le tue notifiche": "Le tue richieste",
+    "Storico Esami": "Storico Esami",
+    "Storico Esercitazioni": "Storico Esercitazioni",
+    "Tutte le tipologie": "Tutte le tipologie",
+    "Azioni": "Azioni",
+    "Nota": "Nota",
+    "Esito": "Esito",
+
+    "Invio avvenuto con successo": "Invio avvenuto con successo",
+    "Hai già preso parte a questo Test": "Hai già preso parte a questo Test",
+    "La data di esecuzione dell'esame non è oggi.": "La data di esecuzione dell'esame non è oggi.",
+    "Il Test che stai cercando non esiste o è scaduto.": "Il Test che stai cercando non esiste o è scaduto.",
+    "L'esame è stato eliminato con successo.": "L'esame è stato eliminato con successo.",
+    "L'esercitazione è stata eliminata con successo.": "L'esercitazione è stata eliminata con successo.",
+    "La duplicazione è andata a buon termine": "La duplicazione è andata a buon termine",
+    "L'esercizio è stato rimosso con successo.": "L'esercizio è stato rimosso con successo.",
+    "L'esercizio è stato inserito con successo.": "L'esercizio è stato inserito con successo.",
+    "L'esercitazione è stata creata con successo": "L'esercitazione è stata creata con successo",
+    "L'esame è stato creato correttamente": "L'esame è stato creato correttamente",
+    "Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è:":  "Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è:",
+    "Non è possibile formare un test con lo score desiderato con gli esercizi disponibili.": "Non è possibile formare un test con lo score desiderato con gli esercizi disponibili.",
+    "Assistenza": "Assistenza",
+    "Classifica il Problema": "Classifica la richiesta",
+    "Richiesta": "Richiesta",
+    "La richiesta è stata inviata.": "La richiesta è stata inviata."
 }

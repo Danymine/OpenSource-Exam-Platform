@@ -51,15 +51,12 @@
         <div class="table-responsive">
             <table id="practice-table" class="table table-bordered table-striped">
                 <colgroup>
-                    <col style="width: 20%;">
+                    <col style="width: 30%;">
+                    <col style="width: 10%;">
+                    <col style="width: 10%;">
                     <col style="width: 10%;">
                     <col style="width: 15%;">
-                    <col style="width: 15%;">
-                    <col style="width: 15%;">
-                    <col style="width: 5%;">
-                    <col style="width: 5%;">
-                    <col style="width: 5%;">
-                    <col style="width: 5%;">
+                    <col style="width: 20%;">
                 </colgroup>
                 <thead>
                     <tr>
@@ -68,10 +65,7 @@
                         <th onclick="sortTable(2)">{{ __('Difficoltà') }} <i class="fas fa-chevron-down"></i></th>
                         <th onclick="sortTable(3)">{{ __('Data') }} <i class="fas fa-chevron-down"></i></th>
                         <th onclick="sortTable(4)">{{ __('Punteggio') }} <i class="fas fa-chevron-down"></i></th>
-                        <th>{{ __('Duplica') }}</th>
-                        <th>{{ __('Visualizza') }}</th>
-                        <th>{{ __('Modifica') }}</th>
-                        <th>{{ __('Elimina') }}</th>
+                        <th>{{ __('Azioni') }}</th>
                     </tr>
                 </thead>
                 <tbody id="table-body">
@@ -83,20 +77,16 @@
                         <td>{{ $practice->practice_date }}</td>
                         <td>{{ $practice->total_score }}</td>
                         <td>
-                            <a href="{{ route('practices.duplicate', ['practice' => $practice]) }}" class="btn btn-primary"><i class="fas fa-copy"></i></a>
-                        </td>
-                        <td>
-                            <a href="{{ route('practices.show', ['practice' => $practice]) }}" class="btn btn-info"><i class="fas fa-search"></i></a>
-                        </td>
-                        <td>
-                            <a class="btn btn-warning edit-button" href="{{ route('practices.edit', ['practice' => $practice]) }}"><i class="fas fa-pencil-alt"></i></a>
-                        </td>
-                        <td>
-                            <form action="{{ route('practices.destroy', ['practice' => $practice]) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questa pratica?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
-                            </form>
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ route('practices.duplicate', ['practice' => $practice]) }}" class="btn btn-primary"><i class="fas fa-copy"></i></a>
+                                <a href="{{ route('practices.show', ['practice' => $practice]) }}" class="btn btn-info"><i class="fas fa-search"></i></a>
+                                <a class="btn btn-warning edit-button" href="{{ route('practices.edit', ['practice' => $practice]) }}"><i class="fas fa-pencil-alt"></i></a>
+                                <form action="{{ route('practices.destroy', ['practice' => $practice]) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questa pratica?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @endforeach

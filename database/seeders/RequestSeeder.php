@@ -22,7 +22,7 @@ class RequestSeeder extends Seeder
                 'description' => Str::random('255'),
                 'status' => rand(0,1),
                 'user_id' => rand(1, 98),
-                'admin_id'=> 102,
+                'admin_id'=> 103,
                 'created_at' => now(),
             ]);
         }
