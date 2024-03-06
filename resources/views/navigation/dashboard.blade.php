@@ -84,7 +84,7 @@
 
                                                 @if( $delivered->valutation == NULL )
 
-                                                        @if ( $practice->type  == "esame" )
+                                                        @if ( $practice->type  == "Exam" )
 
                                                             <tr class="exame">
                                                                 <td>{{ $practice->title }}e</td>
