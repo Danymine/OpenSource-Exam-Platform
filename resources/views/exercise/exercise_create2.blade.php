@@ -61,14 +61,14 @@
                     <div class="form-row">
                         <div class="col-md-6">
                             <div class="form-group m-0">
-                                <input type="text" class="form-control mb-2" name="options[]" required maxlength="255"  placeholder="{{ __('Opzione A') }}" value="{{ session()->has('exercise_step1') && array_key_exists('option_a', session('exercise_step1')) ? session('exercise_step1')['option_a'] : '' }}">
-                                <input type="text" class="form-control mb-2" name="options[]" required maxlength="255"  placeholder="{{ __('Opzione B') }}" value="{{ session()->has('exercise_step1') && array_key_exists('option_b', session('exercise_step1')) ? session('exercise_step1')['option_b'] : '' }}">
+                                <input type="text" class="form-control mb-2" id='option1' name="options[]" required maxlength="255"  placeholder="{{ __('Opzione A') }}" value="{{ session()->has('exercise_step1') && array_key_exists('option_a', session('exercise_step1')) ? session('exercise_step1')['option_a'] : '' }}">
+                                <input type="text" class="form-control mb-2" id='option2' name="options[]" required maxlength="255"  placeholder="{{ __('Opzione B') }}" value="{{ session()->has('exercise_step1') && array_key_exists('option_b', session('exercise_step1')) ? session('exercise_step1')['option_b'] : '' }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input type="text" class="form-control mb-2"  name="options[]" required maxlength="255" placeholder="{{ __('Opzione C') }}" value="{{ session()->has('exercise_step1') && array_key_exists('option_c', session('exercise_step1')) ? session('exercise_step1')['option_c'] : '' }}">
-                                <input type="text" class="form-control mb-2"  name="options[]" required maxlength="255" placeholder="{{ __('Opzione D') }}" value="{{ session()->has('exercise_step1') && array_key_exists('option_d', session('exercise_step1')) ? session('exercise_step1')['option_d'] : '' }}">
+                                <input type="text" class="form-control mb-2" id='option3' name="options[]" required maxlength="255" placeholder="{{ __('Opzione C') }}" value="{{ session()->has('exercise_step1') && array_key_exists('option_c', session('exercise_step1')) ? session('exercise_step1')['option_c'] : '' }}">
+                                <input type="text" class="form-control mb-2" id='option4' name="options[]" required maxlength="255" placeholder="{{ __('Opzione D') }}" value="{{ session()->has('exercise_step1') && array_key_exists('option_d', session('exercise_step1')) ? session('exercise_step1')['option_d'] : '' }}">
                             </div>
                         </div>
                     </div>

@@ -80,41 +80,41 @@
                                     <tbody>
                                         @foreach( Auth::user()->practices()->withTrashed()->get() as $practice )
 
-                                        @foreach( $practice->delivereds as $delivered )
+                                            @foreach( $practice->delivereds as $delivered )
 
-                                            @if( $delivered->valutation == NULL )
+                                                @if( $delivered->valutation == NULL )
 
-                                                    @if ( $practice->type  == "esame" )
+                                                        @if ( $practice->type  == "esame" )
 
-                                                        <tr class="exame">
-                                                            <td>{{ $practice->title }}e</td>
-                                                            <td>{{ $practice->practice_date  }}</td>
-                                                            <td>
-                                                                {{ 
-                                                                    count($practice->delivereds->filter(function ($delivered) {
-                                                                        return $delivered->valutation === NULL;
-                                                                    }));
-                                                                }}
-                                                            </td>
-                                                        </tr>
-                                                    @else
-                                                        
-                                                        <tr class="practice" style="display: none">
-                                                            <td>{{ $practice->title }}e</td>
-                                                            <td>{{ $practice->practice_date  }}</td>
-                                                            <td>
-                                                                {{ 
-                                                                    count($practice->delivereds->filter(function ($delivered) {
-                                                                        return $delivered->valutation === NULL;
-                                                                    }));
-                                                                }}
-                                                            </td>
-                                                        </tr>
-                                                    @endif
-                                                @break
-                                            @endif
+                                                            <tr class="exame">
+                                                                <td>{{ $practice->title }}e</td>
+                                                                <td>{{ $practice->practice_date  }}</td>
+                                                                <td>
+                                                                    {{ 
+                                                                        count($practice->delivereds->filter(function ($delivered) {
+                                                                            return $delivered->valutation === NULL;
+                                                                        }));
+                                                                    }}
+                                                                </td>
+                                                            </tr>
+                                                        @else
+                                                            
+                                                            <tr class="practice" style="display: none">
+                                                                <td>{{ $practice->title }}e</td>
+                                                                <td>{{ $practice->practice_date  }}</td>
+                                                                <td>
+                                                                    {{ 
+                                                                        count($practice->delivereds->filter(function ($delivered) {
+                                                                            return $delivered->valutation === NULL;
+                                                                        }));
+                                                                    }}
+                                                                </td>
+                                                            </tr>
+                                                        @endif
+                                                    @break
+                                                @endif
+                                            @endforeach
                                         @endforeach
-                                    @endforeach
                                         
                                 </tbody>
                             </table>
@@ -129,8 +129,6 @@
         </div>
     </div>
 
-
-</x-app-layout>
 <script>
     events = {!! json_encode(Auth::user()->practices()->get()->map(function ($practice) {
         return [
@@ -433,8 +431,7 @@
             </table>
             {{ $Assistances->links() }}
         </div>
-    @endif
-                    
+    @endif            
 </x-app-layout>
 <script>
 
