@@ -67,25 +67,26 @@
                     <p class="card-text text-black">{{ $response->response }}</p>
                 </div>
                 <div class="card-footer">
-                    <p class="card-text text-black">{{ $response->created_at->format('d/m/Y') }}</p>
+                    <p class="card-text text-black">{{ $response->created_at }}</p>
                 </div>
             </div>
         @endforeach
 
+        @if( $assistence->status === 0 )
+            <div class="card">
 
-        <div class="card">
-
-            <div class="card-body">
-                <h5 class="card-title">{{ __('Rispondi') }}</h5>
-                <form action="{{ route('store-response', ['AssistanceRequest' => $assistence ]) }}" method="POST">
-                    @csrf
-                    <div class="form-group">
-                        <label for="text">{{ __('Testo') }}</label>
-                        <textarea class="card-text form-control" id="text" name="response" rows="4"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary"> {{ __('Rispondi') }}</button>
-                </form>
+                <div class="card-body">
+                    <h5 class="card-title">{{ __('Rispondi') }}</h5>
+                    <form action="{{ route('store-response', ['AssistanceRequest' => $assistence ]) }}" method="POST">
+                        @csrf
+                        <div class="form-group">
+                            <label for="text">{{ __('Testo') }}</label>
+                            <textarea class="card-text form-control" id="text" name="response" rows="4"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary"> {{ __('Rispondi') }}</button>
+                    </form>
+                </div>
             </div>
-        </div>
+        @endif
     </div>
 </x-app-layout>

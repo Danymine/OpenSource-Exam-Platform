@@ -34,7 +34,7 @@
 
         <!-- Sezione delle domande -->
         <div class="mb-4">
-            <form action="{{ route('pratices.send') }}" method="post">
+            <form action="{{ route('pratices.send') }}" method="post" id="invia">
                 @csrf
                 <input type="hidden" name="id_practices" value="{{ $test->id }}">
                 <div class="card mb-4" id="questionCard">
@@ -77,7 +77,7 @@
         const questionCard = document.getElementById("questionCard");
         const prevButton = document.getElementById("previousBtn");
         const nextButton = document.getElementById("nextBtn");
-        const form = document.querySelector("form");
+        const form = document.querySelector("#invia");
         const progressBar = document.querySelector(".progress-bar");
         const exercises = {!! json_encode($exercises) !!};
         let currentExerciseIndex = 0;

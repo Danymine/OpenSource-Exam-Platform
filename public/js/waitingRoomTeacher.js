@@ -18,15 +18,26 @@ function populateStudentsTable2(data) {
 
         // Itera sui dati degli studenti e crea le righe della tabella
         data.forEach(student => {
-            const stats = (student.status === 'wait') ? ina : svl;
+
+            const statusMap = {
+                "wait": ina,
+                "execute": svl,
+            };
+
+            const colorMap = {
+                "wait": "red",
+                "execute": "orange",
+                "Consegnato": "green",
+            }
+            
+            stats = statusMap[student.status] || cgt;
+            color = colorMap[student.status];
+            
             let row = `
                 <tr id="student-${student.id}">
                     <td style="vertical-align: middle;">${student.name}</td>
                     <td style="vertical-align: middle;">${student.first_name}</td>
-                    <td style="vertical-align: middle;">${stats}</td>
-                    <td>
-                        <button class="btn btn-danger" onclick="kickStudent('${student.id}')">${esp}</button>
-                    </td>
+                    <td style="vertical-align: middle; color:${color};">${stats}</td>
             `;
             if (student.status === "wait") {
                 row += `
@@ -34,6 +45,12 @@ function populateStudentsTable2(data) {
                         <button class="btn btn-success" onclick="allowedStudent('${student.id}')">${apr}</button>
                     </td>
                 `;
+            }
+            if( student.status !== "Consegnato" ){
+
+                row += ` <td>
+                            <button class="btn btn-danger" onclick="kickStudent('${student.id}')">${esp}</button>
+                        </td> `;
             }
             row += `</tr>`;
             tableBody.innerHTML += row;

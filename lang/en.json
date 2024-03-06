@@ -261,11 +261,29 @@
     "Non esiste un account associato all'email inserita": "Incorrect email. There is no account associated with the email provided.",
     "Rispondi": "Respond",
 
-    "Le tue notifiche": "Your notifications",
+    "Le tue notifiche": "Your requests",
     "Storico Esami": "Exam History",
     "Storico Esercitazioni": "Practice History",
     "Tutte le tipologie": "All types",
     "Azioni": "Actions",
     "Nota": "Note",
-    "Esito": "Outcome"
+    "Esito": "Outcome",
+
+    "Invio avvenuto con successo": "Submission successful",
+    "Hai già preso parte a questo Test": "You have already participated in this Test",
+    "La data di esecuzione dell'esame non è oggi.": "The execution date of the exam is not today.",
+    "Il Test che stai cercando non esiste o è scaduto.": "The Test you are looking for does not exist or has expired.",
+    "L'esame è stato eliminato con successo.": "The exam has been successfully deleted.",
+    "L'esercitazione è stata eliminata con successo.": "The exercise has been successfully deleted.",
+    "La duplicazione è andata a buon termine": "Duplication completed successfully",
+    "L'esercizio è stato rimosso con successo.": "The exercise has been successfully removed.",
+    "L'esercizio è stato inserito con successo.": "The exercise has been successfully inserted.",
+    "L'esercitazione è stata creata con successo": "The exercise has been created successfully",
+    "L'esame è stato creato correttamente": "The exam has been created successfully",
+    "Con gli esercizi di cui disponi non riesci a raggiungere lo score desiderato. Il massimo raggiungibile è:": "With the exercises you have, you cannot achieve the desired score. The maximum achievable is:",
+    "Non è possibile formare un test con lo score desiderato con gli esercizi disponibili.": "It is not possible to form a test with the desired score with the available exercises.",
+    "Assistenza": "Support", 
+    "Classifica il Problema": "Rate the Request",
+    "Richiesta": "Request",
+    "La richiesta è stata inviata.": "The request has been sent."
 }

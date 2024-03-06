@@ -145,7 +145,7 @@ class PracticeController extends Controller
                 } 
                 else {
 
-                    return back()->withErrors(trans('Non è possibile formare un test con lo score desiderato con gli esercizi disponibili'))->withInput();
+                    return back()->withErrors(trans('Non è possibile formare un test con lo score desiderato con gli esercizi disponibili.'))->withInput();
                 }
 
             }
@@ -660,7 +660,7 @@ class PracticeController extends Controller
         }
         else{
 
-            return back()->withErrors('Non hai il permesso.');
+            return back()->withErrors(['errors' => trans('Non hai il permesso.')]);
         } 
         
     }
@@ -681,7 +681,7 @@ class PracticeController extends Controller
         }
         else if( $test->practice_date != now()->toDateString() ){
 
-            return back()->withErrors(['error' => "La data di esecuzione dell'esame non è oggi."]);
+            return back()->withErrors(['error' => trans("La data di esecuzione dell'esame non è oggi.")]);
         }
         else{
 
@@ -709,7 +709,7 @@ class PracticeController extends Controller
             }
             else{
 
-                return back()->withErrors(['error' => 'Hai già preso parte a questo Test']);
+                return back()->withErrors(['error' => trans('Hai già preso parte a questo Test')]);
             }
         }
     }
@@ -762,10 +762,8 @@ class PracticeController extends Controller
         for($i = 0; $i < count($exercise); $i++ ){
 
             $temporay = $score_user;
-            
-            $score_esercizio = $exercise[$i]["pivot"]["custom_score"];
             $correct_response = $exercise[$i]["correct_option"];
-            
+
             $answer = Answer::where([
                 ['delivered_id', '=', $delivere->id],
                 ['exercise_id', '=', $exercise[$i]["id"]]
@@ -782,11 +780,7 @@ class PracticeController extends Controller
                     case 'a':
                         if( $answer->response == $exercise[$i]["option_1"]){
 
-                            $score_user += $score_esercizio;
-                        }
-                        else{
-
-                            //Logica relative domande alla quale se sbagli togli uno score.
+                            $score_user += $exercise[$i]["score"];
                         }
                         $response = $exercise[$i]["option_1"];
                     break;
@@ -794,11 +788,7 @@ class PracticeController extends Controller
                     case 'b':
                         if( $answer->response == $exercise[$i]["option_2"]){
 
-                            $score_user += $score_esercizio;
-                        }
-                        else{
-
-                            //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
+                            $score_user += $exercise[$i]["score"];
                         }
                         $response = $exercise[$i]["option_2"];
                     break;
@@ -806,11 +796,7 @@ class PracticeController extends Controller
                     case 'c':
                         if( $answer->response == $exercise[$i]["option_3"] ){
 
-                            $score_user += $score_esercizio;
-                        }
-                        else{
-
-                            //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
+                            $score_user += $exercise[$i]["score"];
                         }
                         $response = $exercise[$i]["option_3"];
                     break;
@@ -818,11 +804,7 @@ class PracticeController extends Controller
                     case 'd':
                         if( $answer->response == $exercise[$i]["option_4"] ){
 
-                            $score_user += $score_esercizio;
-                        }
-                        else{
-
-                            //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
+                            $score_user += $exercise[$i]["score"];
                         }
                         $response = $exercise[$i]["option_4"];
                     break;
@@ -834,11 +816,7 @@ class PracticeController extends Controller
                 if( $correct_response == $answer->response )
                 {
 
-                    $score_user += $score_esercizio;
-                }
-                else{
-
-                    //Logica per le spiegazioni e relative domande alla quale se sbagli togli uno score.
+                    $score_user += $exercise[$i]["score"];
                 }
             }
 
@@ -898,13 +876,19 @@ class PracticeController extends Controller
         //Verifico se il test preve l'invio automatico del feedback.
         if( $feedback->feedback_enabled == false ){
 
-            return redirect()->route('ciao')->withErrors(['error' => 'Invio avvenuto con successo']);
+            return redirect()->route('dashboard')->with('success', trans('Invio avvenuto con successo'));
         }
         else{
 
+            
+            if( $feedback->public == 0 ){
+
+                $feedback->public = 1;
+                $feedback->save();
+            }
             $newDelivered->valutation = $this->AutoCorrect($practice_id);
             $newDelivered->save();
-            return redirect()->route('ciao')->withErrors(['error' => 'Invio avvenuto con successo']);
+            return redirect()->route('dashboard')->with('success', trans('Invio avvenuto con successo'));
         }
     }
     

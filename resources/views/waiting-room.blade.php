@@ -77,6 +77,7 @@
             ina="{{ __('In Attesa') }}";
             svl="{{ __('Svolgendo') }}";
             apr="{{ __( 'Approva' )}}";
+            cgt="{{ __( 'Consegnato' )}}";
         </script>
         <script src="/js/waitingRoomTeacher.js"></script>
     @else
