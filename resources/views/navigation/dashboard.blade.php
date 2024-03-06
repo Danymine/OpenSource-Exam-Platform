@@ -129,29 +129,29 @@
         </div>
     </div>
 
-<script>
-    events = {!! json_encode(Auth::user()->practices()->get()->map(function ($practice) {
-        return [
-            'title' => $practice->title,
-            'start' => $practice->practice_date, // Assumendo che $practice->practice_date sia nel formato corretto
-        ];
-    })) !!};    
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
 
-                var calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    events: events,
-                    eventClick: function(info) {
-                        if (info.event.url) {
-                            window.location.href = info.event.url; // Reindirizza alla URL dell'evento
-                        }
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: {!! json_encode(Auth::user()->practices()->get()->map(function ($practice) {
+                    return [
+                        'title' => $practice->title,
+                        'start' => $practice->practice_date, // Assumendo che $practice->practice_date sia nel formato corretto
+                        'url' => '/waiting-room/' .  $practice->key  // Aggiungi l'URL con la chiave corretta
+                    ];
+                })) !!},
+                eventClick: function(info) {
+                    if (info.event.extendedProps.url) {
+                        window.location.href = info.event.extendedProps.url; // Reindirizza alla URL dell'evento
                     }
-                });
-
-                calendar.render();
+                }
             });
-        </script>
+
+            calendar.render();
+        });
+    </script>
 
     @elseif( Auth::user()->roles == "Student" )
         

@@ -9,14 +9,14 @@
     }
 </style>
 
-
 <x-app-layout>
     <div class="container mt-5 p-4 bg-white rounded-lg shadow"> 
         <!-- Sezione Title, Description e Total Score -->
         <div class="mb-4">
             <h2 class="mb-2 text-lg font-semibold">{{ $test->title }}</h2>
-            <h6 class="mb-2">{{ $test->description }}</h6>
+            <h6 class="mb-2">{{ $test->subject }}</h6>
             <h6>{{ __('Punteggio massimo della prova') }}: <span class="font-semibold">{{ $test->total_score }}</span></h6>
+            <p>{{ $test->description }}</p>
         </div>
 
         <!-- Sezione con i riquadri delle domande -->
@@ -70,7 +70,6 @@
     </div>
 </div>
 
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const exerciseButtons = document.querySelectorAll('.exercise-btn');
@@ -81,7 +80,9 @@
         const progressBar = document.querySelector(".progress-bar");
         const exercises = {!! json_encode($exercises) !!};
         let currentExerciseIndex = 0;
-        
+        let selectedAnswers = {};
+        let answeredQuestions = [];
+
         function showExercise(index) {
             if (index >= 0 && index < exercises.length) {
                 const exercise = exercises[index];
@@ -95,25 +96,25 @@
                                 <span class="badge bg-secondary text-white">${exercise['score']}</span>
                             </div>
                         </div>
-                        ${exercise["type"] === "Risposta Aperta" ? `<textarea class="form-control" name="risposte[${exercise['id']}]" rows="2"></textarea>` : ""}
                         ${exercise["type"] === "Risposta Multipla" ? `
                             <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="risposte[${exercise['id']}]" id="option1_${exercise['id']}" value="${exercise['option_1']}">
+                                <input class="form-check-input" type="radio" name="risposte[${exercise['id']}]" id="option1_${exercise['id']}" value="${exercise['option_1']}" ${selectedAnswers[exercise['id']] === exercise['option_1'] ? 'checked' : ''}>
                                 <label class="form-check-label" for="option1_${exercise['id']}">${exercise['option_1']}</label>
                             </div>
                             <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="risposte[${exercise['id']}]" id="option2_${exercise['id']}" value="${exercise['option_2']}">
+                                <input class="form-check-input" type="radio" name="risposte[${exercise['id']}]" id="option2_${exercise['id']}" value="${exercise['option_2']}" ${selectedAnswers[exercise['id']] === exercise['option_2'] ? 'checked' : ''}>
                                 <label class="form-check-label" for="option2_${exercise['id']}">${exercise['option_2']}</label>
                             </div>
                             <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="risposte[${exercise['id']}]" id="option3_${exercise['id']}" value="${exercise['option_3']}">
+                                <input class="form-check-input" type="radio" name="risposte[${exercise['id']}]" id="option3_${exercise['id']}" value="${exercise['option_3']}" ${selectedAnswers[exercise['id']] === exercise['option_3'] ? 'checked' : ''}>
                                 <label class="form-check-label" for="option3_${exercise['id']}">${exercise['option_3']}</label>
                             </div>
                             <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="risposte[${exercise['id']}]" id="option4_${exercise['id']}" value="${exercise['option_4']}">
+                                <input class="form-check-input" type="radio" name="risposte[${exercise['id']}]" id="option4_${exercise['id']}" value="${exercise['option_4']}" ${selectedAnswers[exercise['id']] === exercise['option_4'] ? 'checked' : ''}>
                                 <label class="form-check-label" for="option4_${exercise['id']}">${exercise['option_4']}</label>
                             </div>
                         ` : ""}
+                        ${exercise["type"] === "Risposta Aperta" ? renderUserAnswer(exercise) : ""}
                     </div>
                 `;
                 prevButton.disabled = index === 0;
@@ -127,22 +128,75 @@
                 exerciseButtons[index].classList.add('selected');
 
                 // Aggiorna la progress bar
-                progressBar.style.width = ((index + 1) / exercises.length * 100) + "%";
+                updateProgressBar();
             }
         }
 
-        // Aggiungi un event listener a ciascun pulsante delle domande
+        function renderUserAnswer(exercise) {
+            if (selectedAnswers[exercise['id']]) {
+                // Se l'utente ha già fornito una risposta, visualizzala
+                return `<textarea class="form-control" name="risposte[${exercise['id']}]" rows="2">${selectedAnswers[exercise['id']]}</textarea>`;
+            } else {
+                // Altrimenti, visualizza un campo vuoto per l'immissione della risposta
+                return `<textarea class="form-control" name="risposte[${exercise['id']}]" rows="2"></textarea>`;
+            }
+        }
+
+        function updateProgressBar() {
+            const answeredQuestionsCount = answeredQuestions.length;
+            const progress = (answeredQuestionsCount / exercises.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Definisci una funzione per gestire il click sui pulsanti numerati delle domande
+        function handleExerciseButtonClick(index) {
+            const selectedOption = document.querySelector(`input[name="risposte[${exercises[currentExerciseIndex]['id']}]"]:checked`);
+            if (selectedOption) {
+                selectedAnswers[exercises[currentExerciseIndex]['id']] = selectedOption.value;
+                if (!answeredQuestions.includes(currentExerciseIndex)) {
+                    answeredQuestions.push(currentExerciseIndex);
+                }
+            } else {
+                const textArea = document.querySelector(`textarea[name="risposte[${exercises[currentExerciseIndex]['id']}]"]`);
+                if (textArea && textArea.value.trim() !== "") {
+                    selectedAnswers[exercises[currentExerciseIndex]['id']] = textArea.value;
+                    if (!answeredQuestions.includes(currentExerciseIndex)) {
+                        answeredQuestions.push(currentExerciseIndex);
+                    }
+                }
+            }
+            currentExerciseIndex = index;
+            showExercise(currentExerciseIndex);
+        }
+
+        // Aggiungi un event listener a ciascun pulsante numerato delle domande
         exerciseButtons.forEach(function(button, index) {
             button.addEventListener('click', function() {
-                currentExerciseIndex = index;
-                showExercise(currentExerciseIndex);
+                handleExerciseButtonClick(index);
             });
         });
 
         // Event listener per il pulsante "Indietro"
         prevButton.addEventListener('click', function() {
-            currentExerciseIndex--;
-            showExercise(currentExerciseIndex);
+            if (currentExerciseIndex > 0) {
+                const selectedOption = document.querySelector(`input[name="risposte[${exercises[currentExerciseIndex]['id']}]"]:checked`);
+                if (selectedOption) {
+                    selectedAnswers[exercises[currentExerciseIndex]['id']] = selectedOption.value;
+                    if (!answeredQuestions.includes(currentExerciseIndex)) {
+                        answeredQuestions.push(currentExerciseIndex);
+                    }
+                } else {
+                    const textArea = document.querySelector(`textarea[name="risposte[${exercises[currentExerciseIndex]['id']}]"]`);
+                    if (textArea && textArea.value.trim() !== "") {
+                        selectedAnswers[exercises[currentExerciseIndex]['id']] = textArea.value;
+                        if (!answeredQuestions.includes(currentExerciseIndex)) {
+                            answeredQuestions.push(currentExerciseIndex);
+                        }
+                    }
+                }
+                currentExerciseIndex--;
+                showExercise(currentExerciseIndex);
+            }
         });
 
         // Event listener per il pulsante "Avanti" o "Invia Risposte"
@@ -150,9 +204,35 @@
             if (currentExerciseIndex === exercises.length - 1) {
                 $('#confirmModal').modal('show'); // Mostra la modale di conferma
             } else {
+                const selectedOption = document.querySelector(`input[name="risposte[${exercises[currentExerciseIndex]['id']}]"]:checked`);
+                if (selectedOption) {
+                    selectedAnswers[exercises[currentExerciseIndex]['id']] = selectedOption.value;
+                    if (!answeredQuestions.includes(currentExerciseIndex)) {
+                        answeredQuestions.push(currentExerciseIndex);
+                    }
+                } else {
+                    const textArea = document.querySelector(`textarea[name="risposte[${exercises[currentExerciseIndex]['id']}]"]`);
+                    if (textArea && textArea.value.trim() !== "") {
+                        selectedAnswers[exercises[currentExerciseIndex]['id']] = textArea.value;
+                        if (!answeredQuestions.includes(currentExerciseIndex)) {
+                            answeredQuestions.push(currentExerciseIndex);
+                        }
+                    }
+                }
                 currentExerciseIndex++;
                 showExercise(currentExerciseIndex);
             }
+        });
+
+        // Event listener per il cambio di opzione nelle risposte multiple
+        document.querySelectorAll('input[type="radio"]').forEach(input => {
+            input.addEventListener('change', function() {
+                const exerciseId = this.name.match(/\[(.*?)\]/)[1];
+                selectedAnswers[exerciseId] = this.value;
+                if (!answeredQuestions.includes(currentExerciseIndex)) {
+                    answeredQuestions.push(currentExerciseIndex);
+                }
+            });
         });
 
         // Event listener per il pulsante di conferma nella modale
@@ -165,10 +245,7 @@
             $('#confirmModal').modal('hide'); // Chiudi la modale
         });
 
-
         // Mostra la prima domanda all'avvio della pagina
         showExercise(currentExerciseIndex);
     });
-
 </script>
-
