@@ -6,7 +6,8 @@
 
     <div class="container">
         @if($errors->any())
-        <div class="alert alert-danger">
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -16,11 +17,13 @@
         @endif
 
         @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ session('success') }}
+            </div>
         @endif
     </div>
+
 
     <div class="container">
         @if(Auth::user()->roles == "Teacher" && $practice->user_id == Auth::user()->id)

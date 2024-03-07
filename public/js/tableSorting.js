@@ -386,3 +386,57 @@ type.addEventListener('change', function(){
         buildVeroFalso(exercise, true);
     }
 });
+
+function toggleFilterModal() {
+    var filterSection = document.getElementById('filterSection');
+    var resetButton = document.querySelector('.btn-secondary');
+    if (filterSection.style.display === 'none') {
+        filterSection.style.display = 'block';
+        resetButton.style.display = 'inline-block'; // Mostra il pulsante di reset
+    } else {
+        filterSection.style.display = 'none';
+        resetButton.style.display = 'none'; // Nascondi il pulsante di reset
+        resetFilters(); // Resetta i filtri quando il modulo dei filtri viene chiuso
+    }
+}
+
+function resetFilters() {
+    document.getElementById('materiaInput').value = '';
+    document.getElementById('typeInput').value = '';
+    document.getElementById('difficoltaInput').value = '';
+    applyFilters(); // Applica i filtri resettati
+}
+
+function applyFilters() {
+    var materia = document.getElementById('materiaInput').value.toLowerCase();
+    var tipo = document.getElementById('typeInput').value.toLowerCase();
+    var difficolta = document.getElementById('difficoltaInput').value.toLowerCase();
+    var table = document.getElementById('exercise-table');
+    var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+    for (var i = 0; i < rows.length; i++) {
+        var materiaCell = rows[i].getElementsByTagName('td')[3].textContent.toLowerCase();
+        var tipoCell = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
+        var difficoltaCell = rows[i].getElementsByTagName('td')[2].textContent.toLowerCase();
+
+        var showRow = true;
+
+        if (materia !== '' && !materiaCell.includes(materia)) {
+            showRow = false;
+        }
+
+        if (tipo !== '' && !tipoCell.includes(tipo)) {
+            showRow = false;
+        }
+
+        if (difficolta !== '' && difficoltaCell !== difficolta) {
+            showRow = false;
+        }
+
+        if (showRow) {
+            rows[i].style.display = '';
+        } else {
+            rows[i].style.display = 'none';
+        }
+    }
+}

@@ -18,7 +18,8 @@
     <!--Dato che è un docente e che i risultati del test non sono stati ancora pubblicati lasciamo sempre la possibilità di modificare la valutazione-->
     <div class="container">
         @if($errors->any())
-        <div class="alert alert-danger">
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -28,12 +29,13 @@
         @endif
 
         @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ session('success') }}
+            </div>
         @endif
     </div>
-
+    
     <div class="container p-4 rounded" style="background-color: #fff; box-shadow: 0.15rem 0.25rem 0 rgb(33 40 50 / 15%); border: 1px solid rgba(0,0,0,.125);" >
         <div class="row">
             <div class="col-md-6">

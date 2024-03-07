@@ -176,6 +176,7 @@ class PracticeController extends Controller
         // Recupera tutte le pratiche associate all'utente autenticato di tipo "exam"
         $practices = Practice::where('user_id', Auth::id())
                              ->where('type', $type)
+                             ->orderBy('created_at', 'desc')
                              ->get();
     
         // Estrai tutte le materie univoche dalle pratiche
@@ -304,7 +305,7 @@ class PracticeController extends Controller
         // Recupera tutte le pratiche associate all'utente autenticato di tipo "practice"
         $practices = Practice::where('user_id', Auth::id())
                      ->where('type', $type)
-                     ->orderBy('created_at', 'DESC')
+                     ->orderBy('created_at', 'desc')
                      ->get();
     
         // Estrai tutte le materie univoche dalle pratiche
