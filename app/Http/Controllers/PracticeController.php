@@ -60,7 +60,7 @@ class PracticeController extends Controller
             // Se la somma dei punteggi è inferiore al target, seleziona ulteriori esercizi
             if ($selectedScore < $targetScore) {
                 $remainingExercises = $exercises->diff($selectedExercises);
-                $result = selectExercises($remainingExercises, $targetScore, $selectedExercises);
+                $result = $this->selectExercises($remainingExercises, $targetScore, $selectedExercises);
                 if ($result) {
                     return $result;
                 }
@@ -194,13 +194,15 @@ class PracticeController extends Controller
 
     public function create_exame2(){
         if(session()->has('exame_step1')){
-
+            
             $exercises = Exercise::where('user_id', Auth::user()->id)->get();
-            return view('exame.exame_create2', ['exercises' => $exercises]);
+            $subjects = Exercise::distinct()->pluck('subject');
+            $types = Exercise::distinct()->pluck('type');
+            return view('exame.exame_create2', ['exercises' => $exercises, 'subjects' => $subjects, 'types' => $types]);
         }
-
+    
         abort('403', "Non autorizzato.");
-    }
+    }    
 
     public function create_exame3(){
         if(session()->has('exame_step1') && array_key_exists('total_score', session()->get('exame_step1'))) return view('exame.exame_create3'); abort('403', "Non autorizzato.");
@@ -321,14 +323,16 @@ class PracticeController extends Controller
     }
 
     public function create_practice2(){
-        if (session()->has('exame_step1')) {
-
+        if(session()->has('exame_step1')){
+            
             $exercises = Exercise::where('user_id', Auth::user()->id)->get();
-            return view('practice.practice_create2', ['exercises' => $exercises]);
+            $subjects = Exercise::distinct()->pluck('subject');
+            $types = Exercise::distinct()->pluck('type');
+            return view('practice.practice_create2', ['exercises' => $exercises, 'subjects' => $subjects, 'types' => $types]);
         }
-        
+    
         abort('403', "Non autorizzato.");
-    }
+    } 
 
     public function create_practice3(){
         if (session()->has('exame_step1') && array_key_exists('total_score', session()->get('exame_step1'))) return view('practice.practice_create3'); abort('403', "Non autorizzato.");

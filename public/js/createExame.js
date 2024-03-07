@@ -48,106 +48,83 @@ function closeDetailsDialog() {
     $('#details-dialog').modal('hide');
 }
 
+function toggleFilterSection() {
+    var filterSection = document.getElementById('filterSection');
+    var resetButton = document.querySelector('.btn-secondary'); // Seleziona il bottone "Cancella Filtri"
     
-document.addEventListener("DOMContentLoaded", function() {
-    // Seleziona gli elementi del DOM
-    const filtro = document.getElementById("filtri");
-    const valore = document.getElementById("valore");
-    const esercizi = document.querySelectorAll(".exercise");
+    if (filterSection.style.display === 'none') {
+        filterSection.style.display = 'block';
+        resetButton.style.display = 'inline-block'; // Mostra il bottone "Cancella Filtri"
+    } else {
+        filterSection.style.display = 'none';
+        resetButton.style.display = 'none'; // Nascondi il bottone "Cancella Filtri"
+        resetFilters(); // Resetta i filtri quando il modulo dei filtri viene chiuso
+    }
+}
 
-    // Aggiungi un listener per il cambiamento del filtro o del valore
-    filtro.addEventListener("change", filterExercises);
-    valore.addEventListener("input", filterExercises);
 
-    function filterExercises() {
-        
-        const filtroSelezionato = filtro.value;
-        if( valore.value != "" ){
-            const valoreInserito = valore.value.toLowerCase();
-            
-            switch(filtroSelezionato){
+function resetFilters() {
+    document.getElementById('materiaInput').value = '';
+    document.getElementById('typeInput').value = '';
+    document.getElementById('difficoltaInput').value = '';
+    applyFilters(); // Applica i filtri resettati
+}
 
-                case 'Materia':
-                    esercizi.forEach(function (esercizio){
-                        
-                        $materiaEsercizio = esercizio.dataset.subject.toLowerCase()
-                        if($materiaEsercizio.includes(valoreInserito)){
+function applyFilters() {
+    var materia = document.getElementById('materiaInput').value.toLowerCase();
+    var tipo = document.getElementById('typeInput').value.toLowerCase();
+    var difficolta = document.getElementById('difficoltaInput').value.toLowerCase();
+    var exercises = document.getElementsByClassName('exercise');
 
-                            esercizio.style.display = "block"; // Mostra l'esercizio
-                        }
-                        else {
+    for (var i = 0; i < exercises.length; i++) {
+        var exercise = exercises[i];
+        var subject = exercise.getAttribute('data-subject').toLowerCase();
+        var exerciseType = exercise.getAttribute('data-type').toLowerCase();
+        var difficulty = exercise.getAttribute('data-difficulty').toLowerCase();
 
-                            esercizio.style.display = "none"; // Nascondi l'esercizio
-                        }
-                        
-                    })
-                break;
+        // Verifica se l'esercizio corrente soddisfa i filtri
+        var showExercise = true;
 
-                case 'Difficoltà':
-                    esercizi.forEach(function (esercizio){
-                        
-                        $difficoltaEsercizio = esercizio.dataset.difficulty.toLowerCase()
-                        if($difficoltaEsercizio.includes(valoreInserito)){
-
-                            esercizio.style.display = "block"; // Mostra l'esercizio
-                        }
-                        else {
-                            
-                            esercizio.style.display = "none"; // Nascondi l'esercizio
-                        }
-                        
-                    })
-                break;
-
-                case 'Tipologia':
-                    esercizi.forEach(function (esercizio){
-                        
-                        $tipologiaEsercizio = esercizio.dataset.type.toLowerCase()
-                        if($tipologiaEsercizio.includes(valoreInserito)){
-
-                            esercizio.style.display = "block"; // Mostra l'esercizio
-                        }
-                        else {
-                            
-                            esercizio.style.display = "none"; // Nascondi l'esercizio
-                        }
-                        
-                    })
-                break;
-            }
+        if (materia !== '' && subject.indexOf(materia) === -1) {
+            showExercise = false;
         }
-        else{
 
-            if( filtroSelezionato == "tutto" ){
+        if (tipo !== '' && exerciseType.indexOf(tipo) === -1) {
+            showExercise = false;
+        }
 
-                esercizi.forEach(function (esercizio){
-                        
-                   
-                    esercizio.style.display = "block"; 
-                    
-                })
-            }
+        if (difficolta !== '' && difficulty !== difficolta) {
+            showExercise = false;
+        }
+
+        // Se l'esercizio non soddisfa i filtri, nascondilo
+        if (showExercise) {
+            exercise.style.display = 'block';
+        } else {
+            exercise.style.display = 'none';
         }
     }
+}
 
+function updateScoreCounter() {
+    // Seleziona tutti gli input checkbox degli esercizi selezionati
+    var selectedExercises = document.querySelectorAll('input[type="checkbox"]:checked');
+    
+    // Calcola il punteggio totale
+    var totalScore = Array.from(selectedExercises).reduce((accumulator, exercise) => {
+        return accumulator + parseInt(exercise.getAttribute('data-score'));
+    }, 0);
+    
+    // Aggiorna il contenuto del counter del punteggio
+    document.getElementById('score').textContent = 'Punteggio: ' + totalScore;
+}
 
-    const checkboxes = document.querySelectorAll('input[type="checkbox"][name="exercise[]"]');
-    let score = 0;
-    // Aggiungi un listener per l'evento change a ciascuna casella di controllo
-    checkboxes.forEach(function(checkbox) {
-        checkbox.addEventListener("change", function() {
-            score = 0;
-            checkboxes.forEach(function(cb) {
-                if (cb.checked) {
-                    
-                    score += parseInt(cb.dataset.score);
-                }
-            });
+// Chiamata alla funzione al caricamento della pagina per aggiornare il punteggio iniziale
+updateScoreCounter();
 
-            document.getElementById('score').innerHTML = "<b>Score: " + score + '</b>';
-            input = document.getElementById('score_input');
-            input.setAttribute('value', score);
-
-        });
-    });
+// Aggiungi un event listener per ogni input checkbox per aggiornare il punteggio quando vengono selezionati o deselezionati
+var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+checkboxes.forEach(function(checkbox) {
+    checkbox.addEventListener('change', updateScoreCounter);
 });
+

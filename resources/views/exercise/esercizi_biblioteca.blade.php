@@ -31,7 +31,7 @@
 
     <!-- Aggiunta dei filtri sopra la tabella -->
     <div id="filterSection" class="row mb-3" style="display: none;">
-      <div class="row" style="margin-bottom: 0;">
+      <div class="row justify-content-center text-center" style="margin-bottom: 0;">
         <div class="col-md-3">
           <select id="materiaInput" class="form-select w-100 filter-select" aria-label="Seleziona materia" onchange="applyFilters()">
             <option value="">{{ __('Tutte le materie') }}</option>
