@@ -1,14 +1,3 @@
-<style>
-    .exercise-btn.selected {
-        background-color: #007bff;
-        color: #fff;
-    }
-
-    #questionCard .card-body {
-        min-height: 335px; /* Imposta un'altezza minima per il riquadro della domanda */
-    }
-</style>
-
 <x-app-layout>
     <div class="container mt-5 p-4 bg-white rounded-lg shadow"> 
         <!-- Sezione Title, Description e Total Score -->
@@ -37,215 +26,227 @@
             <form action="{{ route('pratices.send') }}" method="post" id="invia">
                 @csrf
                 <input type="hidden" name="id_practices" value="{{ $test->id }}">
-                <div class="card mb-4" id="questionCard">
-                    <!-- Il codice per visualizzare la domanda corrente verrà aggiunto dinamicamente qui -->
-                </div>
+                @foreach($exercises as $index => $exercise)
+                    <div class="card mb-4" id="questionCard{{$index}}">
+                        <div class="card-body">
+                            <input type="hidden" name="id[]" value="{{ $exercise['id'] }}">
+                            <h6 class="mb-3 font-medium">{{ $exercise['question'] }}</h6>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center">
+                                    <span class="mr-2">Score:</span>
+                                    <span class="badge bg-secondary text-white">{{ $exercise['score'] }}</span>
+                                </div>
+                            </div>
+                            @if($exercise['type'] === "Risposta Multipla")
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="risposte[{{ $exercise['id'] }}]" id="option1_{{ $exercise['id'] }}" value="{{ $exercise['option_1'] }}">
+                                    <label class="form-check-label" for="option1_{{ $exercise['id'] }}">{{ $exercise['option_1'] }}</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="risposte[{{ $exercise['id'] }}]" id="option2_{{ $exercise['id'] }}" value="{{ $exercise['option_2'] }}">
+                                    <label class="form-check-label" for="option2_{{ $exercise['id'] }}">{{ $exercise['option_2'] }}</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="risposte[{{ $exercise['id'] }}]" id="option3_{{ $exercise['id'] }}" value="{{ $exercise['option_3'] }}">
+                                    <label class="form-check-label" for="option3_{{ $exercise['id'] }}">{{ $exercise['option_3'] }}</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="risposte[{{ $exercise['id'] }}]" id="option4_{{ $exercise['id'] }}" value="{{ $exercise['option_4'] }}">
+                                    <label class="form-check-label" for="option4_{{ $exercise['id'] }}">{{ $exercise['option_4'] }}</label>
+                                </div>
+                            @elseif($exercise['type'] === "Risposta Aperta")
+                                <textarea class="form-control" name="risposte[{{ $exercise['id'] }}]" rows="7"></textarea>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
             </form>
         </div>
 
         <!-- Pulsante per tornare alla domanda precedente -->
-        <button id="previousBtn" class="btn btn-secondary mr-2">Indietro</button>
+        <button id="previousBtn" class="btn btn-secondary mr-2">{{ __('Indietro') }}</button>
 
         <!-- Pulsante per passare alla domanda successiva -->
-        <button id="nextBtn" class="btn btn-primary">Avanti</button>
+        <button id="nextBtn" class="btn btn-primary">{{ __('Avanti') }}</button>
 
+        <!-- Pulsante per inviare il modulo  di risposta -->
+        <button id="submitBtn" class="btn btn-primary" style="float: right;" >{{ __('Invia') }}</button>
     </div>
-</x-app-layout>
 
-<!-- Modal -->
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <!-- Modal di conferma -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="confirmModalLabel">Conferma Invio Risposte</h5>
+                <h5 class="modal-title" id="confirmationModalLabel">{{ __('Conferma Invio') }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
-                Sei sicuro di voler inviare le risposte?
+                {{ __('Sei sicuro di voler inviare le risposte?') }}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-danger" data-bs-dismiss="modal" id="cancelSendBtn">Annulla</button>
-                <button type="button" class="btn btn-primary" id="confirmSendBtn">Invia</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">{{ __('Annulla') }}</button>
+                <button type="button" class="btn btn-primary" id="confirmSend">{{ __('Invia') }}</button>
+            </div>
             </div>
         </div>
     </div>
-</div>
+
+</x-app-layout>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const exerciseButtons = document.querySelectorAll('.exercise-btn');
-        const questionCard = document.getElementById("questionCard");
-        const prevButton = document.getElementById("previousBtn");
-        const nextButton = document.getElementById("nextBtn");
-        const form = document.querySelector("#invia");
-        const progressBar = document.querySelector(".progress-bar");
-        const exercises = {!! json_encode($exercises) !!};
-        let currentExerciseIndex = 0;
-        let selectedAnswers = {};
-        let answeredQuestions = [];
+        var questions = document.querySelectorAll('.card');
+        var totalQuestions = questions.length;
+        var nextButton = document.getElementById('nextBtn');
+        var previousButton = document.getElementById('previousBtn');
+        var progressBar = document.querySelector('.progress-bar');
 
-        function showExercise(index) {
-            if (index >= 0 && index < exercises.length) {
-                const exercise = exercises[index];
-                questionCard.innerHTML = `
-                    <div class="card-body">
-                        <input type="hidden" name="id[]" value="${exercise['id']}">
-                        <h6 class="mb-3 font-medium">${exercise["question"]}</h6>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="d-flex align-items-center">
-                                <span class="mr-2">Score:</span>
-                                <span class="badge bg-secondary text-white">${exercise['score']}</span>
-                            </div>
-                        </div>
-                        ${exercise["type"] === "Risposta Multipla" ? `
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="risposte[${exercise['id']}]" id="option1_${exercise['id']}" value="${exercise['option_1']}" ${selectedAnswers[exercise['id']] === exercise['option_1'] ? 'checked' : ''}>
-                                <label class="form-check-label" for="option1_${exercise['id']}">${exercise['option_1']}</label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="risposte[${exercise['id']}]" id="option2_${exercise['id']}" value="${exercise['option_2']}" ${selectedAnswers[exercise['id']] === exercise['option_2'] ? 'checked' : ''}>
-                                <label class="form-check-label" for="option2_${exercise['id']}">${exercise['option_2']}</label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="risposte[${exercise['id']}]" id="option3_${exercise['id']}" value="${exercise['option_3']}" ${selectedAnswers[exercise['id']] === exercise['option_3'] ? 'checked' : ''}>
-                                <label class="form-check-label" for="option3_${exercise['id']}">${exercise['option_3']}</label>
-                            </div>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="risposte[${exercise['id']}]" id="option4_${exercise['id']}" value="${exercise['option_4']}" ${selectedAnswers[exercise['id']] === exercise['option_4'] ? 'checked' : ''}>
-                                <label class="form-check-label" for="option4_${exercise['id']}">${exercise['option_4']}</label>
-                            </div>
-                        ` : ""}
-                        ${exercise["type"] === "Risposta Aperta" ? renderUserAnswer(exercise) : ""}
-                    </div>
-                `;
-                prevButton.disabled = index === 0;
-                nextButton.innerText = index === exercises.length - 1 ? "Invia Risposte" : "Avanti";
-                
-                // Rimuovi la classe 'selected' da tutti i pulsanti delle domande
-                exerciseButtons.forEach(button => {
-                    button.classList.remove('selected');
-                });
-                // Aggiungi la classe 'selected' al pulsante della domanda corrente
-                exerciseButtons[index].classList.add('selected');
+        // Imposta il tasto Indietro come disabilitato all'avvio
+        previousButton.disabled = true;
+        nextButton.disabled = false;
 
-                // Aggiorna la progress bar
-                updateProgressBar();
-            }
-        }
+        hideAllQuestionsExcept(0); // Nasconde tutte le domande tranne la prima
+        updateProgressBar(); // Inizializza la progress bar
 
-        function renderUserAnswer(exercise) {
-            if (selectedAnswers[exercise['id']]) {
-                // Se l'utente ha già fornito una risposta, visualizzala
-                return `<textarea class="form-control" name="risposte[${exercise['id']}]" rows="2">${selectedAnswers[exercise['id']]}</textarea>`;
-            } else {
-                // Altrimenti, visualizza un campo vuoto per l'immissione della risposta
-                return `<textarea class="form-control" name="risposte[${exercise['id']}]" rows="2"></textarea>`;
-            }
-        }
+        // Aggiungi un gestore di eventi per ciascun campo di input
+        var inputFields = document.querySelectorAll('input[type="radio"], input[type="text"], textarea');
+        inputFields.forEach(function(field) {
+            field.addEventListener('input', updateProgressBar);
+        });
 
-        function updateProgressBar() {
-            const answeredQuestionsCount = answeredQuestions.length;
-            const progress = (answeredQuestionsCount / exercises.length) * 100;
-            progressBar.style.width = `${progress}%`;
-        }
+        // Aggiungi un gestore di eventi per i campi di input di tipo radio
+        var radioGroups = document.querySelectorAll('input[type="radio"]');
+        radioGroups.forEach(function(radioGroup) {
+            radioGroup.addEventListener('change', updateProgressBar);
+        });
 
-        // Definisci una funzione per gestire il click sui pulsanti numerati delle domande
-        function handleExerciseButtonClick(index) {
-            const selectedOption = document.querySelector(`input[name="risposte[${exercises[currentExerciseIndex]['id']}]"]:checked`);
-            if (selectedOption) {
-                selectedAnswers[exercises[currentExerciseIndex]['id']] = selectedOption.value;
-                if (!answeredQuestions.includes(currentExerciseIndex)) {
-                    answeredQuestions.push(currentExerciseIndex);
-                }
-            } else {
-                const textArea = document.querySelector(`textarea[name="risposte[${exercises[currentExerciseIndex]['id']}]"]`);
-                if (textArea && textArea.value.trim() !== "") {
-                    selectedAnswers[exercises[currentExerciseIndex]['id']] = textArea.value;
-                    if (!answeredQuestions.includes(currentExerciseIndex)) {
-                        answeredQuestions.push(currentExerciseIndex);
-                    }
-                }
-            }
-            currentExerciseIndex = index;
-            showExercise(currentExerciseIndex);
-        }
-
-        // Aggiungi un event listener a ciascun pulsante numerato delle domande
-        exerciseButtons.forEach(function(button, index) {
+        // Aggiungi un gestore di eventi per ciascun pulsante numerato
+        var exerciseButtons = document.querySelectorAll('.exercise-btn');
+        exerciseButtons.forEach(function(button) {
             button.addEventListener('click', function() {
-                handleExerciseButtonClick(index);
+                var indexToShow = parseInt(this.getAttribute('data-index'));
+                hideAllQuestionsExcept(indexToShow);
+                showQuestion(indexToShow);
+                updateProgressBar();
+                // Imposta la condizione per abilitare o disabilitare il pulsante Indietro
+                if (indexToShow === 0) {
+                    previousButton.disabled = true;
+                } else {
+                    previousButton.disabled = false;
+                }
+                // Imposta la condizione per abilitare o disabilitare il pulsante Avanti
+                if (indexToShow === totalQuestions - 1) {
+                    nextButton.disabled = true;
+                } else {
+                    nextButton.disabled = false;
+                }
             });
         });
 
-        // Event listener per il pulsante "Indietro"
-        prevButton.addEventListener('click', function() {
-            if (currentExerciseIndex > 0) {
-                const selectedOption = document.querySelector(`input[name="risposte[${exercises[currentExerciseIndex]['id']}]"]:checked`);
-                if (selectedOption) {
-                    selectedAnswers[exercises[currentExerciseIndex]['id']] = selectedOption.value;
-                    if (!answeredQuestions.includes(currentExerciseIndex)) {
-                        answeredQuestions.push(currentExerciseIndex);
-                    }
-                } else {
-                    const textArea = document.querySelector(`textarea[name="risposte[${exercises[currentExerciseIndex]['id']}]"]`);
-                    if (textArea && textArea.value.trim() !== "") {
-                        selectedAnswers[exercises[currentExerciseIndex]['id']] = textArea.value;
-                        if (!answeredQuestions.includes(currentExerciseIndex)) {
-                            answeredQuestions.push(currentExerciseIndex);
-                        }
-                    }
-                }
-                currentExerciseIndex--;
-                showExercise(currentExerciseIndex);
-            }
-        });
-
-        // Event listener per il pulsante "Avanti" o "Invia Risposte"
+        // Gestisci il clic sul pulsante Avanti
         nextButton.addEventListener('click', function() {
-            if (currentExerciseIndex === exercises.length - 1) {
-                $('#confirmModal').modal('show'); // Mostra la modale di conferma
-            } else {
-                const selectedOption = document.querySelector(`input[name="risposte[${exercises[currentExerciseIndex]['id']}]"]:checked`);
-                if (selectedOption) {
-                    selectedAnswers[exercises[currentExerciseIndex]['id']] = selectedOption.value;
-                    if (!answeredQuestions.includes(currentExerciseIndex)) {
-                        answeredQuestions.push(currentExerciseIndex);
-                    }
-                } else {
-                    const textArea = document.querySelector(`textarea[name="risposte[${exercises[currentExerciseIndex]['id']}]"]`);
-                    if (textArea && textArea.value.trim() !== "") {
-                        selectedAnswers[exercises[currentExerciseIndex]['id']] = textArea.value;
-                        if (!answeredQuestions.includes(currentExerciseIndex)) {
-                            answeredQuestions.push(currentExerciseIndex);
-                        }
-                    }
+            var currentQuestionIndex = getCurrentQuestionIndex();
+            if (currentQuestionIndex < totalQuestions - 1) {
+                hideQuestion(currentQuestionIndex);
+                showQuestion(currentQuestionIndex + 1);
+                updateProgressBar();
+                // Abilita il tasto Indietro quando si passa alla domanda successiva
+                previousButton.disabled = false;
+                
+                // Disabilita il tasto Avanti se si passa all'ultima domanda
+                if (currentQuestionIndex === totalQuestions - 2 ) {
+                    nextButton.disabled = true;
                 }
-                currentExerciseIndex++;
-                showExercise(currentExerciseIndex);
             }
         });
 
-        // Event listener per il cambio di opzione nelle risposte multiple
-        document.querySelectorAll('input[type="radio"]').forEach(input => {
-            input.addEventListener('change', function() {
-                const exerciseId = this.name.match(/\[(.*?)\]/)[1];
-                selectedAnswers[exerciseId] = this.value;
-                if (!answeredQuestions.includes(currentExerciseIndex)) {
-                    answeredQuestions.push(currentExerciseIndex);
+        // Gestisci il clic sul pulsante Indietro
+        previousButton.addEventListener('click', function() {
+            var currentQuestionIndex = getCurrentQuestionIndex();
+            if (currentQuestionIndex > 0) {
+                hideQuestion(currentQuestionIndex);
+                showQuestion(currentQuestionIndex - 1);
+                updateProgressBar();
+                nextButton.disabled = false;
+            }
+            // Disabilita il tasto Indietro se si torna alla prima domanda
+            if (currentQuestionIndex === 1) {
+                previousButton.disabled = true;
+            }
+        }); 
+
+        // Nascondi la domanda corrente
+        function hideQuestion(index) {
+            questions[index].classList.add('hide-total');
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            questions[index].classList.remove('hide-total');
+        }
+
+        // Nascondi tutte le domande tranne quella con l'indice specificato
+        function hideAllQuestionsExcept(indexToShow) {
+            for (var i = 0; i < totalQuestions; i++) {
+                if (i !== indexToShow) {
+                    hideQuestion(i);
+                }
+            }
+        }
+
+        // Ottieni l'indice della domanda correntemente visualizzata
+        function getCurrentQuestionIndex() {
+            for (var i = 0; i < totalQuestions; i++) {
+                if (!questions[i].classList.contains('hide-total')) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        // Aggiorna il valore della progress bar in base al numero di domande completate
+        function updateProgressBar() {
+            var completedQuestions = 0;
+
+            questions.forEach(function(question) {
+                var inputFields = question.querySelectorAll('input[type="radio"], input[type="text"], textarea');
+                var completedField = false;
+
+                inputFields.forEach(function(field) {
+                    if ((field.tagName === 'INPUT' && field.type === 'radio' && field.checked) || (field.tagName !== 'INPUT' && field.value.trim() !== '')) {
+                        completedField = true;
+                    }
+                });
+
+                if (completedField) {
+                    completedQuestions++;
                 }
             });
+
+            var progressValue = (completedQuestions / totalQuestions) * 100;
+            progressBar.style.width = progressValue + '%';
+            progressBar.setAttribute('aria-valuenow', progressValue);
+        }
+
+        // Pulsante per inviare il modulo di risposta
+        var submitButton = document.getElementById('submitBtn');
+        // Modal di conferma
+        var confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+
+        // Gestisci il clic sul pulsante Invia
+        submitButton.addEventListener('click', function() {
+            // Mostra il modal di conferma
+            confirmationModal.show();
         });
 
-        // Event listener per il pulsante di conferma nella modale
-        document.getElementById("confirmSendBtn").addEventListener('click', function() {
-            form.submit(); // Invia il modulo
+        // Gestisci il clic sul pulsante di conferma all'interno del modal
+        document.getElementById('confirmSend').addEventListener('click', function() {
+            // Invia il modulo di risposta
+            document.getElementById('invia').submit();
         });
 
-        // Event listener per il pulsante di annulla nella modale
-        document.getElementById("cancelSendBtn").addEventListener('click', function() {
-            $('#confirmModal').modal('hide'); // Chiudi la modale
-        });
-
-        // Mostra la prima domanda all'avvio della pagina
-        showExercise(currentExerciseIndex);
     });
 </script>

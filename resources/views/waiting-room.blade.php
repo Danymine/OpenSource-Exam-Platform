@@ -58,7 +58,7 @@
                     </tbody>
                 </table>
 
-                <a href="{{ route('finish-test', ['practice' => $practice]) }}" class="btn btn-danger">{{ __('Termina') }}</a>
+                <a href="{{ route('dashboard', ['practice' => $practice]) }}" class="btn btn-danger">{{ __('Termina') }}</a>
             @endif
         @else
 

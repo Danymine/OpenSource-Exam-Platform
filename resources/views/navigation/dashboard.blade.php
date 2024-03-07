@@ -90,7 +90,7 @@
                                                         @if ( $practice->type  == "Exam" )
 
                                                             <tr class="exame">
-                                                                <td>{{ $practice->title }}e</td>
+                                                                <td>{{ $practice->title }}</td>
                                                                 <td>{{ $practice->practice_date  }}</td>
                                                                 <td>
                                                                     {{ 
