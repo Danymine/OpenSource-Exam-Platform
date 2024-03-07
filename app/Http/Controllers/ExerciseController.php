@@ -61,27 +61,26 @@ class ExerciseController extends Controller
 
             
             $validatedData = $request->validate([
-                'question' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255|min:5',
-                'explanation' => 'nullable|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
+                'question' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?\,\"]+$/|max:255|min:5',
             ]);
 
         }
         else if( $exerciseStep1['type'] == "Risposta Multipla" ){
 
             $validatedData = $request->validate([
-                'question' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255|min:5',
+                'question' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?\,\"]+$/|max:255|min:5',
                 'options' => 'array|required',
                 'options.*' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
                 'correct_option' => ['required', Rule::in(['a', 'b', 'c', 'd'])],
-                'explanation' => 'nullable|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
+                'explanation' => 'nullable|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-,\'\?\.]+$/|max:255',
             ]);
         }
         else{
 
             $validatedData = $request->validate([
-                'question' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255|min:5',
+                'question' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?\,\"]+$/]+$/|max:255|min:5',
                 'correct_option' => ['required', Rule::in(['vero', 'falso'])],
-                'explanation' => 'nullable|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
+                'explanation' => 'nullable|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-,\'\?\.]+$/|max:255',
             ]);
         }
 

@@ -17,7 +17,8 @@
 
     <div class="container">
         @if($errors->any())
-        <div class="alert alert-danger">
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -27,9 +28,10 @@
         @endif
 
         @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ session('success') }}
+            </div>
         @endif
     </div>
 
@@ -224,9 +226,10 @@
                 <div class="modal-body">
                     <form action="{{ route('practices.add_exercises', ['practice' => $practice]) }}"  method="POST">
                         @csrf
-
+                        @php $ctr = false @endphp
                         @foreach($availableExercises as $exercise)
                             @if (!$practice->exercises->contains($exercise) && $exercise->subject == $practice->subject)
+                            @php $ctr = true @endphp
                                 <div class="form-check p-3">
                                     <input class="form-check-input" type="checkbox" name="exercises[]" value="{{ $exercise->id }}" id="exercise{{ $exercise->id }}">
                                     <label class="form-check-label" for="exercise{{ $exercise->id }}">
@@ -235,6 +238,10 @@
                                 </div>
                             @endif
                         @endforeach
+
+                        @if( $ctr == false )
+                            <h6> {{ __('Non hai esercizi adatti da aggiungere. ') }} </h6>
+                        @endif
                     
                 </div>
                 <div class="modal-footer">

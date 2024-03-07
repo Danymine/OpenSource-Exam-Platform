@@ -38,7 +38,7 @@
             </li>
         @endguest
         @auth
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown" id="menu-profile">
                 <!-- Dropdown per il profilo utente -->
                 <div class="dropdown">
                     <button class="btn dropdown-toggle" type="button" id="navbarDropdownProfile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: #010039; color: #CCCCCC; font-size: 0.8em; padding: 0.2em 0.5em;">

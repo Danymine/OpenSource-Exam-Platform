@@ -43,12 +43,6 @@
                         <label for="domanda">{{ __('Domanda') }}:</label>
                         <textarea class="form-control" id="domanda" name="question" rows="6" required minlength="5" maxlength="255" placeholder="{{ __('Inserisci qui la domanda dell\'esercizio') }}">{{ session()->has('exercise_step1') && array_key_exists('question', session('exercise_step1')) ? session('exercise_step1')['question'] : '' }}</textarea>
                     </div>
-
-
-                    <div class="form-group">
-                        <label for="spiegazione">{{ __('Spiegazione') }}:</label>
-                        <input type="text" class="form-control" id="spiegazione" name="explanation" maxlength="255" placeholder="{{ __('Inserisci qui la Spiegazione') }}" value="{{ session()->has('exercise_step1') && array_key_exists('explanation', session('exercise_step1')) ? session('exercise_step1')['explanation'] : '' }}">
-                    </div>
                 
                 @elseif ( $exerciseData["type"] == "Risposta Multipla" )
 

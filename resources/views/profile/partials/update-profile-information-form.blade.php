@@ -60,12 +60,11 @@
                                     </div>
                                     <!-- Form Row-->
                                     <div class="row gx-3 mb-3">
-                                        <!-- Form Group (phone number)-->
                                         <!-- Form Group (birthday)-->
                                         <div class="col-md-6">
                                             <x-input-label class="small mb-1" for="date_birth " :value="__('Data di Nascita')" />
-                                            <x-text-input id="date_birth" name="date_birth " type="date" class="mt-1 form-control" :value="old('date_birth ', $user->date_birth )" required autocomplete="username" />
-                                            <x-input-error class="mt-2" :messages="$errors->get('date_birth ')" id="error"/>
+                                            <x-text-input id="date_birth" name="date_birth" type="date" class="mt-1 form-control" :value="old('date_birth ', $user->date_birth )" required autocomplete="username" />
+                                            <x-input-error class="mt-2" :messages="$errors->get('date_birth')" id="error"/>
                                         </div>
 
                                         <div class="col-md-6">
@@ -94,7 +93,7 @@
                                             </div>
                                     @endif
                                 <!-- Save changes button-->
-                                <button class="btn btn-primary" type="submit">{{ __('Salva le modifiche') }}</button>
+                                <button class="btn btn-primary" type="submit" id="save">{{ __('Salva le modifiche') }}</button>
                             </div>
                         </div>
                     </div>

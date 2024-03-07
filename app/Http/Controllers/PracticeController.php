@@ -493,12 +493,10 @@ class PracticeController extends Controller
                 }
 
                 $newPractice->save();
-
                 $newPractice->exercises()->attach($practice->exercises->pluck('id')); //pluck viene utilizzato per estrarre una singola key da una collezione in questo caso id
                 $practice->delete();
                     
                 return redirect()->route('practices.edit', ['practice' => $newPractice]);
-       
             }
         }
         else{
@@ -532,6 +530,9 @@ class PracticeController extends Controller
 
                 $practice->total_score += $scoreAdd;
                 $practice->save();
+
+                
+                return redirect()->route('practices.edit', ['practice' => $practice])->with('success', trans("L'esercizio è stato inserito con successo."));
             }
             else{
 
@@ -548,20 +549,21 @@ class PracticeController extends Controller
 
                     $newPractice->key = $this->generateKey();
                 }
-                $newPractice->save();
                 $newPractice->exercises()->attach($practice->exercises->pluck('id')); //pluck viene utilizzato per estrarre una singola key da una collezione in questo caso id
                 $scoreAdd = 0;
                 for( $i = 0; $i < count($validatedData["exercises"]); $i++ ){
 
                     $exercise = Exercise::find($validatedData["exercises"][$i]);
+                    $newPractice->exercises()->attach($exercise->id);
                     $scoreAdd += $exercise->score;
                 }
 
                 $newPractice->total_score += $scoreAdd;
                 $practice->delete();
-            }
+                $newPractice->save();
 
-            return redirect()->route('practices.edit', ['practice' => $practice])->with('success', trans("L'esercizio è stato inserito con successo."));
+                return redirect()->route('practices.edit', ['practice' => $newPractice])->with('success', trans("L'esercizio è stato inserito con successo."));
+            }
         }
 
         abort('403', "Non autorizzato.");
@@ -598,8 +600,10 @@ class PracticeController extends Controller
                     $newPractice->key = $this->generateKey();
                 }
                 $newPractice->save();
-                $newPractice->exercises()->detach($exercise); //pluck viene utilizzato per estrarre una singola key da una collezione in questo caso id
+                $newPractice->exercises()->detach($exercise);
                 $practice->delete();
+
+                return redirect()->route('practices.edit', ['practice' => $newPractice])->with('success', trans("L'esercizio è stato rimosso con successo."));
             }
 
             return redirect()->route('practices.edit', ['practice' => $practice])->with('success', trans("L'esercizio è stato rimosso con successo."));

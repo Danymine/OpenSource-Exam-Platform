@@ -14,7 +14,8 @@ class Studenti extends DuskTestCase
 {
     /**
      * A Dusk test example.
-     */
+    */
+
     public function testStudentCanRegister() : void
     {
 
@@ -25,6 +26,7 @@ class Studenti extends DuskTestCase
             $browser->visit('/register')
                     ->type('name', 'Prova')
                     ->type('firstname', 'Cognome')
+                    ->type('date_birth', '07/13/2001')
                     ->type('email', $email)
                     ->type('password', 'Password123')
                     ->type('password_confirmation', 'Password123')
@@ -39,21 +41,26 @@ class Studenti extends DuskTestCase
 
         $this->assertNotNull($user);
         $this->assertEquals('Prova', $user->name);
+        $this->assertEquals('Cognome', $user->first_name);
+        $this->assertEquals('2001-07-13', $user->date_birth);
+        $this->assertEquals('Prova@example.com', $user->email);
         $this->assertEquals('Student', $user->roles);
     }
 
+    
     public function testStudentCanLogout(){
 
         $this->browse(function (Browser $browser) {
 
             $browser->visit('/dashboard')
-                ->click('#menu')
-                ->waitFor('#menu')
-                ->clickLink('Log Out')
+                ->click('#menu-profile')
+                ->waitFor('#menu-profile')
+                ->clickLink('Esci')
                 ->assertPathIs('/');
          });
     }
 
+   
     public function testStudentCanLogin() : void
     {
 
@@ -61,6 +68,7 @@ class Studenti extends DuskTestCase
         $user = new User([
             'name' => 'Studente',
             'first_name' => 'Cognome',
+            'date_birth' => '2001-07-13',
             'email' => $email,
             'password' => Hash::make("Password123"),
             'roles' => 'Student',
@@ -85,9 +93,9 @@ class Studenti extends DuskTestCase
         $this->browse(function (Browser $browser) {
 
             $browser->visit('/dashboard')
-                ->click('#menu')
-                ->waitFor('#menu')
-                ->clickLink('Profile')
+                ->click('#menu-profile')
+                ->waitFor('#menu-profile')
+                ->clickLink('Profilo')
                 ->assertPathIs('/profile');
         });
     }
@@ -107,6 +115,38 @@ class Studenti extends DuskTestCase
         $this->assertEquals('CambioNome', $user->name);
     }
 
+    public function testStudentCanEditSurnameCorrect() : void
+    {
+        $this->browse(function (Browser $browser) {
+
+            $browser->visit('/profile')
+                ->type('first_name', "CambioCognome")
+                ->click('#save')
+                ->assertPathIs('/profile');
+        });
+
+        $user = User::latest()->first();
+        
+        $this->assertEquals('CambioCognome', $user->first_name);
+    }
+
+    public function testStudentCanEditDateBirthCorrect() : void
+    {
+        $this->browse(function (Browser $browser) {
+
+            $browser->visit('/profile')
+                ->screenshot('prima')
+                ->type('date_birth', "07/14/2001")
+                ->click('#save')
+                ->assertPathIs('/profile')
+                ->screenshot('dopo');
+        });
+
+        $user = User::latest()->first();
+        
+        $this->assertEquals('2001-07-14', $user->date_birth);
+    }
+
     public function testInvalidEmailWithoutAtSymbol() : void
     {
         $this->browse(function (Browser $browser) {
@@ -124,6 +164,7 @@ class Studenti extends DuskTestCase
 
     }
 
+    /*
     public function testInvalidEmailWithoutDomain() : void
     {
         $this->browse(function (Browser $browser) {
@@ -380,7 +421,7 @@ class Studenti extends DuskTestCase
         $this->assertNull($latestDeletedUser); 
 
     }
-    /*
+    
     public function testStudentCanDeleteProfileWithPasswordCorrect() : void
     {
         $this->browse(function (Browser $browser) {

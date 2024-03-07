@@ -14,7 +14,7 @@ class Autenticazione extends DuskTestCase
    {
        $this->browse(function (Browser $browser) {
            $browser->visit('/')
-                   ->clickLink('Register')
+                   ->clickLink('Registrati')
                    ->assertPathIs('/register');
        });
    }
@@ -23,7 +23,7 @@ class Autenticazione extends DuskTestCase
    {
        $this->browse(function (Browser $browser) {
            $browser->visit('/')
-                   ->clickLink('Log in')
+                   ->clickLink('Accedi')
                    ->assertPathIs('/login');
        });
    }
