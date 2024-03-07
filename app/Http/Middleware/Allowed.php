@@ -31,6 +31,6 @@ class Allowed
                 return $next($request);
             }
         }
-        return redirect('/errore2');
+        return abort('403', "Non autorizzato.");
     }
 }

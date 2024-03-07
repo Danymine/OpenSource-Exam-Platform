@@ -8,7 +8,7 @@
                 <form action="{{ route('pratices.join') }}" method="POST" class="form-inline">
                     @csrf
                     <input type="text" id="key" name="key" class="form-control mr-3 equal-height" placeholder="{{ __('Inserisci la chiave') }}">
-                    <button type="submit" class="btn btn-primary equal-height">{{ __('Partecipa') }}</button>
+                    <button type="submit" class="btn btn-primary equal-height" id="join">{{ __('Partecipa') }}</button>
                 </form>
             </div>
             <hr style="border-top: 1px solid #0000004a width: 90%;" />

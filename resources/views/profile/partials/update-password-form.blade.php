@@ -43,7 +43,7 @@
                                         class="text-sm text-gray-600 dark:text-gray-400"
                                     >{{ __('Salvato') }}</p>
                                 @endif
-                                <button class="btn btn-primary" type="submit">{{ __('Salva le modifiche') }}</button>
+                                <button class="btn btn-primary" type="submit" id="update">{{ __('Salva le modifiche') }}</button>
                             </div>
                         </div>
                     </div>

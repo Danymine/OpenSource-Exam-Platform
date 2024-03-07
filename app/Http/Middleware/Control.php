@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Delivered;
+use App\Models\Practice;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 
@@ -24,11 +25,15 @@ class Control
 
         $delivery = Delivered::findOrFail($prova->id);
 
-        if( $delivery->user_id == Auth::user()->id or $delivery->practice->user_id == Auth::user()->id){
+        if( $delivery ){
 
-            return $next($request);
+            $practice = Practice::withTrashed()->findOrFail($delivery->practice_id);
+            if($delivery->user_id == Auth::user()->id || $practice->user_id == Auth::user()->id){
+
+                return $next($request);
+            }
         }
-        
-        return redirect('/errore');
+            
+        return abort('403', "Non autorizzato.");
     }
 }

@@ -6,9 +6,11 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 use App\Models\User;
+use App\Models\Practice;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Carbon;
 
 class Studenti extends DuskTestCase
 {
@@ -45,6 +47,7 @@ class Studenti extends DuskTestCase
         $this->assertEquals('2001-07-13', $user->date_birth);
         $this->assertEquals('Prova@example.com', $user->email);
         $this->assertEquals('Student', $user->roles);
+
     }
 
     
@@ -164,7 +167,6 @@ class Studenti extends DuskTestCase
 
     }
 
-    /*
     public function testInvalidEmailWithoutDomain() : void
     {
         $this->browse(function (Browser $browser) {
@@ -331,7 +333,6 @@ class Studenti extends DuskTestCase
         $this->assertEquals('NuovaEmail2@gmail.com', $user->email);
     }
 
-
     public function testStudentCannotEditPasswordWithWrongPassword() : void
     {
         $this->browse(function (Browser $browser) {
@@ -404,51 +405,293 @@ class Studenti extends DuskTestCase
         $this->assertTrue(Hash::check('NuovaPassword1', $user->password));
     }
 
-    public function testStudentCannotDeleteProfileWithPasswordNotCorrect() : void
+    public function testStudentCannotDeleteProfileWithoutConfirm() : void
     {
         $this->browse(function (Browser $browser) {
-
+    
             $browser->visit('/profile')
-                ->click('#delete')
-                ->type('password', 'NuovaPassword2')
-                ->click('#confirmdelete')
-                ->assertVisible('#error')
-                ->assertPathIs('/profile');
+                ->click('#delete-account-btn')
+                ->dismissDialog();
+    
+            $browser->assertPathIs('/profile');
         });
-
-        $latestDeletedUser = User::onlyTrashed()->latest()->first();
-
-        $this->assertNull($latestDeletedUser); 
-
+    
+        // Verifica che l'utente non sia stato eliminato
+        $latestUser = User::latest()->first();
+        $this->assertNotNull($latestUser);
     }
     
-    public function testStudentCanDeleteProfileWithPasswordCorrect() : void
+    public function testStudentCanDeleteProfileWithConfirm() : void
     {
         $this->browse(function (Browser $browser) {
-
+    
             $browser->visit('/profile')
-                ->waitFor('#delete')
-                ->click('#delete')
-                ->screenshot('studio0')
-                ->waitFor('#password')
-                ->type('password', 'NuovaPassword1')
-                ->screenshot('studio1')
-                ->click('#confirmdelete')
-                ->screenshot('studio2')
+                ->click('#delete-account-btn')
+                ->acceptDialog()
                 ->assertPathIs('/');
         });
 
-        $user = User::latest()->first();
+        // Verifica che l'utente sia eliminato
+        $latestDeletedUser = User::onlyTrashed()->latest()->first();
+        $this->assertNotNull($latestDeletedUser);
 
-        $this->assertSoftDeleted('users', ['id' => $user->id]);
+        $latestDeletedUser->forceDelete();
+    }
+
+    /* 
+    *
+    *
+    *   Test per la partecipazione dello studente ad una prova (è indipendente dal tipo)
+    */
+    
+    public function testStudentCanJoin() : void
+    {
+        $practice = new Practice([
+            'title' => 'Titolo della pratica',
+            'description' => 'Descrizione della pratica',
+            'difficulty' => 'Facile',
+            'subject' => 'Materia della pratica',
+            'total_score' => 100,
+            'key' => 'O6N71p',
+            'user_id' => 1, 
+            'feedback_enabled' => 0,
+            'randomize_questions' => 1,
+            'allowed' => 0,
+            'practice_date' => now(),
+            'type' => 'Exam',
+            'public' => 0,
+            'time' => 60,
+        ]);
+        
+        $practice->save();
+
+        $this->browse(function (Browser $browser) use ($practice) {
+
+            $browser->loginAs(2)
+                ->visit('/dashboard')
+                ->type('key', $practice->key)
+                ->press('#join')
+                ->assertPathIs('/waiting-room/' . $practice->key);
+    
+            $user = User::find(2);
+            $this->assertTrue($user->waitingroom()->where('practice_id', $practice->id)->exists());
+        });
+
+        $user = User::find(2);
+        $user->waitingroom()->detach($practice->id);
+
+        $practice->delete();
+        $practice->forceDelete();
+    }
+
+    public function testStudentCannotJoinWithoutKeyExist() : void
+    {
+
+        $this->browse(function (Browser $browser){
+
+            $browser->loginAs(2)
+                ->visit('/dashboard')
+                ->type('key', "O00000") //Questa key non esiste
+                ->press('#join')
+                ->assertPathIs('/dashboard');
+        });
+    }
+
+    public function testStudentCannotJoinWithoutKeyFormatBad() : void
+    {
+
+        $this->browse(function (Browser $browser){
+
+            $browser->loginAs(2)
+                ->visit('/dashboard')
+                ->type('key', "O000000") //Questa key ha 7 caratteri
+                ->press('#join')
+                ->assertPathIs('/dashboard');
+        });
+    }
+
+    public function testStudentCannotJoinWithoutKeyWithNotChart() : void
+    {
+
+        $this->browse(function (Browser $browser){
+
+            $browser->loginAs(2)
+                ->visit('/dashboard')
+                ->type('key', "O0!000") //Questa key ha 7 caratteri
+                ->press('#join')
+                ->assertPathIs('/dashboard');
+        });
+    }
+
+    public function testStudentCannotJoinForFutureDate() : void
+    {
+        $practice = new Practice([
+            'title' => 'Titolo della pratica',
+            'description' => 'Descrizione della pratica',
+            'difficulty' => 'Facile',
+            'subject' => 'Materia della pratica',
+            'total_score' => 100,
+            'key' => 'O6N71p',
+            'user_id' => 1, 
+            'feedback_enabled' => 0,
+            'randomize_questions' => 1,
+            'allowed' => 0,
+            'practice_date' => now()->addDays(1),
+            'type' => 'Exam',
+            'public' => 0,
+            'time' => 60,
+        ]);
+        
+        $practice->save();
+
+        $this->browse(function (Browser $browser) use ($practice) {
+
+            $browser->loginAs(2)
+                ->visit('/dashboard')
+                ->type('key', $practice->key)
+                ->press('#join')
+                ->assertPathIs('/dashboard');
+    
+            $user = User::find(2);
+            $this->assertFalse($user->waitingroom()->where('practice_id', $practice->id)->exists());
+        });
+
+        $practice->delete();
+        $practice->forceDelete();
+    }
+
+    public function testStudentCannotJoinForPastDate() : void
+    {
+        $practice = new Practice([
+            'title' => 'Titolo della pratica',
+            'description' => 'Descrizione della pratica',
+            'difficulty' => 'Facile',
+            'subject' => 'Materia della pratica',
+            'total_score' => 100,
+            'key' => 'O6N71p',
+            'user_id' => 1, 
+            'feedback_enabled' => 0,
+            'randomize_questions' => 1,
+            'allowed' => 0,
+            'practice_date' => now()->subDays(1),
+            'type' => 'Exam',
+            'public' => 0,
+            'time' => 60,
+        ]);
+        
+        $practice->save();
+
+        $this->browse(function (Browser $browser) use ($practice) {
+
+            $browser->loginAs(2)
+                ->visit('/dashboard')
+                ->type('key', $practice->key)
+                ->press('#join')
+                ->assertPathIs('/dashboard');
+    
+            $user = User::find(2);
+            $this->assertFalse($user->waitingroom()->where('practice_id', $practice->id)->exists());
+        });
+
+        $practice->delete();
+        $practice->forceDelete();
+    }
+
+    public function testStudentCanJoinAndDoTest() : void
+    {
+
+        $practice = new Practice([
+            'title' => 'Titolo della pratica',
+            'description' => 'Descrizione della pratica',
+            'difficulty' => 'Facile',
+            'subject' => 'Materia della pratica',
+            'total_score' => 100,
+            'key' => 'O6N71p',
+            'user_id' => 1, 
+            'feedback_enabled' => 0,
+            'randomize_questions' => 1,
+            'allowed' => 1,
+            'practice_date' => '2024-03-07',
+            'type' => 'Exam',
+            'public' => 0,
+            'time' => 60,
+        ]);
+        
+        $practice->save();
+
+        $this->browse(function (Browser $browser) use ($practice) {
+
+            $browser->loginAs(2)
+                ->visit('/dashboard')
+                ->type('key', $practice->key)
+                ->press('#join')
+                ->assertPathIs('/waiting-room/' . $practice->key);
+    
+            $user = User::find(2);
+            //Li viene data dal docente la possibilità di partecipare
+            $user->waitingroom()->where('practice_id', $practice->id)->update(['status' => 'execute']);
+
+            $browser->pause(5000);
+            $browser->assertPathIs('/view-test/' . $practice->key);
+        });
+
+        $user = User::find(2);
+        $user->waitingroom()->detach($practice->id);
+
+        $practice->delete();
+        $practice->forceDelete();
+    }
+
+    /* Da fare dopo.
+    public function testStudentCanJoinAndSendTest() : void
+    {
+
+        $practice = new Practice([
+            'title' => 'Titolo della pratica',
+            'description' => 'Descrizione della pratica',
+            'difficulty' => 'Facile',
+            'subject' => 'Materia della pratica',
+            'total_score' => 100,
+            'key' => 'O6N71p',
+            'user_id' => 1, 
+            'feedback_enabled' => 0,
+            'randomize_questions' => 1,
+            'allowed' => 1,
+            'practice_date' => '2024-03-07',
+            'type' => 'Exam',
+            'public' => 0,
+            'time' => 60,
+        ]);
+        
+        $practice->save();
+
+        $this->browse(function (Browser $browser) use ($practice) {
+
+            $browser->loginAs(2)
+                ->visit('/dashboard')
+                ->type('key', $practice->key)
+                ->press('#join')
+                ->assertPathIs('/waiting-room/' . $practice->key);
+    
+            $user = User::find(2);
+            //Li viene data dal docente la possibilità di partecipare
+            $user->waitingroom()->where('practice_id', $practice->id)->update(['status' => 'execute']);
+
+            $browser->pause(5000);
+            $browser->assertPathIs('/view-test/' . $practice->key);
+        });
+
+        $user = User::find(2);
+        $user->waitingroom()->detach($practice->id);
+
+        $practice->delete();
+        $practice->forceDelete();
     }
     */
 
-    //Considererare i casi in cui vengono inseriti valori non validi e quindi il programma dovrebbe bloccarlo.
-    
-    //Partecipa ad un esame Questi dipendono troppo dalle scelte di design per adesso non li implementerò
-
-    //Partecipa ad una esercitazione
-
-    //Visualizza la consegna
+    /*
+    *
+    *
+    *   Consegne. (Visualizza consegna)
+    */
 }

@@ -11,7 +11,7 @@
                     <div class="card-header">{{ __('Cancella Account') }}</div>
                         <div class="card-body">
                                 
-                            <button class="btn btn-danger" id="delete-account-btn" >{{ __('Elimina Account') }}</button>
+                            <button class="btn btn-danger" id="delete-account-btn">{{ __('Elimina Account') }}</button>
                         </div>
                     </div>
                 </div>
@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <form action="{{ route('delete_account', ['user' => Auth::user()]) }}" method="post" id="delete"></form>
+    <form action="{{ route('delete_account', ['user' => Auth::user()]) }}" method="post" id="delete">@csrf</form>
 
 </section>
 

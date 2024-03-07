@@ -697,19 +697,20 @@ class PracticeController extends Controller
             
             if($response == NULL){
                 
-                //Non trovando nulla sono sicuro. Ora verifico che sia già startata o meno. Se non lo è l'utente viene reinderizzo in waiting-room altrimenti direttamente al test.
-                if( $test->allowed == 0 ){
-                
-                    $status = 'wait';
-                    Auth::user()->waitingroom()->attach($test->id, ['status' => $status]);
-                    return redirect()->route('waiting-room', ['key' => $test->key]);
-                }
-                else{
+                //Non trovando nulla sono sicuro. Ora verifico che sia già startata o meno. Se non lo è l'utente viene reinderizzo in waiting-room
+                $existingWaitingRoom = Auth::user()->waitingroom()->first();
 
-                    $status = 'wait';
-                    Auth::user()->waitingroom()->attach($test->id, ['status' => $status]);
-                    return redirect()->route('waiting-room', ['key' => $test->key]);
+                if ($existingWaitingRoom) {
+
+                    // Se l'utente è già associato a una waiting room, rimuovilo prima di aggiungerlo alla nuova
+                    $existingWaitingRoom->detach(Auth::user()->id);
                 }
+
+                $status = 'wait';
+                Auth::user()->waitingroom()->attach($test->id, ['status' => $status]);
+
+                // Reindirizza l'utente alla waiting room
+                return redirect()->route('waiting-room', ['key' => $test->key]);
             }
             else{
 
