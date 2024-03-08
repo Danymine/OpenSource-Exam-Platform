@@ -79,7 +79,7 @@
             </div>
         </div>
         
-        <form method="POST" action="{{ route('create_exame_step2') }}">
+        <form method="POST" action="{{ route('create_practice_step2') }}">
             @csrf
             @if(!$exercises->isEmpty())
                 
@@ -97,8 +97,6 @@
                             </div>
                         </div>
                     @endforeach
-
-                    <input type="number" id="score_input" style="display: none;" name="total_score">
 
             @else
 

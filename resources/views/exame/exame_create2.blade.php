@@ -99,8 +99,6 @@
                         </div>
                     @endforeach
 
-                    <input type="number" id="score_input" style="display: none;" name="total_score">
-
             @else
 
                 <h5>{{ __("Qui non c'è un bel nulla :C") }}</h5>

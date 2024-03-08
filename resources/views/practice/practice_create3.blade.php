@@ -138,10 +138,10 @@
         const errorSpan = document.getElementById("error_date");
 
         dataInput.addEventListener("change", function() {
-            const dataInserita = new Date(dataInput.value);
-            const dataAttuale = new Date();
+            const dataInserita = new Date(dataInput.value).toLocaleDateString();
+            const dataAttuale = new Date().toLocaleDateString();
 
-            if (dataInserita <= dataAttuale) {
+            if (dataInserita < dataAttuale) {
                 errorSpan.textContent = prova;
             } else {
                 errorSpan.textContent = "";

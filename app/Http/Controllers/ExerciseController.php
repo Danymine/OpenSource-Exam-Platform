@@ -78,10 +78,21 @@ class ExerciseController extends Controller
         else{
 
             $validatedData = $request->validate([
-                'question' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?\,\"]+$/]+$/|max:255|min:5',
+                'question' => [
+                    'required',
+                    'string',
+                    'regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?\,\"]+$/',
+                    'max:255',
+                    'min:5',
+                ],
                 'correct_option' => ['required', Rule::in(['vero', 'falso'])],
-                'explanation' => 'nullable|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-,\'\?\.]+$/|max:255',
-            ]);
+                'explanation' => [
+                    'nullable',
+                    'string',
+                    'regex:/^[A-Za-zÀ-ÿ0-9\s\-,\'\?\.]+$/',
+                    'max:255',
+                ],
+            ]);            
         }
 
         $exerciseStep1 = array_merge($exerciseStep1, $validatedData);

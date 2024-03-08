@@ -227,8 +227,20 @@ class PracticeController extends Controller
 
         $validatedData = $request->validate([
             'exercise' => 'array|required',
-            'total_score' => 'required|numeric|min:1'
         ]);
+
+        $sumScore = 0;
+        foreach( $validatedData['exercise'] as $id){
+
+            $exercise = Exercise::find($id);
+            if( $exercise === NULL){
+
+                return back()->withErrors(['errors' => trans('Non hai inserito esercizi validi.')]);
+            }
+
+            $sumScore += $exercise->score;
+        }
+        $validatedData["total_score"] = $sumScore;
         $exameStep1 = session()->get('exame_step1');
         
         $exameStep2 = array_merge($exameStep1, $validatedData);
@@ -357,8 +369,20 @@ class PracticeController extends Controller
 
         $validatedData = $request->validate([
             'exercise' => 'array|required',
-            'total_score' => 'required|numeric|min:1'
         ]);
+
+        $sumScore = 0;
+        foreach( $validatedData['exercise'] as $id){
+
+            $exercise = Exercise::find($id);
+            if( $exercise === NULL){
+
+                return back()->withErrors(['errors' => trans('Non hai inserito esercizi validi.')]);
+            }
+
+            $sumScore += $exercise->score;
+        }
+        $validatedData['total_score'] = $sumScore;
         $exameStep1 = session()->get('exame_step1');
         
         $exameStep2 = array_merge($exameStep1, $validatedData);
@@ -708,7 +732,7 @@ class PracticeController extends Controller
                 if ($existingWaitingRoom) {
 
                     // Se l'utente è già associato a una waiting room, rimuovilo prima di aggiungerlo alla nuova
-                    $existingWaitingRoom->detach(Auth::user()->id);
+                    Auth::user()->waitingroom()->detach($existingWaitingRoom->id);
                 }
 
                 $status = 'wait';

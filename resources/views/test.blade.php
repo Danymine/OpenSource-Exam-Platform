@@ -55,7 +55,7 @@
                                     <label class="form-check-label" for="option4_{{ $exercise['id'] }}">{{ $exercise['option_4'] }}</label>
                                 </div>
                             @elseif($exercise['type'] === "Risposta Aperta")
-                                <textarea class="form-control" name="risposte[{{ $exercise['id'] }}]" rows="7"></textarea>
+                                <textarea class="form-control" name="risposte[{{ $exercise['id'] }}]" rows="7" id="text_{{ $exercise['id'] }}"></textarea>
                             @endif
                         </div>
                     </div>

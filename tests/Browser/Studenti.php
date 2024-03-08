@@ -7,6 +7,7 @@ use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 use App\Models\User;
 use App\Models\Practice;
+use App\Models\Exercise;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
@@ -280,7 +281,7 @@ class Studenti extends DuskTestCase
         $this->browse(function (Browser $browser) {
 
             $browser->visit('/profile')
-                ->type('email', "Prova@example.com")
+                ->type('email', "Prova@example.com")    //Esiste visto che lo creo io
                 ->click('#save')
                 ->assertVisible('#error')
                 ->assertPathIs('/profile');
@@ -457,7 +458,7 @@ class Studenti extends DuskTestCase
             'feedback_enabled' => 0,
             'randomize_questions' => 1,
             'allowed' => 0,
-            'practice_date' => now(),
+            'practice_date' => Carbon::today(),
             'type' => 'Exam',
             'public' => 0,
             'time' => 60,
@@ -536,7 +537,7 @@ class Studenti extends DuskTestCase
             'feedback_enabled' => 0,
             'randomize_questions' => 1,
             'allowed' => 0,
-            'practice_date' => now()->addDays(1),
+            'practice_date' => Carbon::now()->addDays(1),
             'type' => 'Exam',
             'public' => 0,
             'time' => 60,
@@ -573,7 +574,7 @@ class Studenti extends DuskTestCase
             'feedback_enabled' => 0,
             'randomize_questions' => 1,
             'allowed' => 0,
-            'practice_date' => now()->subDays(1),
+            'practice_date' => Carbon::now()->subDays(1),
             'type' => 'Exam',
             'public' => 0,
             'time' => 60,
@@ -611,7 +612,7 @@ class Studenti extends DuskTestCase
             'feedback_enabled' => 0,
             'randomize_questions' => 1,
             'allowed' => 1,
-            'practice_date' => '2024-03-07',
+            'practice_date' => Carbon::today(),
             'type' => 'Exam',
             'public' => 0,
             'time' => 60,
@@ -631,7 +632,7 @@ class Studenti extends DuskTestCase
             //Li viene data dal docente la possibilità di partecipare
             $user->waitingroom()->where('practice_id', $practice->id)->update(['status' => 'execute']);
 
-            $browser->pause(5000);
+            $browser->pause(10000);
             $browser->assertPathIs('/view-test/' . $practice->key);
         });
 
@@ -642,7 +643,6 @@ class Studenti extends DuskTestCase
         $practice->forceDelete();
     }
 
-    /* Da fare dopo.
     public function testStudentCanJoinAndSendTest() : void
     {
 
@@ -655,9 +655,9 @@ class Studenti extends DuskTestCase
             'key' => 'O6N71p',
             'user_id' => 1, 
             'feedback_enabled' => 0,
-            'randomize_questions' => 1,
+            'randomize_questions' => 0,
             'allowed' => 1,
-            'practice_date' => '2024-03-07',
+            'practice_date' => Carbon::today(),
             'type' => 'Exam',
             'public' => 0,
             'time' => 60,
@@ -665,7 +665,44 @@ class Studenti extends DuskTestCase
         
         $practice->save();
 
-        $this->browse(function (Browser $browser) use ($practice) {
+        $exercisesOpen = Exercise::where('type', 'Risposta Aperta')->take(1)->get();
+        $exercisesMultiple = Exercise::where('type', 'Risposta Multipla')->take(1)->get();
+        $exercisesTrueFalse = Exercise::where('type', 'Vero o Falso')->take(1)->get();
+        
+        $exercisesRandom = Exercise::whereNotIn('id', $exercisesOpen->pluck('id')->merge($exercisesMultiple->pluck('id'))->merge($exercisesTrueFalse->pluck('id'))->toArray())
+                                    ->inRandomOrder()
+                                    ->take(2)
+                                    ->get();
+        
+        $exercises = $exercisesOpen->merge($exercisesMultiple)->merge($exercisesTrueFalse)->merge($exercisesRandom);
+        $sumScore=0;
+        $id_exercise = [
+            'id' => [],
+            'type' => [],
+            'value' => [
+                [],
+                [],
+                [],
+                []
+            ]
+        ]; 
+
+        foreach ($exercises as $exercise) {
+            
+            $practice->exercises()->attach($exercise->id);
+            array_push($id_exercise['id'], $exercise->id);
+            array_push($id_exercise['type'], $exercise->type);
+            array_push($id_exercise['value'][0], $exercise->option_1);
+            array_push($id_exercise['value'][1], $exercise->option_2);
+            array_push($id_exercise['value'][2], $exercise->option_3);
+            array_push($id_exercise['value'][3], $exercise->option_4);
+            $sumScore += $exercise->score;
+        }
+
+        $practice->total_score = $sumScore;
+        $practice->save();
+
+        $this->browse(function (Browser $browser) use ($practice, $id_exercise) {
 
             $browser->loginAs(2)
                 ->visit('/dashboard')
@@ -677,17 +714,65 @@ class Studenti extends DuskTestCase
             //Li viene data dal docente la possibilità di partecipare
             $user->waitingroom()->where('practice_id', $practice->id)->update(['status' => 'execute']);
 
-            $browser->pause(5000);
-            $browser->assertPathIs('/view-test/' . $practice->key);
+            $browser->pause(10000);
+
+            for( $i = 0; $i < 5; $i++ ){
+
+                if( $id_exercise["type"][$i] == 'Risposta Aperta' ){
+
+                    //Comportati con la consopevolezza che siamo davanti a un esercizio di cui sappiamo il tipo e quindi anche le modalità di risposte
+                    $browser->pause(1000)->type('#text_' . $id_exercise['id'][$i], "Inserisco una risposta")->screenshot('aperto' . $i)
+                        ->press("#nextBtn");
+                }
+                else if( $id_exercise["type"][$i] == 'Risposta Multipla'  ){
+
+                    $browser->radio('risposte[' . $id_exercise['id'][$i] . "]", $id_exercise["value"][0])->screenshot('multiplo' . $i)
+                        ->press("#nextBtn");
+                }
+                else{
+
+                    //Sappiamo che è un vero falso.
+                }
+            }
+            $browser->press("#submitBtn")->waitFor('#confirmationModal')->press("#confirmSend")->assertPathIs('/dashboard');
         });
 
         $user = User::find(2);
         $user->waitingroom()->detach($practice->id);
 
+        $delivery = Delivered::latest()->first();
+        
+        $this->assertNotNull($delivery);
+        $this->assertEquals($practice->id, $delivery->practice_id);
+        $this->assertEquals($delivery->user_id, 2);
+        
+        $answers = $delivery->answers();
+        foreach( $answers as $answer ){
+
+            for( $i = 0; $i < 5; $i++ ){
+
+                if( $answer->exercise_id == $id_exercise['id'][$i]){
+
+                    if( $id_exercise['type'][$i] == "Risposta Aperta"){
+
+                        $this->assertEquals($answer->response, "Inserisco una risposta");
+                    }
+                    else if( $id_exercise["type"][$i] == 'Risposta Multipla'  ){
+
+                        $this->assertEquals($answer->response, Exercise::find($id_exercise['id'][$i]->option_1));
+                    }
+                    else{
+    
+                        $this->assertEquals($answer->response, "vero");
+                    }
+                }
+            }
+        }
+
+        $practice->exercises()->detach();
+
         $practice->delete();
-        $practice->forceDelete();
     }
-    */
 
     /*
     *
