@@ -17,21 +17,20 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-6 mb-4">
                 <div class="chart-container">
                     <h5 class="mb-4">{{ __('Valutazioni Partecipanti') }}</h5>
-                    <canvas id="barChart"></canvas>
+                    <canvas id="barChart" width="800" height="600"></canvas>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 mb-4">
                 <div class="chart-container">
                     <h5 class="mb-4">{{ __('Valutazioni Generale') }}</h5>
-                    <canvas id="pieChart"></canvas>
+                    <canvas id="pieChart" width="400" height="400"></canvas>
                 </div>
             </div>
         </div>
     </div>
-
 
     <script>
         // Ottieni i dati dalla variabile PHP

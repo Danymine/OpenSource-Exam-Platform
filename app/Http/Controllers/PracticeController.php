@@ -301,7 +301,11 @@ class PracticeController extends Controller
             ->where('user_id', Auth::user()->id)
             ->has('delivereds')
             ->get();
-        return view('practice_history', ['practices' => $practices]);
+        
+        // Estrai tutte le materie univoche dalle pratiche
+        $subjects = $practices->pluck('subject')->unique();
+
+        return view('practice_history', ['practices' => $practices,  'subjects' => $subjects]);
     }
 
     /* NOTE: INIZIO AREA ESERCITAZIONI
@@ -443,7 +447,11 @@ class PracticeController extends Controller
             ->where('user_id', Auth::user()->id)
             ->has('delivereds')
             ->get();
-        return view('practice_history', ['practices' => $practices]);
+        
+        // Estrai tutte le materie univoche dalle pratiche
+        $subjects = $practices->pluck('subject')->unique();
+
+        return view('practice_history', ['practices' => $practices,  'subjects' => $subjects]);
     }
 
     /* NOTE:: Comuni. Funzioni che hanno valenza per entrambe
@@ -878,45 +886,44 @@ class PracticeController extends Controller
             'id.*' => 'integer',
             'id_practices' => 'integer|required',
             'risposte' => 'array|required',
-            'risposte.*' => 'string|max:255|nullable',
+            'risposte.*' => 'nullable|string|max:255', // Accetta risposte vuote
         ]);
-
-        $array_id = $request->input('id');
-        $array_response = array_map('htmlspecialchars', $validated['risposte']);    //Sostituiamo caratteri speciali.
+    
+        // Assicurati che tutti gli id delle domande siano presenti
+        $validatedIds = $validated['id'];
+        $missingIds = array_diff($validatedIds, array_keys($request->input('risposte')));
+        foreach ($missingIds as $missingId) {
+            $validated['risposte'][$missingId] = ''; // Aggiungi campi vuoti per le domande mancanti
+        }
+    
         $user_id = Auth::id();
         $practice_id = $request->input('id_practices');
         $feedback = Practice::find($practice_id);
-        $i = 0;
         
         date_default_timezone_set('Europe/Rome');
         $newDelivered = new Delivered([
             'user_id' => $user_id,
             'practice_id' => $practice_id,
         ]);
-
+    
         $newDelivered->save();
-
-        for($i = 0; $i < count($array_id); $i++){
-
+    
+        foreach($validated['id'] as $exercise_id){
+            $response = $validated['risposte'][$exercise_id] ?? ''; // Otteniamo la risposta o una stringa vuota se mancante
             $test = new Answer([
                 'delivered_id' => $newDelivered->id,
-                'response' => $array_response[$array_id[$i]],
-                'exercise_id' => $array_id[$i]
+                'response' => $response,
+                'exercise_id' => $exercise_id
             ]);
             $test->save();
         }
-        
-
-        //Verifico se il test preve l'invio automatico del feedback.
+    
+        // Verifica se il test prevede l'invio automatico del feedback.
         if( $feedback->feedback_enabled == false ){
-
             return redirect()->route('dashboard')->with('success', trans('Invio avvenuto con successo'));
         }
         else{
-
-            
             if( $feedback->public == 0 ){
-
                 $feedback->public = 1;
                 $feedback->save();
             }
@@ -926,32 +933,6 @@ class PracticeController extends Controller
         }
     }
     
-    public function showHistoryExame(){
-
-        //Mostriamo gli esami che hanno qualcuno che ha consegnato, anche quelli cancellati quindi, solo dell'utente che fa la richiesta.   
-        $exames = Practice::where([
-            ['type',"=",'esame'],
-            ['user_id', '=', Auth::user()->id],
-            ['public', '=', 1]
-            ])->simplePaginate(15);
-
-        
-        return view('showHistory', ['tests' => $exames]);
-    }
-
-    public function showHistoryPractice(){
-
-        $practices = Practice::where([
-            ['type',"=",'esercitazione'],
-            ['user_id', '=', Auth::user()->id],
-            ['public', '=', 1]
-            ])->simplePaginate(15);
-
-        
-        return view('showHistory', ['tests' => $practices]);
-
-    }
-
     public function stats( Practice $practice ){
         
         //Servono tutte le consegne con i rispettivi utenti che hanno consegnato
