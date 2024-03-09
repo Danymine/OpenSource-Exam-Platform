@@ -30,7 +30,7 @@
                                 <textarea class="form-control" id="description" name="description" placeholder="{{ __('Descrizione')}}" required></textarea>
                             </div>
 
-                            <button type="submit" class="btn btn-primary">{{ __('Invia Richiesta') }}</button>
+                            <button type="submit" class="btn btn-primary" id="send-request">{{ __('Invia Richiesta') }}</button>
                         </form>
                     </div>
                 </div>

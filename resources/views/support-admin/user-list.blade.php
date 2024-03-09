@@ -65,7 +65,7 @@
                         <td class="align-middle" >{{ $user->roles }}</td>
                         <td class="align-middle">
                             <div class="d-flex align-items-center">
-                                <a href="#" class="btn btn-warning mr-2" data-toggle="modal" data-target="#editModal">
+                                <a href="#" class="btn btn-warning mr-2" id="modify" data-toggle="modal" data-target="#editModal">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <form action="{{ route('delete-user', ['user' => $user]) }}" method="POST" onsubmit="return confirm(trans)">
@@ -118,7 +118,7 @@
                             <div class="form-group">
                                 <label for="roles">{{ __('Ruolo') }}:</label>
                                 <select id="roles" name="roles" class="form-control p-0">
-                                    <option value="admin" {{ $user->roles == 'admin' ? 'selected' : '' }}>{{ __('Amministratore') }}</option>
+                                    <option value="Admin" {{ $user->roles == 'Admin' ? 'selected' : '' }}>{{ __('Amministratore') }}</option>
                                     <option value="Teacher" {{ $user->roles == 'Teacher' ? 'selected' : '' }}>{{ __('Professore') }}</option>
                                     <option value="Student" {{ $user->roles == 'Student' ? 'selected' : '' }}>{{ __('Studente') }}</option>
                                 </select>

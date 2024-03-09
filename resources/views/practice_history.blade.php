@@ -21,7 +21,7 @@
                             <th>{{ __('Data') }}</th>
                             <th>{{ __('Materia') }}</th>
                             <th>{{ __('Dettagli') }}</th>
-                            <th>{{ __('Statistiche') }}</th>
+                            <th>{{ __('Statistica') }}</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -286,9 +286,11 @@
     "Classifica il Problema": "Rate the Request",
     "Richiesta": "Request",
     "La richiesta è stata inviata.": "The request has been sent.",
+    "Invia Richiesta": "Send Request",
 
     "Valutazioni": "Evaluations",
     "Invia": "Send",
     "Punteggio massimo della prova": "Maximum test score",
-    "Domande": "Questions"
+    "Domande": "Questions",
+    "Statistica": "Statistics"
 }
