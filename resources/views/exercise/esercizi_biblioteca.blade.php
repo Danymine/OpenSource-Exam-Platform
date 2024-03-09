@@ -25,6 +25,10 @@
         @endif
     </div>
 
+    <script>
+        trans = "{{ __('Sei sicuro di voler eliminare questo esercizio?') }}";
+    </script>
+
     <div class="text-right mb-3">
       <button class="btn btn-secondary" style="display: none;" onclick="resetFilters()"><i class="fas fa-times"></i> {{ __('Cancella Filtri') }}</button>
       <button class="btn btn-info" onclick="toggleFilterModal()"><i class="fas fa-filter"></i> {{ __('Filtri') }}</button>
@@ -93,7 +97,7 @@
                   <div class="d-flex justify-content-between">
                     <a class="btn btn-info details-button mr-2" onclick="showDetails('{{ $exercise->id }}')"><i class="fas fa-search"></i></a>
                     <a class="btn btn-warning edit-button mr-2" onclick="editExercise('{{ $exercise->id }}')"><i class="fas fa-pencil-alt"></i></a>
-                    <form action="{{ route('deleteExercise', ['exercise' => $exercise]) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questo esercizio?');">
+                    <form action="{{ route('deleteExercise', ['exercise' => $exercise]) }}" method="POST" onsubmit="return confirm(trans);">
                         @csrf
                         @method('DELETE')
                       <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>

@@ -24,6 +24,9 @@
                 </div>
             @endif
         </div>
+        <script>
+            trans = "{{ __('Sei sicuro di voler eliminare questo Esame?') }}";
+        </script>
 
         <div class="text-right mb-3">
             <button class="btn btn-secondary" style="display: none;" onclick="resetFilters()"><i class="fas fa-times"></i> {{ __('Cancella Filtri') }}</button>
@@ -93,7 +96,7 @@
                     <tr>
                         <td>{{ $practice->title }}</td>
                         <td>{{ $practice->subject }}</td>
-                        <td>{{ $practice->difficulty }}</td>
+                        <td>{{ __($practice->difficulty) }}</td>
                         <td>{{ $practice->practice_date }}</td>
                         <td>{{ $practice->total_score }}</td>
                         <td>
@@ -101,7 +104,7 @@
                                 <a href="{{ route('practices.duplicate', ['practice' => $practice]) }}" class="btn btn-primary"><i class="fas fa-copy"></i></a>
                                 <a href="{{ route('practices.show', ['practice' => $practice]) }}" class="btn btn-info"><i class="fas fa-search"></i></a>
                                 <a class="btn btn-warning edit-button" href="{{ route('practices.edit', ['practice' => $practice]) }}"><i class="fas fa-pencil-alt"></i></a>
-                                <form action="{{ route('practices.destroy', ['practice' => $practice]) }}" method="POST" onsubmit="return confirm('Sei sicuro di voler eliminare questa pratica?');">
+                                <form action="{{ route('practices.destroy', ['practice' => $practice]) }}" method="POST" onsubmit="return confirm(trans);">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>

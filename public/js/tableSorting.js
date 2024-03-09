@@ -322,19 +322,13 @@ function editExercise(id) {
     document.getElementById('subject').value = exercise.subject;
 
     var selectType = document.getElementById('type');
-    selectType.value = exercise.type;
 
     // Rimuovi l'opzione selezionata attualmente
     var selectedOption = selectType.querySelector('option[selected]');
     if (selectedOption) {
         selectedOption.removeAttribute('selected');
     }
-
-    // Seleziona l'opzione corretta
-    var typeOption = selectType.querySelector('option[value="' + exercise.type + '"]');
-    if (typeOption) {
-        typeOption.setAttribute('selected', 'selected');
-    }
+    console.log(exercise.type);
     
     if(exercise.type == "Risposta Aperta" ){
 
@@ -384,12 +378,12 @@ type.addEventListener('change', function(){
         return exercise.id == id;
     });
     
-    if( type.value === translations[language]["Risposta Aperta"] ){
+    if( type.value === "Risposta Aperta" ){
 
         buildMultipleChoiceOptions(exercise, false);
         buildVeroFalso(exercise, false);
     }
-    else if( type.value === translations[language]["Risposta Multipla"]){
+    else if( type.value === "Risposta Multipla"){
 
         buildMultipleChoiceOptions(exercise, false);
         buildMultipleChoiceOptions(exercise, true);

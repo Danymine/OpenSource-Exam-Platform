@@ -881,8 +881,6 @@ class PracticeController extends Controller
             'risposte.*' => 'string|max:255|nullable',
         ]);
 
-        dd($validated);
-
         $array_id = $request->input('id');
         $array_response = array_map('htmlspecialchars', $validated['risposte']);    //Sostituiamo caratteri speciali.
         $user_id = Auth::id();

@@ -139,6 +139,7 @@
     "Inserisci una Descrizione": "Enter a Description",
     "Inserisci la Materia": "Enter the Subject",
     "Inserisci il Titolo": "Enter the Title",
+    "Inserisci un punteggio massimo": "Enter a maximum score",
     "Indietro": "Back",
     "Avanti": "Next",
 
@@ -170,6 +171,7 @@
 
 
     "Sei sicuro di voler eliminare questo esercizio?": "Are you sure you want to delete this exercise?",
+    "Sei sicuro di voler eliminare questo Esame?": "Are you sure you want to delete this exam?",
     "Modifica Esercizio": "Edit Exercise",
     "Risposta Aperta": "Open Answer",
     "Risposta Multipla": "Multiple Choice",
@@ -292,5 +294,8 @@
     "Invia": "Send",
     "Punteggio massimo della prova": "Maximum test score",
     "Domande": "Questions",
-    "Statistica": "Statistics"
+    "Statistica": "Statistics",
+    "Esame": "Exam",
+    "Esercitazione": "Practice",
+    "Inserisci la durata del test espressa in minuti": "Enter the duration of the test expressed in minutes"
 }

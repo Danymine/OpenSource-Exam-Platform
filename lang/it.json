@@ -132,6 +132,7 @@
     "Inserisci una Descrizione": "Inserisci una Descrizione",
     "Inserisci la Materia": "Inserisci la Materia",
     "Inserisci il Titolo": "Inserisci il Titolo",
+    "Inserisci un punteggio massimo": "Inserisci un punteggio massimo",
     "Indietro": "Indietro",
     "Avanti": "Avanti",
       
@@ -162,6 +163,7 @@
     "© 2024 ProgettoLaravel Tutti i diritti riservati": "© 2024 ExamSync Tutti i diritti riservati",
 
     "Sei sicuro di voler eliminare questo esercizio?": "Sei sicuro di voler eliminare questo esercizio?",
+    "Sei sicuro di voler eliminare questo Esame?": "Sei sicuro di voler eliminare questo Esame?",
     "Modifica Esercizio": "Modifica Esercizio",
     "Risposta Aperta": "Risposta Aperta",
     "Risposta Multipla": "Risposta Multipla",
@@ -285,5 +287,8 @@
     "Domande": "Domande",
     "Invia Richiesta": "Invia Richiesta",
 
-    "Statistica": "Statistica"
+    "Statistica": "Statistica",
+    "Esame": "Esame",
+    "Esercitazione": "Esercitazione",
+    "Inserisci la durata del test espressa in minuti": "Inserisci la durata del test espressa in minuti"
 }
