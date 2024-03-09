@@ -287,5 +287,8 @@
     "Richiesta": "Request",
     "La richiesta è stata inviata.": "The request has been sent.",
 
-    "Valutazioni": "Evaluations"
+    "Valutazioni": "Evaluations",
+    "Invia": "Send",
+    "Punteggio massimo della prova": "Maximum test score",
+    "Domande": "Questions"
 }

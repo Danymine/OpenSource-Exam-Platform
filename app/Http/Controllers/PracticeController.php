@@ -878,8 +878,10 @@ class PracticeController extends Controller
             'id.*' => 'integer',
             'id_practices' => 'integer|required',
             'risposte' => 'array|required',
-            'risposte.*' => 'string|max:255'
+            'risposte.*' => 'string|max:255|nullable',
         ]);
+
+        dd($validated);
 
         $array_id = $request->input('id');
         $array_response = array_map('htmlspecialchars', $validated['risposte']);    //Sostituiamo caratteri speciali.

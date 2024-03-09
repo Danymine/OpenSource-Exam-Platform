@@ -1,5 +1,23 @@
+<style>
+    #countdown {
+        float: right;
+    }
+</style>
 <x-app-layout>
     <div class="container mt-5 p-4 bg-white rounded-lg shadow"> 
+        @if($errors->any())
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <div id="countdown" class="mb-4"></div>
+        
         <!-- Sezione Title, Description e Total Score -->
         <div class="mb-4">
             <h2 class="mb-2 text-lg font-semibold">{{ $test->title }}</h2>
@@ -33,7 +51,7 @@
                             <h6 class="mb-3 font-medium">{{ $exercise['question'] }}</h6>
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div class="d-flex align-items-center">
-                                    <span class="mr-2">Score:</span>
+                                    <span class="mr-2">{{ __('Punteggio') }}:</span>
                                     <span class="badge bg-secondary text-white">{{ $exercise['score'] }}</span>
                                 </div>
                             </div>
@@ -56,6 +74,15 @@
                                 </div>
                             @elseif($exercise['type'] === "Risposta Aperta")
                                 <textarea class="form-control" name="risposte[{{ $exercise['id'] }}]" rows="7" id="text_{{ $exercise['id'] }}"></textarea>
+                            @else
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="risposte[{{ $exercise['id'] }}]" id="vero_{{ $exercise['id'] }}" value="VERO">
+                                    <label class="form-check-label" for="vero_{{ $exercise['id'] }}">{{ __('Vero') }}</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="risposte[{{ $exercise['id'] }}]" id="falso_{{ $exercise['id'] }}" value="FALSO">
+                                    <label class="form-check-label" for="falso_{{ $exercise['id'] }}">{{ __('Falso') }}</label>
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -231,6 +258,7 @@
             progressBar.setAttribute('aria-valuenow', progressValue);
         }
 
+
         // Pulsante per inviare il modulo di risposta
         var submitButton = document.getElementById('submitBtn');
         // Modal di conferma
@@ -249,4 +277,50 @@
         });
 
     });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Ottieni l'elemento HTML dove visualizzare il timer
+        var countdownElement = document.getElementById('countdown');
+        
+        // Ottieni la durata del test dal campo 'time' nel form, se presente
+        var testTimeMinutes = parseInt("{{ $test->time ?? 0 }}");
+        
+        if (testTimeMinutes <= 0 || isNaN(testTimeMinutes)) {
+            // Se il tempo non è specificato o non è valido, visualizza un messaggio di errore
+            countdownElement.textContent = "Tempo non valido!";
+        } else {
+            // Calcola la data di fine del timer
+            var endTime = new Date();
+            endTime.setMinutes(endTime.getMinutes() + testTimeMinutes);
+            
+            // Funzione per aggiornare il timer
+            function updateCountdown() {
+                var currentTime = new Date();
+                var remainingTime = endTime - currentTime;
+                
+                if (remainingTime <= 0) {
+                    // Se il tempo rimanente è scaduto, visualizza un messaggio di fine
+                    countdownElement.textContent = "Tempo scaduto!";
+                } else {
+                    // Calcola ore, minuti e secondi rimanenti
+                    var hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
+                    var minutes = Math.floor((remainingTime / 1000 / 60) % 60);
+                    var seconds = Math.floor((remainingTime / 1000) % 60);
+                    
+                    // Formatta il tempo rimanente
+                    var formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    // Aggiorna l'elemento HTML con il tempo rimanente
+                    countdownElement.textContent = formattedTime;
+                }
+            }
+            
+            // Aggiorna il timer ogni secondo
+            setInterval(updateCountdown, 1000);
+            
+            // Aggiorna subito il timer all'avvio
+            updateCountdown();
+        }
+    });
+
 </script>
