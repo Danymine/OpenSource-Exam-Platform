@@ -83,7 +83,7 @@
                             <label for="text">{{ __('Testo') }}</label>
                             <textarea class="card-text form-control" id="text" name="response" rows="4"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary"> {{ __('Rispondi') }}</button>
+                        <button type="submit" class="btn btn-primary" id="send-response"> {{ __('Rispondi') }}</button>
                     </form>
                 </div>
             </div>

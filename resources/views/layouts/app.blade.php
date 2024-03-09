@@ -23,21 +23,23 @@
     </head>
     
     <body>
-        @include('layouts.navigation')
+        <div class="wrapper">
+            @include('layouts.navigation')
 
-        <!-- Page Heading -->
-        @if (isset($header))
-            <header>
-                <div class="container-fluid p-3">
-                    {{ $header }}
-                </div>
-            </header>
-        @endif
+            <!-- Page Heading -->
+            @if (isset($header))
+                <header>
+                    <div class="container-fluid p-3">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endif
 
-        <!-- Page Content -->
-        <main>
-            {{ $slot }}
-        </main>
+            <!-- Page Content -->
+            <main>
+                {{ $slot }}
+            </main>
+        </div>
 
         <script>
             function openNav() {

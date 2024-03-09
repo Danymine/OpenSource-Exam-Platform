@@ -99,9 +99,9 @@ function showDetails(exerciseId) {
         // Costruisci il contenuto della finestra di dialogo
         var contentHtml = `
             <p style="color: black;" ><strong>${translations[language]["Domanda"]}:</strong> ${exercise.question}</p>
-            <p style="color: black;" ><strong>${translations[language]["Difficoltà"]}:</strong> ${exercise.difficulty}</p>
+            <p style="color: black;" ><strong>${translations[language]["Difficoltà"]}:</strong> ${translations[language][exercise.difficulty]}</p>
             <p style="color: black;" ><strong>${translations[language]["Materia"]}:</strong> ${exercise.subject}</p>
-            <p style="color: black;" ><strong>${translations[language]["Tipo"]}:</strong> ${exercise.type}</p>
+            <p style="color: black;" ><strong>${translations[language]["Tipo"]}:</strong> ${translations[language][exercise.type]}</p>
         `;
 
         // Aggiungi informazioni specifiche in base al tipo di esercizio
@@ -152,6 +152,7 @@ function buildMultipleChoiceOptions(exercise, bool) {
         alpha = ['A', 'B', 'C', 'D'];
         // Ciclo per creare gli input per le opzioni
         for (let i = 1; i <= numOptions; i++) {
+
             const label = document.createElement('label');
             label.setAttribute('for', `option${i}`);
             label.setAttribute('class', `form-label`);
@@ -319,6 +320,21 @@ function editExercise(id) {
     document.getElementById('score').value = exercise.score;
     document.getElementById('difficulty').value = exercise.difficulty;
     document.getElementById('subject').value = exercise.subject;
+
+    var selectType = document.getElementById('type');
+    selectType.value = exercise.type;
+
+    // Rimuovi l'opzione selezionata attualmente
+    var selectedOption = selectType.querySelector('option[selected]');
+    if (selectedOption) {
+        selectedOption.removeAttribute('selected');
+    }
+
+    // Seleziona l'opzione corretta
+    var typeOption = selectType.querySelector('option[value="' + exercise.type + '"]');
+    if (typeOption) {
+        typeOption.setAttribute('selected', 'selected');
+    }
     
     if(exercise.type == "Risposta Aperta" ){
 
@@ -368,12 +384,12 @@ type.addEventListener('change', function(){
         return exercise.id == id;
     });
     
-    if( type.value === "Risposta Aperta" ){
+    if( type.value === translations[language]["Risposta Aperta"] ){
 
         buildMultipleChoiceOptions(exercise, false);
         buildVeroFalso(exercise, false);
     }
-    else if( type.value == "Risposta Multipla"){
+    else if( type.value === translations[language]["Risposta Multipla"]){
 
         buildMultipleChoiceOptions(exercise, false);
         buildMultipleChoiceOptions(exercise, true);

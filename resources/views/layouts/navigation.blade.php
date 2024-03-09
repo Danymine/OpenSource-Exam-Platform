@@ -66,7 +66,7 @@
                     </div>
                 </div>
             </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown" id="requests">
                 <!-- Dropdown per le notifiche -->
                 <div class="dropdown">
                     <button class="btn dropdown-toggle" type="button" id="notificationDropdownBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: #010039; color: #CCCCCC; font-size: 0.8em; padding: 0.2em 0.5em;">

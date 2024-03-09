@@ -441,7 +441,7 @@ class PracticeController extends Controller
         $practices = Practice::where('type', 'Practice')
             ->where('public', 1)
             ->where('user_id', Auth::user()->id)
-            ->has('delivered')
+            ->has('delivereds')
             ->get();
         return view('practice_history', ['practices' => $practices]);
     }

@@ -46,16 +46,16 @@
           <select id="typeInput" class="form-select w-100 filter-select" aria-label="Seleziona la tipologia" onchange="applyFilters()">
             <option value="">{{ __('Tutte le tipologie') }}</option>
             @foreach ($types as $type)
-              <option value="{{ $type }}">{{ $type }}</option>
+              <option value="{{ __($type) }}">{{ __($type) }}</option>
             @endforeach
           <select>
         </div>
         <div class="col-md-3">
           <select id="difficoltaInput" class="form-select w-100 filter-select" aria-label="Seleziona difficoltà" onchange="applyFilters()">
             <option value="">{{ __('Tutte le difficoltà') }}</option>
-            <option value="Bassa">{{ __('Bassa') }}</option>
-            <option value="Media">{{ __('Media') }}</option>
-            <option value="Alta">{{ __('Alta')}}</option>
+            <option value="{{ __('Bassa') }}">{{ __('Bassa') }}</option>
+            <option value="{{ __('Media') }}">{{ __('Media') }}</option>
+            <option value="{{ __('Alta') }}">{{ __('Alta')}}</option>
           </select>
         </div>
       </div>
@@ -85,8 +85,8 @@
               <tr data-id="{{ $exercise->id }}">
                 <!-- Data -->
                 <td class="align-middle" >{{ $exercise->name }}</td>
-                <td class="align-middle" >{{ $exercise->type }}</td>
-                <td class="align-middle" >{{ $exercise->difficulty }}</td>
+                <td class="align-middle" >{{ __($exercise->type) }}</td>
+                <td class="align-middle" >{{ __($exercise->difficulty) }}</td>
                 <td class="align-middle" >{{ $exercise->subject }}</td>
                 <!-- Function -->
                 <td class="align-middle">
@@ -212,7 +212,13 @@
         "Falso": "{{ __('Falso') }}",
         "Opzione": "{{ __('Opzione') }}",
         "Inserisci l'opzione": '{{ __("Opzione") }}',
-        "Inserisci la spiegazione": "{{ __('Inserisci la spiegazione') }}"
+        "Inserisci la spiegazione": "{{ __('Inserisci la spiegazione') }}",
+        "Risposta Aperta": "{{ __('Risposta Aperta') }}",
+        "Risposta Multipla": "{{ __('Risposta Multipla') }}",
+        "Vero o Falso": "{{ __('Vero o Falso') }}",
+        "Bassa": "{{ __('Bassa') }}",
+        "Media": "{{ __('Media') }}",
+        "Alta": "{{ __('Alta') }}",
       }
     };
   </script>

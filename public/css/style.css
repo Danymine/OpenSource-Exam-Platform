@@ -2,6 +2,24 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.footer {
+    flex-shrink: 0;
+    width: 100%;
+    background-color: #010039;
+    color: #FFFFFF;
+}
+
 h1 {
     font-family: 'Roboto', sans-serif;
     font-weight: 700;

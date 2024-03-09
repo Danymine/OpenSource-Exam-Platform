@@ -8,6 +8,8 @@ use Tests\DuskTestCase;
 use App\Models\User;
 use App\Models\Practice;
 use App\Models\Exercise;
+use App\Models\AssistanceRequest;
+use App\Models\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
@@ -139,11 +141,9 @@ class Studenti extends DuskTestCase
         $this->browse(function (Browser $browser) {
 
             $browser->visit('/profile')
-                ->screenshot('prima')
                 ->type('date_birth', "07/14/2001")
                 ->click('#save')
-                ->assertPathIs('/profile')
-                ->screenshot('dopo');
+                ->assertPathIs('/profile');
         });
 
         $user = User::latest()->first();
@@ -642,7 +642,7 @@ class Studenti extends DuskTestCase
         $practice->delete();
         $practice->forceDelete();
     }
-
+    /* Da continuare dopo
     public function testStudentCanJoinAndSendTest() : void
     {
 
@@ -773,10 +773,75 @@ class Studenti extends DuskTestCase
 
         $practice->delete();
     }
+    */
 
     /*
     *
     *
     *   Consegne. (Visualizza consegna)
     */
+
+     /*
+    *
+    *
+    *   Richiesta di Assistenza.
+    */
+
+    public function testStudentCanCreateRequest() : void
+    {
+
+        $this->browse(function (Browser $browser){
+
+            $browser->loginAs(2)
+                ->visit('/dashboard')
+                ->press('#requests')
+                ->clickLink('Richiedi assistenza')
+                ->assertPathIs('/richiedi-assistenza');
+        });
+    }
+
+    public function testStudentCanSendRequest() : void
+    {
+
+        $this->browse(function (Browser $browser){
+
+            $browser->loginAs(2)
+                ->visit('/dashboard')
+                ->press('#requests')
+                ->clickLink('Richiedi assistenza')
+                ->type("subject", "Oggetto Assistenza")
+                ->type("description", "Descrizione del problema")
+                ->press('#send-request')
+                ->assertPathIs('/dashboard');
+        });
+
+        $request = AssistanceRequest::latest()->first();
+
+        $this->assertEquals($request->subject, "Oggetto Assistenza");
+        $this->assertEquals($request->description, "Descrizione del problema");
+    }
+
+    public function testStudentCanSeeListRequestAndSendResponse() : void
+    {
+
+        $request = AssistanceRequest::latest()->first();
+
+        $this->browse(function (Browser $browser) use ($request) {
+
+            $browser->loginAs(2)
+                ->visit('/view-request/' . $request->id)
+                ->type('response', "Rispondo ad un messaggio")
+                ->press("#send-response")
+                ->assertPathIs('/view-request/' . $request->id);
+        });
+
+        $responses = Response::latest()->first();
+
+        $this->assertEquals($responses->response, "Rispondo ad un messaggio");
+        $this->assertEquals($responses->assistance_request_id, $request->id);
+        $this->assertEquals($responses->user_id, 2);
+
+        $responses->delete();
+        $request->delete();
+    }
 }
