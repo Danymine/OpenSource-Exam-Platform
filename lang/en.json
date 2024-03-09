@@ -170,6 +170,7 @@
 
 
     "Sei sicuro di voler eliminare questo esercizio?": "Are you sure you want to delete this exercise?",
+    "Sei sicuro di voler eliminare questo Esame?": "Are you sure you want to delete this exam?",
     "Modifica Esercizio": "Edit Exercise",
     "Risposta Aperta": "Open Answer",
     "Risposta Multipla": "Multiple Choice",
@@ -290,4 +291,5 @@
 
     "Valutazioni": "Evaluations",
     "Statistica": "Statistics"
+    
 }

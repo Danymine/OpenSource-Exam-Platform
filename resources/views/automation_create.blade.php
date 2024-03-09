@@ -70,7 +70,7 @@
                     </div>
                     <div class="form-group">
                         <label for="time">{{ __('Durata') }}</label>
-                        <input type="number" class="form-control" id="time" name="time" value="{{ old('practice_date') }}" required>
+                        <input type="number" class="form-control" id="time" name="time" value="{{ old('time') }}" required>
                     </div>
                     <div class="form-check">
                         <label class="form-check-label" for="randomize_questions">
