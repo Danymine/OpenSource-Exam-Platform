@@ -1,10 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Creazione Automatica') }}
-        </h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="font-semibold text-xl leading-tight">
+                {{ __('Creazione Automatica') }}
+            </h3>
+            <div>
+                <a href="{{ back()->getTargetUrl() }}" class="btn btn-info">{{ __('Torna Indietro') }}</a>   
+            </div>
+        </div>
         <hr style="border-top: 1px solid #0000004a width: 90%;" />
     </x-slot>
+
     <div class="container">
         @if($errors->any())
         <div class="alert alert-danger alert-dismissible">
@@ -33,11 +39,11 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="title">{{ __('Titolo') }}</label>
-                        <input type="text" class="form-control" id="title" name="title" required value="{{ old('title') }}">
+                        <input type="text" class="form-control" id="title" name="title" required value="{{ old('title') }}" placeholder="{{ __('Inserisci il Titolo') }}">
                     </div>
                     <div class="form-group">
                         <label for="description">{{ __('Descrizione') }}</label>
-                        <textarea class="form-control" id="description" name="description" required rows="3"> {{ old('description') }}</textarea>
+                        <textarea class="form-control" id="description" name="description" required rows="3" placeholder="{{ __('Inserisci una Descrizione') }}">{{ old('description') }}</textarea>
                     </div>
                     <div class="form-group">
                         <label for="difficulty">{{ __('Difficoltà') }}</label>
@@ -49,11 +55,11 @@
                     </div>
                     <div class="form-group">
                         <label for="subject">{{ __('Materia') }}</label>
-                        <input type="text" class="form-control" id="subject" name="subject" value="{{ old('subject') }}" required>
+                        <input type="text" class="form-control" id="subject" name="subject" value="{{ old('subject') }}" required placeholder="{{ __('Inserisci la Materia') }}">
                     </div>
                     <div class="form-group">
-                        <label for="total_score">{{ __('Punteggio totale') }}</label>
-                        <input type="number" class="form-control" id="total_score" name="total_score" value="{{ old('total_score') }}" required>
+                        <label for="total_score">{{ __('Punteggio Totale') }}</label>
+                        <input type="number" class="form-control" id="total_score" name="total_score" value="{{ old('total_score') }}" required placeholder="{{ __('Inserisci un punteggio massimo') }}">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -70,7 +76,7 @@
                     </div>
                     <div class="form-group">
                         <label for="time">{{ __('Durata') }}</label>
-                        <input type="number" class="form-control" id="time" name="time" value="{{ old('time') }}" required>
+                        <input type="number" class="form-control" id="time" name="time" value="{{ old('time') }}" required placeholder="{{ __('Inserisci la durata del test espressa in minuti') }}">
                     </div>
                     <div class="form-check">
                         <label class="form-check-label" for="randomize_questions">
@@ -100,7 +106,9 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">{{ __('Crea') }}</button>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">{{ __('Crea') }}</button>
+            </div>
         </form>
     </div>
 

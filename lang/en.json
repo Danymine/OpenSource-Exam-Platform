@@ -139,6 +139,7 @@
     "Inserisci una Descrizione": "Enter a Description",
     "Inserisci la Materia": "Enter the Subject",
     "Inserisci il Titolo": "Enter the Title",
+    "Inserisci un punteggio massimo": "Enter a maximum score",
     "Indietro": "Back",
     "Avanti": "Next",
 
@@ -290,6 +291,8 @@
     "Invia Richiesta": "Send Request",
 
     "Valutazioni": "Evaluations",
-    "Statistica": "Statistics"
-    
+    "Statistica": "Statistics",
+    "Esame": "Exam",
+    "Esercitazione": "Practice",
+    "Inserisci la durata del test espressa in minuti": "Enter the duration of the test expressed in minutes"
 }

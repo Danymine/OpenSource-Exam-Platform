@@ -25,7 +25,7 @@
             @endif
         </div>
         <script>
-            trans = "__('Sei sicuro di voler eliminare questa pratica?')"
+            trans = "{{ __('Sei sicuro di voler eliminare questa pratica?') }}";
         </script>
 
         <div class="text-right mb-3">
