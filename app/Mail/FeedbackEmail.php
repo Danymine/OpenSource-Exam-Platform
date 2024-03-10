@@ -29,7 +29,7 @@ class FeedbackEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Risultato',
+            subject: trans('Risultato'),
         );
     }
 

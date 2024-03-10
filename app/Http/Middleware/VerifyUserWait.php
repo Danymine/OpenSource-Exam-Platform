@@ -29,6 +29,7 @@ class VerifyUserWait
                 return $next($request);
             }
         }
-        return redirect('/errore2');
+        
+        abort('403', "Non autorizzato");
     }
 }

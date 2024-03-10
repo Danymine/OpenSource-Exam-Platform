@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ __('Esito') }} "{{ $practices }}"</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,7 +21,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        h1 {
+        h2 {
             color: #333;
         }
 
@@ -41,14 +42,14 @@
 </head>
 <body>
     <div class="container">
-        <h2>Esito Esame "{{ $practices }}"</h2>
-        <p>Caro, {{ $name }} le comunichiamo che l'esito della prova relativa all'attività didattica "{{ $practices }}", da lei sostenuta in data "{{ $practice->practice_date }}" è: {{ $score }}/{{ $practice->total_score }}</p>
-        <h4>Esercizi Sbagliati</h4>
-        @for( $i = 0; $i < count($explanation); $i++ )
-            <div>All'esercizio con domanda: "{{ $explanation[$i][0] }}" <br/> hai risposto: "{{ $explanation[$i][1] }}" <br/> ma quella giusta era: "{{ $explanation[$i][2] }}" <br/> Spiegazione: "{{ $explanation[$i][3] }}"</div>
+        <h2>{{ __('Esito Esame') }} "{{ $practices }}"</h2>
+        <p>{{ __('Caro,') }}, {{ $name }}, {{ __('le comunichiamo che l\'esito della prova relativa all\'attività didattica') }} "{{ $practices }}", {{ __('da lei sostenuta in data') }} "{{ $practice->practice_date }}" {{ __('è') }}: {{ $score }}/{{ $practice->total_score }}</p>
+        <h4>{{ __('Esercizi Sbagliati') }}</h4>
+        @for($i = 0; $i < count($explanation); $i++)
+            <div>{{ __('All\'esercizio con domanda') }}: "{{ $explanation[$i][0] }}" <br/> {{ __('hai risposto') }}: "{{ $explanation[$i][1] }}" <br/> {{ __('ma quella giusta era') }}: "{{ $explanation[$i][2] }}" <br/> {{ __('Spiegazione') }}: "{{ $explanation[$i][3] }}"</div>
         @endfor
 
-        <a href="#" class="cta-button">Vai al Libretto</a>
+        <a href="{{ route('dashboard') }}" class="cta-button">{{ __('Vai al Libretto') }}</a>
     </div>
 </body>
 </html>

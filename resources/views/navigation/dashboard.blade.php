@@ -140,6 +140,8 @@
                     'url' => route('waiting-room', ['key' => $practice->key]) // Aggiungi l'URL con la chiave corretta
                 ];
             })) !!};
+
+            console.log(events);
         </script>
         <script src="/js/TeacherDashboard.js"></script>
 

@@ -24,6 +24,6 @@ class RoleIsValid
             return $next($request);
         }
         
-        return redirect('/errore');
+        abort('403', "Non autorizzato");
     }
 }

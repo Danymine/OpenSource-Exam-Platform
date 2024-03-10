@@ -27,7 +27,7 @@ class PublishResults extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Publish Results',
+            subject: trans('Nuova valutazione'),
         );
     }
 

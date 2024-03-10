@@ -443,6 +443,7 @@ class PracticeController extends Controller
             ->where('user_id', Auth::user()->id)
             ->has('delivereds')
             ->get();
+            
         return view('practice_history', ['practices' => $practices]);
     }
 
@@ -471,7 +472,7 @@ class PracticeController extends Controller
             return view('practice_edit', ['practice' => $practice, 'availableExercises' => Auth::user()->exercises]);
         }
         
-        abort('403', "Non autorizzato");
+        abort('403', "Non autorizzato.");
     }    
 
     public function update_details(Request $request){
@@ -653,7 +654,12 @@ class PracticeController extends Controller
         foreach ($practice->exercises as $exercise) {
             $newPractice->exercises()->attach($exercise->id);
         }
-    
+        
+        if( $newPractice->type == 'Practice' ){
+
+            return redirect()->route('practices.index')->with('success', trans("La duplicazione è andata a buon termine"));
+        }
+
         return redirect()->route('exam.index')->with('success', trans("La duplicazione è andata a buon termine"));
     }    
 

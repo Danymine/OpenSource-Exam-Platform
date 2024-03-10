@@ -14,17 +14,6 @@ use App\Models\AssistanceRequest;
 use App\Http\Controllers\AssistanceRequestController;
 
 
-//Temporanea
-Route::get('/errore', function (){
-
-    return "Non hai l'account adatto per svolgere questa opzione.";
-});
-
-Route::get('/errore2', function (){
-
-    return "Non puoi accedere a questo test";
-});
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes

@@ -21,7 +21,7 @@ class CheckStep
         if (!$request->session()->has('exercise_step1') || !array_key_exists('question', $request->session()->get('exercise_step1'))) {
             
 
-            abort(403, 'Azione non corretta');
+            abort(403, 'Non autorizzato');
         }
 
         return $next($request);

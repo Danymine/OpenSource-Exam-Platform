@@ -107,7 +107,7 @@
                 </div>
             </div>
             <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary">{{ __('Crea') }}</button>
+                <button type="submit" class="btn btn-primary" id="crea">{{ __('Crea') }}</button>
             </div>
         </form>
     </div>

@@ -33,7 +33,7 @@
             <button class="btn btn-info" onclick="toggleFilterModal()"><i class="fas fa-filter"></i> {{ __('Filtri') }}</button>
             <!-- Bottone di creazione con menu a discesa -->
             <div class="dropdown" style="display: inline-block;">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownCreateMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-plus"></i> {{ __('Crea') }}
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">

@@ -294,5 +294,28 @@
     "Statistica": "Statistics",
     "Esame": "Exam",
     "Esercitazione": "Practice",
-    "Inserisci la durata del test espressa in minuti": "Enter the duration of the test expressed in minutes"
+    "Inserisci la durata del test espressa in minuti": "Enter the duration of the test expressed in minutes",
+
+    "Benvenuto/a, :name": "Welcome, :name",
+    "Grazie per esserti unito a noi. Siamo entusiasti di averti con noi.": "Thank you for joining us. We're excited to have you with us.",
+    "Inizia subito a esplorare tutto ciò che abbiamo da offrire.": "Start exploring everything we have to offer right away.",
+    "Esplora Ora": "Explore Now",
+
+    "Nuova valutazione": "New Evaluation",
+    "Nuovo Esito Inserito nel Libretto": "New Outcome Inserted in the Register",
+    "Ciao": "Hi",
+    "Grazie": "Thank you",
+    "Il tuo team scolastico": "Your School Team",
+
+    "Risultato": "Result",
+
+    "Caro,": "Dear,",
+    "le comunichiamo che l'esito della prova relativa all'attività didattica": "we inform you that the result of the test related to the didactic activity",
+    "da lei sostenuta in data": "supported by you on",
+    "è": "is",
+    "Esercizi Sbagliati": "Incorrect Exercises",
+    "All'esercizio con domanda": "For the exercise with question",
+    "hai risposto": "you answered",
+    "ma quella giusta era": "but the correct one was",
+    "Vai al Libretto": "Go to Gradebook"
 }
