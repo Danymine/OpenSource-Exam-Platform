@@ -74,10 +74,6 @@
                             <option value="Practice"> {{ __('Esercitazione') }} </option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="time">{{ __('Durata') }}</label>
-                        <input type="number" class="form-control" id="time" name="time" value="{{ old('time') }}" required placeholder="{{ __('Inserisci la durata del test espressa in minuti') }}">
-                    </div>
                     <div class="form-check">
                         <label class="form-check-label" for="randomize_questions">
                             {{ __("Vuoi abilitare la randomizzazione delle domande?") }}

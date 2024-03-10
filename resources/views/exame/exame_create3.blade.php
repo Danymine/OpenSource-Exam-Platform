@@ -44,14 +44,17 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="durata" class="form-label">{{ __('Durata') }}</label>
-                        <input type="number" class="form-control" id="durata" name="time" placeholder="Inserisci la durata"  min="1">
-                        <span id="error_durata" style="color: red;"></span>
-                    </div>
-                    <div class="mb-3">
                         <label for="data_programmazione" class="form-label">{{ __('Data di programmazione') }}</label>
                         <input type="date" class="form-control" id="data_programmazione" name="practice_date" required>
                         <span id="error_date" style="color: red;"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="difficulty">{{ __('Difficoltà') }}:</label>
+                        <select class="form-control p-2" name="difficulty" required>
+                            <option value="Bassa" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Bassa' ? 'selected' : '' }}>{{ __('Bassa') }}</option>
+                            <option value="Media" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Media' ? 'selected' : '' }}>{{ __('Media') }}</option>
+                            <option value="Alta" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Alta' ? 'selected' : '' }}>{{ __('Alta') }}</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -99,18 +102,7 @@
                                 <label class="form-check-label" for="randomize_questions_no">{{ __('No') }}</label>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="difficulty">{{ __('Difficoltà') }}:</label>
-                        <select class="form-control p-2" name="difficulty" required>
-                            <option value="Bassa" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Bassa' ? 'selected' : '' }}>{{ __('Bassa') }}</option>
-                            <option value="Media" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Media' ? 'selected' : '' }}>{{ __('Media') }}</option>
-                            <option value="Alta" {{ session()->has('exercise_step1') && array_key_exists('difficulty', session('exercise_step1')) && session('exercise_step1')['difficulty'] == 'Alta' ? 'selected' : '' }}>{{ __('Alta') }}</option>
-                        </select>
-                    </div>
-
-                    
+                    </div>                    
                 </div>
             </div>
 

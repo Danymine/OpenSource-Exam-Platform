@@ -202,7 +202,7 @@ Route::middleware(Localization::class)
         Route::get('/public/{practice}', [DeliveredController::class, 'public'])->name('public');
 
         //Passiamo a gestire la Waiting-Room e l'avvio dell'esame.
-        Route::get('/authorize/{practice}', [WaitingRoomController::class, 'empower'])->name('start-test');
+        Route::post('/authorize/{practice}', [WaitingRoomController::class, 'empower'])->name('start-test');
 
         //Annulla l'avvio di un test kikkando tutti gli studenti che tentavano di partecipare.
         Route::get('/cancel-start/{practice}', [WaitingRoomController::class, 'cancel'])->name('cancel-start');
@@ -216,8 +216,8 @@ Route::middleware(Localization::class)
         //Accetta Studenti
         Route::get('/allowed/{user_id}', [WaitingRoomController::class, 'allowed'])->name('allow-student');
 
-        //Annulla l'avvio di un test kikkando tutti gli studenti che tentavano di partecipare.
-        Route::get('/finish-test/{practice}', [PracticeController::class, 'finish'])->name('finish-test');
+        //Termina la pratica
+        Route::get('/terminate-test/{practice}', [WaitingRoomController::class, 'terminateTest'])->name('terminate-test');
 
         //Storico degli esami (Mostra gli esami che sono passati(ma che sono stati anche sottoposti))
         Route::get('/view-exame-passed', [PracticeController::class, 'story_exame'])->name('exame-passed');

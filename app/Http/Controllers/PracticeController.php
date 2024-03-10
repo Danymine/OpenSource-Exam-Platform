@@ -87,7 +87,6 @@ class PracticeController extends Controller
             'title' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
             'subject' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
             'description' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:512',
-            'time' => 'nullable|numeric|min:1',
             'practice_date' => [
                 'required',
                 'date',
@@ -131,6 +130,7 @@ class PracticeController extends Controller
                     $newPractice->key = $this->generateKey();
                     $newPractice->allowed = 0;
                     $newPractice->public = 0;
+                    $newPractice->time = NULL;
 
                     $newPractice->save();
                     
@@ -253,7 +253,6 @@ class PracticeController extends Controller
 
         $exameStep1 = session()->get('exame_step1');
         $validatedData = $request->validate([
-            'time' => 'nullable|numeric|min:1',
             'practice_date' => [
                 'required',
                 'date',
@@ -273,6 +272,7 @@ class PracticeController extends Controller
         $practice->allowed = 0;
         $practice->type = "Exam";
         $practice->public = 0;
+        $practice->time = NULL;
 
         $practice->save();
 
@@ -399,7 +399,6 @@ class PracticeController extends Controller
 
         $exameStep1 = session()->get('exame_step1');
         $validatedData = $request->validate([
-            'time' => 'nullable|numeric|min:1',
             'practice_date' => [
                 'required',
                 'date',
@@ -419,6 +418,7 @@ class PracticeController extends Controller
         $practice->allowed = 0;
         $practice->type = "Practice";
         $practice->public = 0;
+        $practice->time = NULL;
 
         $practice->save();
 
@@ -488,7 +488,6 @@ class PracticeController extends Controller
             'title' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
             'subject' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:255',
             'description' => 'required|string|regex:/^[A-Za-zÀ-ÿ0-9\s\-\'\?]+$/|max:512',
-            'time' => 'nullable|numeric|min:1',
             'practice_date' => [
                 'required',
                 'date',
@@ -516,6 +515,7 @@ class PracticeController extends Controller
                 $newPractice->allowed=0;
                 $newPractice->type=$practice->type;
                 $newPractice->public=0;
+                $newPractice->time = NULL;
 
                 if($practice->key == NULL){
 

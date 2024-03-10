@@ -1,4 +1,3 @@
-
 <x-app-layout>
 
     <x-slot name="header">
@@ -81,43 +80,43 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach( Auth::user()->practices()->withTrashed()->get() as $practice )
+                                        @foreach(Auth::user()->practices()->withTrashed()->get() as $practice)
+                                            @if($practice->public != 1 && $practice->delivereds->isEmpty())
+                                                @continue
+                                            @endif
 
-                                            @foreach( $practice->delivereds as $delivered )
+                                            @foreach($practice->delivereds as $delivered)
+                                                @if($delivered->valutation == NULL)
 
-                                                @if( $delivered->valutation == NULL )
-
-                                                        @if ( $practice->type  == "Exam" )
-
-                                                            <tr class="exame" onclick="window.location='{{ route('view-delivered', ['practice' =>  $practice ] ) }}'" style="cursor:pointer;">
-                                                                <td>{{ $practice->title }}</td>
-                                                                <td>{{ $practice->practice_date  }}</td>
-                                                                <td>
-                                                                    {{ 
-                                                                        count($practice->delivereds->filter(function ($delivered) {
-                                                                            return $delivered->valutation === NULL;
-                                                                        }));
-                                                                    }}
-                                                                </td>
-                                                            </tr>
-                                                        @else
-                                                            
-                                                            <tr class="practice" onclick="window.location='{{ route('view-delivered', ['practice' =>  $practice ] ) }}'" style="cursor:pointer; display: none;">
-                                                                <td>{{ $practice->title }}e</td>
-                                                                <td>{{ $practice->practice_date  }}</td>
-                                                                <td>
-                                                                    {{ 
-                                                                        count($practice->delivereds->filter(function ($delivered) {
-                                                                            return $delivered->valutation === NULL;
-                                                                        }));
-                                                                    }}
-                                                                </td>
-                                                            </tr>
-                                                        @endif
+                                                    @if($practice->type == "Exam")
+                                                        <tr class="exame" onclick="window.location='{{ route('view-delivered', ['practice' =>  $practice ] ) }}'" style="cursor:pointer;">
+                                                            <td>{{ $practice->title }}</td>
+                                                            <td>{{ $practice->practice_date }}</td>
+                                                            <td>
+                                                                {{
+                                                                    count($practice->delivereds->filter(function ($delivered) {
+                                                                        return $delivered->valutation === NULL;
+                                                                    }))
+                                                                }}
+                                                            </td>
+                                                        </tr>
+                                                    @else
+                                                        <tr class="practice" onclick="window.location='{{ route('view-delivered', ['practice' =>  $practice ] ) }}'" style="cursor:pointer; display: none;">
+                                                            <td>{{ $practice->title }}e</td>
+                                                            <td>{{ $practice->practice_date }}</td>
+                                                            <td>
+                                                                {{
+                                                                    count($practice->delivereds->filter(function ($delivered) {
+                                                                        return $delivered->valutation === NULL;
+                                                                    }))
+                                                                }}
+                                                            </td>
+                                                        </tr>
+                                                    @endif
                                                     @break
                                                 @endif
                                             @endforeach
-                                        @endforeach   
+                                        @endforeach  
                                     </tbody>
                                 </table>
                             </div>
@@ -133,7 +132,7 @@
         </div>
         
         <script>
-            events = {!! json_encode(Auth::user()->practices()->get()->map(function ($practice) {
+            events = {!! json_encode(Auth::user()->practices()->whereDoesntHave('delivereds')->get()->map(function ($practice) {
                 return [
                     'title' => $practice->title,
                     'start' => $practice->practice_date, // Assumendo che $practice->practice_date sia nel formato corretto

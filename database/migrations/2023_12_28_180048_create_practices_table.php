@@ -18,7 +18,7 @@ class CreatePracticesTable extends Migration
                 $table->string('difficulty');
                 $table->string('subject');
                 $table->integer('total_score');
-                $table->integer('time');
+                $table->integer('time')->nullable(); // Modifica per consentire valori NULL
             });
         }
     }
@@ -29,3 +29,4 @@ class CreatePracticesTable extends Migration
         Schema::dropIfExists('practices');
     }
 }
+

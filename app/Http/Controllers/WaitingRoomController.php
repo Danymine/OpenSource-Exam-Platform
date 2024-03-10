@@ -92,24 +92,32 @@ class WaitingRoomController extends Controller
         return response()->json(['participants' => $participants]);
     }
     
-    public function empower(Practice $practice){
+    public function empower(Request $request, Practice $practice){
 
-        if( $practice->user_id == Auth::user()->id ){
-        
+        if($practice->user_id == Auth::user()->id) {
             $practice->allowed = 1;
+    
+            // Controllo se è stato impostato il setDurationOption
+            if($request->has('setDurationOption')) {
+                if($request->input('setDurationOption') === 'yes') {
+                    if($request->filled('time')) { 
+                        $time = $request->input('time'); 
+                        $practice->time = $time;
+                    }
+                }
+            }
+    
             $practice->save();
-
+    
             foreach ($practice->userwaiting as $user_wait) {
-
                 $user_wait->waitingroom()->updateExistingPivot($practice->id, ['status' => 'execute']);
             }
-
-            return redirect()->back()->with('success', 'Gli studenti hanno iniziato la prova');  
+    
+            return redirect()->back()->with('success', 'Gli studenti hanno iniziato la prova');
         }
         
         abort('403', "Non autorizzato.");
-        
-    }
+    }    
 
     public function kick($user_id){
 
@@ -151,4 +159,20 @@ class WaitingRoomController extends Controller
         
         abort('403', "Non autorizzato.");
     }
+
+    public function terminateTest(Practice $practice){
+        
+        // Verifica se l'utente che sta cercando di terminare il test è l'insegnante
+        if ($practice->user_id == Auth::user()->id) {
+            // Imposta lo stato della pratica come non più consentito
+            $practice->allowed = 0;
+            $practice->save();
+
+            return redirect()->route('dashboard');        
+        }
+    
+        // Ritorna una risposta di errore se l'utente non è autorizzato
+        abort(403, 'Non sei autorizzato a terminare questa prova');
+    }
+
 }
