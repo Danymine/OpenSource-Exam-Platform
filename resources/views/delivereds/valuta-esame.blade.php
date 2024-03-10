@@ -58,7 +58,7 @@
                         @if( $exercises[0]->type == "Risposta Aperta")
                         <div class="form-group">
                             <label for="valutation">{{ __('Valutazione', ['score' => $exercises[0]->score]) }} </label>
-                            <input type="number" class="form-control mb-2" id="valutation" name='correct[{{$response[$exercises[0]->id][0]["id"]}}]' min="1" max="{{ $exercises[0]->score }}" placeholder="{{ __('Assegna un punteggio') }}" value="{{ $response[$exercises[0]->id][0]['score_assign'] }}" >
+                            <input type="number" class="form-control mb-2" id="valutation" name='correct[{{$response[$exercises[0]->id][0]["id"]}}]' min="0" max="{{ $exercises[0]->score }}" placeholder="{{ __('Assegna un punteggio') }}" value="{{ $response[$exercises[0]->id][0]['score_assign'] }}" >
                         </div>
                         <div class="form-group">
                             <label for="note">{{ __('Note') }}</label>
@@ -86,7 +86,7 @@
                                 @if( $exercise->type == "Risposta Aperta")
                                 <div class="form-group">
                                     <label for="valutation">{{ __('Valutazione', ['score' => $exercise->score]) }} </label>
-                                    <input type="number" class="form-control mb-2" id="valutation" name='correct[{{$response[$exercise->id][0]["id"]}}]' min="1" max="{{ $exercise->score }}" placeholder="{{ __('Assegna un punteggio') }}" value="{{ $response[$exercise->id][0]['score_assign'] }}">
+                                    <input type="number" class="form-control mb-2" id="valutation" name='correct[{{$response[$exercise->id][0]["id"]}}]' min="0" max="{{ $exercise->score }}" placeholder="{{ __('Assegna un punteggio') }}" value="{{ $response[$exercise->id][0]['score_assign'] }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="note">{{ __('Note') }}</label>
