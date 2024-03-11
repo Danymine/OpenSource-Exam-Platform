@@ -76,11 +76,11 @@
                                 <textarea class="form-control" name="risposte[{{ $exercise['id'] }}]" rows="7" id="text_{{ $exercise['id'] }}"></textarea>
                             @else
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="risposte[{{ $exercise['id'] }}]" id="vero_{{ $exercise['id'] }}" value="VERO">
+                                    <input class="form-check-input" type="radio" name="risposte[{{ $exercise['id'] }}]" id="vero_{{ $exercise['id'] }}" value="vero">
                                     <label class="form-check-label" for="vero_{{ $exercise['id'] }}">{{ __('Vero') }}</label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="risposte[{{ $exercise['id'] }}]" id="falso_{{ $exercise['id'] }}" value="FALSO">
+                                    <input class="form-check-input" type="radio" name="risposte[{{ $exercise['id'] }}]" id="falso_{{ $exercise['id'] }}" value="falso">
                                     <label class="form-check-label" for="falso_{{ $exercise['id'] }}">{{ __('Falso') }}</label>
                                 </div>
                             @endif
@@ -279,48 +279,38 @@
     });
 
     document.addEventListener("DOMContentLoaded", function() {
-        // Ottieni l'elemento HTML dove visualizzare il timer
         var countdownElement = document.getElementById('countdown');
-        
-        // Ottieni la durata del test dal campo 'time' nel form, se presente
         var testTimeMinutes = parseInt("{{ $test->time ?? 0 }}");
+        var startTime = new Date(); // Memorizza il tempo di inizio della prova
+
+        // Calcola la data di fine del timer basandoti sulla durata totale del test
+        var endTime = new Date(startTime);
+        endTime.setMinutes(endTime.getMinutes() + testTimeMinutes);
         
-        if (testTimeMinutes <= 0 || isNaN(testTimeMinutes)) {
-            // Se il tempo non è specificato o non è valido, visualizza un messaggio di errore
-            countdownElement.textContent = "Tempo non valido!";
-        } else {
-            // Calcola la data di fine del timer
-            var endTime = new Date();
-            endTime.setMinutes(endTime.getMinutes() + testTimeMinutes);
-            
-            // Funzione per aggiornare il timer
-            function updateCountdown() {
-                var currentTime = new Date();
-                var remainingTime = endTime - currentTime;
-                
-                if (remainingTime <= 0) {
-                    // Se il tempo rimanente è scaduto, visualizza un messaggio di fine
-                    countdownElement.textContent = "Tempo scaduto!";
-                } else {
-                    // Calcola ore, minuti e secondi rimanenti
-                    var hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
-                    var minutes = Math.floor((remainingTime / 1000 / 60) % 60);
-                    var seconds = Math.floor((remainingTime / 1000) % 60);
-                    
-                    // Formatta il tempo rimanente
-                    var formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                    
-                    // Aggiorna l'elemento HTML con il tempo rimanente
-                    countdownElement.textContent = formattedTime;
-                }
+        // Calcola il tempo trascorso dalla data di inizio della prova fino ad ora
+        var elapsedTime = new Date() - startTime;
+        
+        // Calcola il tempo rimanente sottraendo il tempo trascorso dalla durata totale del test
+        var remainingTime = endTime - new Date() + elapsedTime;
+        
+        function updateCountdown() {
+            if (remainingTime <= 0) {
+                countdownElement.textContent = "Tempo scaduto!";
+            } else {
+                var hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
+                var minutes = Math.floor((remainingTime / 1000 / 60) % 60);
+                var seconds = Math.floor((remainingTime / 1000) % 60);
+                var formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                countdownElement.textContent = formattedTime;
             }
-            
-            // Aggiorna il timer ogni secondo
-            setInterval(updateCountdown, 1000);
-            
-            // Aggiorna subito il timer all'avvio
-            updateCountdown();
         }
+        
+        setInterval(function() {
+            remainingTime -= 1000; // Sottrae un secondo dal tempo rimanente ogni secondo
+            updateCountdown();
+        }, 1000);
+        
+        updateCountdown(); // Aggiorna subito il timer all'avvio
     });
 
 </script>

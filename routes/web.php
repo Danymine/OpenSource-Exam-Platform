@@ -182,6 +182,9 @@ Route::middleware(Localization::class)
         //Duplica
         Route::get('/duplicate/{practice}', [PracticeController::class, 'duplicate'])->name('practices.duplicate');
 
+        //Genera una nuova key
+        Route::get('/generate-new-key/{practice}', [PracticeController::class, 'generateNewKey'])->name('generate.new.key');
+
         //Mostra il contenuto di una Practice
         Route::get('/show/{practice}', [PracticeController::class, 'show'])->name('practices.show');
 

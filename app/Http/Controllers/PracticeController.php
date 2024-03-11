@@ -185,7 +185,7 @@ class PracticeController extends Controller
         // Restituisci la vista degli esami con i dati recuperati
         return view('exame.exam-index', [
             'practices' => $practices, 
-            'subjects' => $subjects, 
+            'subjects' => $subjects,
         ]);
     }  
 
@@ -265,6 +265,7 @@ class PracticeController extends Controller
 
         $request->session()->forget('exame_step1');
         $date = array_merge($exameStep1, $validatedData);
+        $date[  "subject" ] = strtolower($date [ "subject"]);
         $practice = new Practice($date);
         
         $practice->user_id = Auth::user()->id;
@@ -411,6 +412,7 @@ class PracticeController extends Controller
 
         $request->session()->forget('exame_step1');
         $date = array_merge($exameStep1, $validatedData);
+        $date[  "subject" ] = strtolower($date [ "subject"]);
         $practice = new Practice($date);
         
         $practice->user_id = Auth::user()->id;
@@ -655,6 +657,8 @@ class PracticeController extends Controller
         $newPractice->title = $practice->title . ' (Copia)';
         $newPractice->key = $this->generateKey();
         $newPractice->allowed = 0; // Imposta allowed a 0
+        $newPractice->public = 0; // Imposta public a 0
+        $newPractice->time = NULL; 
         $newPractice->save();
     
         // Duplica gli esercizi associati con i loro punteggi personalizzati
@@ -668,7 +672,41 @@ class PracticeController extends Controller
         }
 
         return redirect()->route('exam.index')->with('success', trans("La duplicazione è andata a buon termine"));
-    }    
+    }  
+    
+    public function generateNewKey(Practice $practice){
+        // Duplica la pratica con tutte le caratteristiche
+        $newPractice = $practice->replicate();
+        $newPractice->key = $this->generateKey(); // Genera una nuova chiave
+        $newPractice->allowed = 0; // Imposta allowed a 0
+        $newPractice->public = 0; // Imposta public a 0
+        $newPractice->time = NULL; 
+    
+        if ($practice->key == NULL) {
+            $newPractice->key = $this->generateKey();
+        } else {
+            $key = $practice->key;
+            $practice->key = NULL;
+            $practice->save();
+            $newPractice->key = $this->generateKey();
+        }
+    
+        // Salva la nuova pratica
+        $newPractice->save();
+    
+        // Duplica gli esercizi associati con i loro punteggi personalizzati
+        foreach ($practice->exercises as $exercise) {
+            $newPractice->exercises()->attach($exercise->id);
+        }
+        
+        // Elimina la pratica originale
+        $practice->delete();
+    
+        // Redirect alla pagina di modifica della nuova pratica
+        return redirect()->route('practices.show', ['practice' => $newPractice])
+            ->with('success', trans("La chiave è stata generata con successo"));
+    }
+    
 
     public function destroy(Practice $practice){
         //Elimino definitivamente se non è mai stata utilizzata.

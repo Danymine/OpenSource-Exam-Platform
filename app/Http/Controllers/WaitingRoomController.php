@@ -166,6 +166,7 @@ class WaitingRoomController extends Controller
         if ($practice->user_id == Auth::user()->id) {
             // Imposta lo stato della pratica come non più consentito
             $practice->allowed = 0;
+            $practice->key = NULL;
             $practice->save();
 
             return redirect()->route('dashboard');        

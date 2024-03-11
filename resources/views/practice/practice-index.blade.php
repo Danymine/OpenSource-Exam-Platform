@@ -94,8 +94,8 @@
                 <tbody id="table-body">
                     @foreach ($practices as $practice)
                     <tr>
-                        <td>{{ $practice->title }}</td>
-                        <td>{{ $practice->subject }}</td>
+                        <td>{{ ucfirst($practice->title) }}</td>
+                        <td>{{ ucfirst($practice->subject) }}</td>
                         <td>{{ __($practice->difficulty) }}</td>
                         <td>{{ $practice->practice_date }}</td>
                         <td>{{ $practice->total_score }}</td>
@@ -118,6 +118,16 @@
         </div>
     </div>
 
+    <script>
+        var practices = @json($practices);
+            var translations = {
+            'translate': {
+                "Bassa": "{{ __('Bassa') }}",
+                "Media": "{{ __('Media') }}",
+                "Alta": "{{ __('Alta') }}",
+            }
+        };
+    </script>
     <script src='/js/Test.js'></script>
     
 </x-app-layout>

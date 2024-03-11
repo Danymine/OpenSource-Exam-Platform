@@ -29,33 +29,29 @@ function resetFilters() {
 
 function applyFilters() {
     var materia = document.getElementById('materiaInput').value.toLowerCase();
-    var punteggioMin = parseInt(document.getElementById('punteggioMinInput').value) || '';
-    var punteggioMax = parseInt(document.getElementById('punteggioMaxInput').value) || '';
+    var punteggioMin = document.getElementById('punteggioMinInput').value.trim();
+    var punteggioMax = document.getElementById('punteggioMaxInput').value.trim();
     var difficolta = document.getElementById('difficoltaInput').value.toLowerCase();
     var table = document.getElementById('practice-table');
     var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 
     for (var i = 0; i < rows.length; i++) {
-        var title = rows[i].getElementsByTagName('td')[0].textContent.toLowerCase();
         var materiaCell = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
-        var punteggiCells = rows[i].getElementsByTagName('td')[4].textContent.trim().split(' ').map(score => parseInt(score));
+        var punteggioCell = parseInt(rows[i].getElementsByTagName('td')[4].textContent);
         var difficoltaCell = rows[i].getElementsByTagName('td')[2].textContent.toLowerCase();
-
-        // Aggiungi questa condizione per verificare se la riga è vuota
-        if (title === '' && materiaCell === '' && punteggiCells.length === 0 && difficoltaCell === '') {
-            continue;
-        }
 
         var showRow = true;
 
-        if (materia !== '' && !(title.includes(materia) || materiaCell.includes(materia))) {
+        if (materia !== '' && !materiaCell.includes(materia)) {
             showRow = false;
         }
 
-        if ((punteggioMin !== '' || punteggioMax !== '') && punteggiCells.length > 0) {
-            if (!punteggiCells.some(value => !isNaN(value) && (punteggioMin === '' || value >= punteggioMin) && (punteggioMax === '' || value <= parseInt(punteggioMax, 10)))) {
-                showRow = false;
-            }
+        if (punteggioMin !== '' && (isNaN(punteggioCell) || punteggioCell < parseInt(punteggioMin))) {
+            showRow = false;
+        }
+
+        if (punteggioMax !== '' && (isNaN(punteggioCell) || punteggioCell > parseInt(punteggioMax))) {
+            showRow = false;
         }
 
         if (difficolta !== '' && difficoltaCell !== difficolta) {

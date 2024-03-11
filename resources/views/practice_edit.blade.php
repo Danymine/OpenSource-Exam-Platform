@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="row">
             <div class="col-6">
-                <h4 class="text-2xl font-bold text-black mb-4">{{ $practice->title }}</h4>
+            <h4 class="text-2xl font-bold text-black mb-4">{{ __('Dettagli') }}</h4>
             </div>
             <div class="col-6 text-right">
                 @if( $practice->type == "Exam")
@@ -37,7 +37,7 @@
 
     <div class="container p-4 rounded" style="background-color: #fff; box-shadow: 0.15rem 0.25rem 0 rgb(33 40 50 / 15%); border: 1px solid rgba(0,0,0,.125);">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="mb-0">{{ __('Dettagli') }}:</h3>
+        <h3 class="mb-4">{{ ucfirst($practice->title) }}</h3>
             <button class="btn btn-primary" data-toggle="modal" data-target="#editDetailsModal">{{ __('Modifica') }}</button>
         </div>
         <div class="practice-details">
@@ -45,10 +45,10 @@
             <p class="mb-3 text-black"><strong>{{ __('Descrizione') }}:</strong> {{ $practice->description }}</p>
 
             <!-- Difficulty -->
-            <p class="mb-3 text-black"><strong>{{ __('Difficoltà') }}:</strong> {{ $practice->difficulty }}</p>
+            <p class="mb-3 text-black"><strong>{{ __('Difficoltà') }}:</strong> {{ __($practice->difficulty) }}</p>
 
             <!-- Subject -->
-            <p class="mb-3 text-black"><strong>{{ __('Materia') }}:</strong> {{ $practice->subject }}</p>
+            <p class="mb-3 text-black"><strong>{{ __('Materia') }}:</strong> {{ ucfirst($practice->subject) }}</p>
 
             <!-- Total Score -->
             <p class="mb-3 text-black"><strong>{{ __('Punteggio Totale') }}:</strong> {{ $practice->total_score }}</p>
@@ -192,11 +192,6 @@
                                     {{ __('No') }}
                                 </label>
                             </div>
-                        </div>
-                        <!-- Durata -->
-                        <div class="form-group">
-                            <label for="duration">{{ __('Durata') }}</label>
-                            <input type="text" class="form-control" id="duration" name="time" value="{{ $practice->time }}">
                         </div>
                         <!-- Data Programmata -->
                         <div class="form-group">

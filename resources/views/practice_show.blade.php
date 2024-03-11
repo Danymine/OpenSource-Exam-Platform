@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="row">
             <div class="col-6">
-                <h4 class="text-2xl font-bold text-black mb-4">{{ $practice->title }}</h4>
+                <h4 class="text-2xl font-bold text-black mb-4">{{ __('Dettagli') }}</h4>
             </div>
             <div class="col-6 text-right">
                 @if( $practice->type == "Exam")
@@ -16,7 +16,7 @@
     </x-slot>
 
     <div class="container p-4 rounded" style="background-color: #fff; box-shadow: 0.15rem 0.25rem 0 rgb(33 40 50 / 15%); border: 1px solid rgba(0,0,0,.125);">
-        <h3 class="mb-4">{{ __('Dettagli') }}:</h3>
+        <h3 class="mb-4">{{ ucfirst($practice->title) }}</h3>
         <div class="practice-details">
             <!-- Description -->
             <p class="mb-3 text-black"><strong>{{ __('Descrizione') }}:</strong> {{ $practice->description }}</p>
@@ -24,18 +24,6 @@
             <!-- Difficulty -->
             <p class="mb-3 text-black"><strong>{{ __('Difficoltà') }}:</strong> {{ $practice->difficulty }}</p>
           
-            <p class="mb-3 text-black">
-                <strong class="text-black">{{ __('Chiave') }}:</strong>
-                @if( $practice->key != NULL )
-                    <!-- Key Content -->
-                    <span id="generatedKey" class="text-black">{{ $practice->key }}</span>
-                @else
-                    <span id="generatedKey" class="text-black">{{ __('La chiave è stata eliminata.') }}</span>
-                @endif
-                
-                <!-- Copy Key Button -->
-                <button onclick="copyKey()" class="btn btn-primary ml-3">{{ __('Copia') }}</button>
-
             <!-- Subject -->
             <p class="mb-3 text-black"><strong>{{ __('Materia') }}:</strong> {{ $practice->subject }}</p>
 
@@ -59,6 +47,27 @@
 
             <!-- Practice Date -->
             <p class="mb-3 text-black"><strong>{{ __('Data programmata') }}:</strong> {{ \Carbon\Carbon::parse($practice->practice_date)->format('d-m-Y') }}</p>
+
+            <p class="mb-3 text-black">
+                <strong class="text-black">{{ __('Chiave') }}:</strong>
+                @if( $practice->key != NULL )
+                    <!-- Key Content -->
+                    <span id="generatedKey" class="text-black">{{ $practice->key }}</span>
+                @else
+                    <span id="generatedKey" class="text-black">{{ __('La chiave è stata eliminata.') }}</span>
+                @endif
+                
+                <!-- Condizione per mostrare sia il pulsante Copia che il pulsante Genera una nuova chiave -->
+                @if($practice->key !== NULL)
+                    <!-- Copy Key Button -->
+                    <button onclick="copyKey()" class="btn btn-primary ml-3 fas fa-copy"></button>
+                @else
+                    <!-- New Key Button (mostrato solo quando key = NULL) -->
+                    <a href="{{ route('generate.new.key', ['practice' => $practice]) }}" class="btn btn-primary" style="font-family: 'InserisciQuiIlTuoFontPredefinito';">
+                        <i class="fas fa-sync-alt"></i> {{ __('Genera una nuova chiave') }}
+                    </a>
+                @endif
+            </p>
         </div>
 
         <!-- Linea di separazione -->
@@ -96,4 +105,5 @@
             alert('Chiave copiata negli appunti!');
         }
     </script>
+
 </x-app-layout>
