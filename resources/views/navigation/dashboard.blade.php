@@ -71,7 +71,7 @@
                         <div class="row mt-3">
                             <!-- Secondo elemento: tabella -->
                             <div class="col">
-                                <table class="table">
+                                <table class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th scope="col">{{ __('Nome') }}</th>
@@ -98,8 +98,8 @@
                                                     </tr>
 
                                                 @else
-                                                    <tr class="practice" onclick="window.location='{{ route('view-delivered', ['practice' =>  $practice ] ) }}'" style="cursor:pointer; display: none;">
-                                                        <td>{{ $practice->title }}e</td>
+                                                    <tr class="practice" style="display: none;">
+                                                        <td><a href="{{ route('view-delivered', ['practice' =>  $practice]) }}">{{ $practice->title }}</a></td>
                                                         <td>{{ $practice->practice_date }}</td>
                                                         <td>
                                                             {{
