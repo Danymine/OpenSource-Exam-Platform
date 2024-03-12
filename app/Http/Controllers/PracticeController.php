@@ -964,7 +964,7 @@ class PracticeController extends Controller
         }
     
         // Verifica se il test prevede l'invio automatico del feedback.
-        if( $feedback->feedback_enabled == false ){
+        if( $feedback->feedback_enabled == 0 ){
 
             return redirect()->route('dashboard')->with('success', trans('Invio avvenuto con successo'));
         }

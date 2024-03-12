@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Practice;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 
 class WaitingRoomController extends Controller
@@ -31,29 +32,51 @@ class WaitingRoomController extends Controller
     public function status(Practice $practice)
     {
 
-        $status = NULL;
         $waitingRoom = Auth::user()->waitingroom()->where('practice_id', $practice->id)->first();
-        if ($waitingRoom) {
+        if ($waitingRoom != NULL ) {
+
             $status = $waitingRoom->pivot->status;
+            if( $practice->allowed == 1 ){
+    
+                //La prova è avviata quindi è possibile entrarci ma dobbiamo constatare lo status dell'utente.
+                switch($status){
+
+                    case "execute":
+                        return response()->json(['status' => 'allowed']);
+                    break;
+
+                    case "wait":
+                        return response()->json(['status' => 'wait']); 
+                    break;
+                }
+            }
+
+            return response()->json(['status' => 'wait']); 
         }
-        
-        if (!$practice) {
-            // Se la pratica non esiste, restituisci un errore 404
-            return response()->json(['error' => 'Pratica non trovata'], 404);
+
+        return response()->json(['status' => 'kicked']); 
+    }
+
+    public function status_test(Practice $practice)
+    {
+
+        //Siamo sicuri come la morte essendo dentro la pagina del test che practice sia stata avviata quindi che abbia allowed = 1; Se questo valore cambia allora è terminata.
+        if( $practice->allowed == 0 ){
+
+            return response()->json(['status' => 'finished']); 
         }
+        else{
 
-        $allowed = $practice->allowed;
-        if( $allowed == 1 && $status == "execute"){ //Dai l'accesso solo nel caso in cui la pratica sia stata avviata lo status dell'utente che fa la richiesta sia in execute
+            //Altrimenti non è finita ma è possibile che lo studente sia stato kikkato quindi controlliamo la sua presenza in waiting room.
+            $status = NULL;
+            $waitingRoom = Auth::user()->waitingroom()->where('practice_id', $practice->id)->first();
+            if( $waitingRoom === NULL ){
 
-            return response()->json(['status' => 'allowed']);
+                return response()->json(['status' => 'kicked']); 
+            }
+
+            return response()->json(['status' => 'nothing']); 
         }
-
-        if ($status == NULL) {
-
-            return response()->json(['status' => 'kicked']);
-        }
-
-        return response()->json(['status' => 'wait']); 
     }
 
     public function participants(Practice $practice) {
@@ -94,26 +117,30 @@ class WaitingRoomController extends Controller
     
     public function empower(Request $request, Practice $practice){
 
-        if($practice->user_id == Auth::user()->id) {
+        $validateData = $request->validate([
+            'setDurationOption' => ['string', Rule::in(['yes', 'no']), 'nullable'],
+            'time' => 'required_if:setDurationOption,yes|nullable|numeric|min:1',
+        ]);        
+        if ($practice->user_id == Auth::user()->id ) {
+
             $practice->allowed = 1;
-    
-            // Controllo se è stato impostato il setDurationOption
-            if($request->has('setDurationOption')) {
-                if($request->input('setDurationOption') === 'yes') {
-                    if($request->filled('time')) { 
-                        $time = $request->input('time'); 
-                        $practice->time = $time;
-                    }
-                }
+            if( $validateData['setDurationOption'] === "yes" ) {
+
+                $practice->time = $validateData['time'];
+            }
+            else{
+
+                $practice->time = NULL;
             }
     
             $practice->save();
     
-            foreach ($practice->userwaiting as $user_wait) {
+            foreach ( $practice->userwaiting as $user_wait ) {
+
                 $user_wait->waitingroom()->updateExistingPivot($practice->id, ['status' => 'execute']);
             }
     
-            return redirect()->back()->with('success', 'Gli studenti hanno iniziato la prova');
+            return redirect()->back()->with('success', trans('Gli studenti hanno iniziato la prova'));
         }
         
         abort('403', "Non autorizzato.");

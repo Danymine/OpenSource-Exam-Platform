@@ -122,195 +122,231 @@
     </div>
 
 </x-app-layout>
+    <script>
+        route = "{!! route('status_test', ['practice' => $test]) !!}";
+        routeDashboard = "{!! route('dashboard') !!}";
+        durata = "{!! $test->time  !!}";
+        
+        /* Ora che ho l'orario di start e la durata della prova posso determinare l'orario di finish ora il timer deve essere determinato automaticamente dalla differenza 
+        fra la l'orario di finish meno l'ora attuale */
+        
+        dateStart = new Date("{!! $test->updated_at  !!}");
+        dateStart.setHours(dateStart.getHours() + 1); // Aggiungi un'ora
+        dateEnd = new Date(dateStart.getTime() + (durata * 60000));
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var questions = document.querySelectorAll('.card');
-        var totalQuestions = questions.length;
-        var nextButton = document.getElementById('nextBtn');
-        var previousButton = document.getElementById('previousBtn');
-        var progressBar = document.querySelector('.progress-bar');
+        function timer(){
 
-        // Imposta il tasto Indietro come disabilitato all'avvio
-        previousButton.disabled = true;
-        nextButton.disabled = false;
+            // Ottieni l'orario attuale
+            const currentDate = new Date();
 
-        hideAllQuestionsExcept(0); // Nasconde tutte le domande tranne la prima
-        updateProgressBar(); // Inizializza la progress bar
+            // Calcola il tempo rimanente sottraendo l'orario attuale all'orario di fine
+            const remainingTime = dateEnd - currentDate;
 
-        // Aggiungi un gestore di eventi per ciascun campo di input
-        var inputFields = document.querySelectorAll('input[type="radio"], input[type="text"], textarea');
-        inputFields.forEach(function(field) {
-            field.addEventListener('input', updateProgressBar);
-        });
+            if (remainingTime <= 0) {
+                document.getElementById("countdown").textContent = "Tempo Scaduto";
+                document.getElementById("countdown").style.color = "red";
+                return;
+            }
 
-        // Aggiungi un gestore di eventi per i campi di input di tipo radio
-        var radioGroups = document.querySelectorAll('input[type="radio"]');
-        radioGroups.forEach(function(radioGroup) {
-            radioGroup.addEventListener('change', updateProgressBar);
-        });
+            // Converti il tempo rimanente in ore, minuti e secondi
+            const hoursRemaining = Math.floor(remainingTime / (1000 * 60 * 60));
+            const minutesRemaining = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+            const secondsRemaining = Math.floor((remainingTime % (1000 * 60)) / 1000);
 
-        // Aggiungi un gestore di eventi per ciascun pulsante numerato
-        var exerciseButtons = document.querySelectorAll('.exercise-btn');
-        exerciseButtons.forEach(function(button) {
-            button.addEventListener('click', function() {
-                var indexToShow = parseInt(this.getAttribute('data-index'));
-                hideAllQuestionsExcept(indexToShow);
-                showQuestion(indexToShow);
-                updateProgressBar();
-                // Imposta la condizione per abilitare o disabilitare il pulsante Indietro
-                if (indexToShow === 0) {
-                    previousButton.disabled = true;
-                } else {
-                    previousButton.disabled = false;
+            //Costruisci la parte grafica nell'elemento con id = countdown metti ORA-MINUTI-SECONDI 
+            // Costruisci la stringa dell'orario rimanente
+            const countdownString = `${hoursRemaining.toString().padStart(2, '0')}:${minutesRemaining.toString().padStart(2, '0')}:${secondsRemaining.toString().padStart(2, '0')}`;
+
+            // Aggiorna il contenuto dell'elemento con id "countdown"
+            document.getElementById("countdown").textContent = countdownString;
+        }
+
+        function fetchStatus() {
+            fetch(route, {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+
+                if( data.status == "finished" ){
+
+                    form = document.getElementById('invia');
+                    form.submit();
                 }
-                // Imposta la condizione per abilitare o disabilitare il pulsante Avanti
-                if (indexToShow === totalQuestions - 1) {
-                    nextButton.disabled = true;
-                } else {
-                    nextButton.disabled = false;
+                else if( data.status == "kicked" ){
+
+                    window.location.href = routeDashboard;
+                }
+                else{
+
+                    setTimeout(fetchStatus, 5000);
+                }
+            })    
+            .catch(error => console.error("Errore nell'aggiornamento ", error));
+        }
+
+        fetchStatus(); 
+        setInterval(timer, 1000);
+        
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var questions = document.querySelectorAll('.card');
+            var totalQuestions = questions.length;
+            var nextButton = document.getElementById('nextBtn');
+            var previousButton = document.getElementById('previousBtn');
+            var progressBar = document.querySelector('.progress-bar');
+
+            // Imposta il tasto Indietro come disabilitato all'avvio
+            previousButton.disabled = true;
+            nextButton.disabled = false;
+
+            hideAllQuestionsExcept(0); // Nasconde tutte le domande tranne la prima
+            updateProgressBar(); // Inizializza la progress bar
+
+            // Aggiungi un gestore di eventi per ciascun campo di input
+            var inputFields = document.querySelectorAll('input[type="radio"], input[type="text"], textarea');
+            inputFields.forEach(function(field) {
+                field.addEventListener('input', updateProgressBar);
+            });
+
+            // Aggiungi un gestore di eventi per i campi di input di tipo radio
+            var radioGroups = document.querySelectorAll('input[type="radio"]');
+            radioGroups.forEach(function(radioGroup) {
+                radioGroup.addEventListener('change', updateProgressBar);
+            });
+
+            // Aggiungi un gestore di eventi per ciascun pulsante numerato
+            var exerciseButtons = document.querySelectorAll('.exercise-btn');
+            exerciseButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var indexToShow = parseInt(this.getAttribute('data-index'));
+                    hideAllQuestionsExcept(indexToShow);
+                    showQuestion(indexToShow);
+                    updateProgressBar();
+                    // Imposta la condizione per abilitare o disabilitare il pulsante Indietro
+                    if (indexToShow === 0) {
+                        previousButton.disabled = true;
+                    } else {
+                        previousButton.disabled = false;
+                    }
+                    // Imposta la condizione per abilitare o disabilitare il pulsante Avanti
+                    if (indexToShow === totalQuestions - 1) {
+                        nextButton.disabled = true;
+                    } else {
+                        nextButton.disabled = false;
+                    }
+                });
+            });
+
+            // Gestisci il clic sul pulsante Avanti
+            nextButton.addEventListener('click', function() {
+                var currentQuestionIndex = getCurrentQuestionIndex();
+                if (currentQuestionIndex < totalQuestions - 1) {
+                    hideQuestion(currentQuestionIndex);
+                    showQuestion(currentQuestionIndex + 1);
+                    updateProgressBar();
+                    // Abilita il tasto Indietro quando si passa alla domanda successiva
+                    previousButton.disabled = false;
+                    
+                    // Disabilita il tasto Avanti se si passa all'ultima domanda
+                    if (currentQuestionIndex === totalQuestions - 2 ) {
+                        nextButton.disabled = true;
+                    }
                 }
             });
-        });
 
-        // Gestisci il clic sul pulsante Avanti
-        nextButton.addEventListener('click', function() {
-            var currentQuestionIndex = getCurrentQuestionIndex();
-            if (currentQuestionIndex < totalQuestions - 1) {
-                hideQuestion(currentQuestionIndex);
-                showQuestion(currentQuestionIndex + 1);
-                updateProgressBar();
-                // Abilita il tasto Indietro quando si passa alla domanda successiva
-                previousButton.disabled = false;
-                
-                // Disabilita il tasto Avanti se si passa all'ultima domanda
-                if (currentQuestionIndex === totalQuestions - 2 ) {
-                    nextButton.disabled = true;
+            // Gestisci il clic sul pulsante Indietro
+            previousButton.addEventListener('click', function() {
+                var currentQuestionIndex = getCurrentQuestionIndex();
+                if (currentQuestionIndex > 0) {
+                    hideQuestion(currentQuestionIndex);
+                    showQuestion(currentQuestionIndex - 1);
+                    updateProgressBar();
+                    nextButton.disabled = false;
+                }
+                // Disabilita il tasto Indietro se si torna alla prima domanda
+                if (currentQuestionIndex === 1) {
+                    previousButton.disabled = true;
+                }
+            }); 
+
+            // Nascondi la domanda corrente
+            function hideQuestion(index) {
+                questions[index].classList.add('hide-total');
+            }
+
+            // Mostra la domanda corrente
+            function showQuestion(index) {
+                questions[index].classList.remove('hide-total');
+            }
+
+            // Nascondi tutte le domande tranne quella con l'indice specificato
+            function hideAllQuestionsExcept(indexToShow) {
+                for (var i = 0; i < totalQuestions; i++) {
+                    if (i !== indexToShow) {
+                        hideQuestion(i);
+                    }
                 }
             }
-        });
 
-        // Gestisci il clic sul pulsante Indietro
-        previousButton.addEventListener('click', function() {
-            var currentQuestionIndex = getCurrentQuestionIndex();
-            if (currentQuestionIndex > 0) {
-                hideQuestion(currentQuestionIndex);
-                showQuestion(currentQuestionIndex - 1);
-                updateProgressBar();
-                nextButton.disabled = false;
-            }
-            // Disabilita il tasto Indietro se si torna alla prima domanda
-            if (currentQuestionIndex === 1) {
-                previousButton.disabled = true;
-            }
-        }); 
-
-        // Nascondi la domanda corrente
-        function hideQuestion(index) {
-            questions[index].classList.add('hide-total');
-        }
-
-        // Mostra la domanda corrente
-        function showQuestion(index) {
-            questions[index].classList.remove('hide-total');
-        }
-
-        // Nascondi tutte le domande tranne quella con l'indice specificato
-        function hideAllQuestionsExcept(indexToShow) {
-            for (var i = 0; i < totalQuestions; i++) {
-                if (i !== indexToShow) {
-                    hideQuestion(i);
+            // Ottieni l'indice della domanda correntemente visualizzata
+            function getCurrentQuestionIndex() {
+                for (var i = 0; i < totalQuestions; i++) {
+                    if (!questions[i].classList.contains('hide-total')) {
+                        return i;
+                    }
                 }
+                return -1;
             }
-        }
 
-        // Ottieni l'indice della domanda correntemente visualizzata
-        function getCurrentQuestionIndex() {
-            for (var i = 0; i < totalQuestions; i++) {
-                if (!questions[i].classList.contains('hide-total')) {
-                    return i;
-                }
-            }
-            return -1;
-        }
+            // Aggiorna il valore della progress bar in base al numero di domande completate
+            function updateProgressBar() {
+                var completedQuestions = 0;
 
-        // Aggiorna il valore della progress bar in base al numero di domande completate
-        function updateProgressBar() {
-            var completedQuestions = 0;
+                questions.forEach(function(question) {
+                    var inputFields = question.querySelectorAll('input[type="radio"], input[type="text"], textarea');
+                    var completedField = false;
 
-            questions.forEach(function(question) {
-                var inputFields = question.querySelectorAll('input[type="radio"], input[type="text"], textarea');
-                var completedField = false;
+                    inputFields.forEach(function(field) {
+                        if ((field.tagName === 'INPUT' && field.type === 'radio' && field.checked) || (field.tagName !== 'INPUT' && field.value.trim() !== '')) {
+                            completedField = true;
+                        }
+                    });
 
-                inputFields.forEach(function(field) {
-                    if ((field.tagName === 'INPUT' && field.type === 'radio' && field.checked) || (field.tagName !== 'INPUT' && field.value.trim() !== '')) {
-                        completedField = true;
+                    if (completedField) {
+                        completedQuestions++;
                     }
                 });
 
-                if (completedField) {
-                    completedQuestions++;
-                }
+                var progressValue = (completedQuestions / totalQuestions) * 100;
+                progressBar.style.width = progressValue + '%';
+                progressBar.setAttribute('aria-valuenow', progressValue);
+            }
+
+
+            // Pulsante per inviare il modulo di risposta
+            var submitButton = document.getElementById('submitBtn');
+            // Modal di conferma
+            var confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+
+            // Gestisci il clic sul pulsante Invia
+            submitButton.addEventListener('click', function() {
+                // Mostra il modal di conferma
+                confirmationModal.show();
             });
 
-            var progressValue = (completedQuestions / totalQuestions) * 100;
-            progressBar.style.width = progressValue + '%';
-            progressBar.setAttribute('aria-valuenow', progressValue);
-        }
+            // Gestisci il clic sul pulsante di conferma all'interno del modal
+            document.getElementById('confirmSend').addEventListener('click', function() {
+                // Invia il modulo di risposta
+                document.getElementById('invia').submit();
+            });
 
-
-        // Pulsante per inviare il modulo di risposta
-        var submitButton = document.getElementById('submitBtn');
-        // Modal di conferma
-        var confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-
-        // Gestisci il clic sul pulsante Invia
-        submitButton.addEventListener('click', function() {
-            // Mostra il modal di conferma
-            confirmationModal.show();
         });
 
-        // Gestisci il clic sul pulsante di conferma all'interno del modal
-        document.getElementById('confirmSend').addEventListener('click', function() {
-            // Invia il modulo di risposta
-            document.getElementById('invia').submit();
-        });
-
-    });
-
-    document.addEventListener("DOMContentLoaded", function() {
-        var countdownElement = document.getElementById('countdown');
-        var testTimeMinutes = parseInt("{{ $test->time ?? 0 }}");
-        var startTime = new Date(); // Memorizza il tempo di inizio della prova
-
-        // Calcola la data di fine del timer basandoti sulla durata totale del test
-        var endTime = new Date(startTime);
-        endTime.setMinutes(endTime.getMinutes() + testTimeMinutes);
-        
-        // Calcola il tempo trascorso dalla data di inizio della prova fino ad ora
-        var elapsedTime = new Date() - startTime;
-        
-        // Calcola il tempo rimanente sottraendo il tempo trascorso dalla durata totale del test
-        var remainingTime = endTime - new Date() + elapsedTime;
-        
-        function updateCountdown() {
-            if (remainingTime <= 0) {
-                countdownElement.textContent = "Tempo scaduto!";
-            } else {
-                var hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
-                var minutes = Math.floor((remainingTime / 1000 / 60) % 60);
-                var seconds = Math.floor((remainingTime / 1000) % 60);
-                var formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                countdownElement.textContent = formattedTime;
-            }
-        }
-        
-        setInterval(function() {
-            remainingTime -= 1000; // Sottrae un secondo dal tempo rimanente ogni secondo
-            updateCountdown();
-        }, 1000);
-        
-        updateCountdown(); // Aggiorna subito il timer all'avvio
-    });
-
-</script>
+    </script>

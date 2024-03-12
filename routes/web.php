@@ -73,6 +73,8 @@ Route::middleware(Localization::class)
 
         Route::get('/status/{practice}', [WaitingRoomController::class, 'status'])->name('status');
 
+        Route::get('/test/{practice}', [WaitingRoomController::class, 'status_test'])->name('status_test');
+
         //Incomincia la correzione
         Route::get('/view-details-delivered/{delivered}', [DeliveredController::class, 'show'])->name('view-details-delivered')->middleware('control'); //Il middleware permette di vedere i dettagli della consegna solo per gli utenti che l'hanno consegnata o per il docente che ha creato la practice alla quale si riferisce
         
