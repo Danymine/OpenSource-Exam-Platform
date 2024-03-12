@@ -93,7 +93,7 @@
 
                             <button id="annullaAggiunta{{ $delivered->user_id }}" class="btn btn-info ml-2" style="font-size:20px" onclick="nascondiGrafico({{ $delivered->user_id }})" >{{ __('Esci') }}</button>         
                         </div>
-                        <td> {{ $delivered->practice->practice_date }} </td>
+                        <td> {{ $practice->practice_date }} </td>
                         @if( $delivered->valutation === NULL )
 
                             <td> {{ __('Nessuna Valutazione') }} </td>
@@ -106,7 +106,7 @@
                 @endforeach
             </tbody>
         </table>
-        @if( $delivered->practice->public == 0 )
+        @if( $practice->public == 0 )
             <div>
                 <a class="btn btn-primary" href="{{ route('public', ['practice' => $practice]) }}">{{ __('Pubblica') }}</a>
             </div>

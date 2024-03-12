@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\LocalizationController;
 use App\Models\AssistanceRequest;
+use App\Models\Practice;
 use App\Http\Controllers\AssistanceRequestController;
 
 
@@ -41,7 +42,10 @@ Route::middleware(Localization::class)
 
         if( Auth::user()->roles != 'Admin' ){
 
-            return view('navigation.dashboard');
+            if( Auth::user()->roles == 'Teacher'){
+
+                return view('navigation.dashboard', ['practices' => Auth::user()->practices()->withTrashed()->get()]);
+            }
         }
 
         return view('navigation.dashboard', ['Assistances' => AssistanceRequest::where('status', 0)->where('admin_id', Auth::user()->id)->simplePaginate(10)]);
@@ -196,13 +200,13 @@ Route::middleware(Localization::class)
 
         //Passiamo a gestire le consegne.
         //Pagina Iniziale
-        Route::get('/view-delivered/{practice}', [DeliveredController::class, 'index'])->name('view-delivered');
+        Route::get('/view-delivered/{practice}', [DeliveredController::class, 'index'])->name('view-delivered')->withTrashed();
 
         //Si occupa di memorizzare il voto.
         Route::post('/save-valutation/{delivered}', [DeliveredController::class, 'save'])->name('store-valutation');
 
         //Si occupa di pubblicare le valutazioni
-        Route::get('/public/{practice}', [DeliveredController::class, 'public'])->name('public');
+        Route::get('/public/{practice}', [DeliveredController::class, 'public'])->name('public')->withTrashed();
 
         //Passiamo a gestire la Waiting-Room e l'avvio dell'esame.
         Route::post('/authorize/{practice}', [WaitingRoomController::class, 'empower'])->name('start-test');

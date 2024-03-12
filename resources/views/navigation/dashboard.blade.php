@@ -71,7 +71,7 @@
                         <div class="row mt-3">
                             <!-- Secondo elemento: tabella -->
                             <div class="col">
-                                <table class="table table-hover">
+                                <table class="table">
                                     <thead>
                                         <tr>
                                             <th scope="col">{{ __('Nome') }}</th>
@@ -80,42 +80,37 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach(Auth::user()->practices()->withTrashed()->get() as $practice)
-                                            @if($practice->public != 1 && $practice->delivereds->isEmpty())
-                                                @continue
-                                            @endif
+                                        @foreach($practices as $practice)
+                                            @if($practice->public != 1 && !$practice->delivereds->isEmpty())
+                                                
+                                                @if($practice->type == "Exam")
+                                                            
+                                                    <tr class="exame">
+                                                        <td><a href="{{ route('view-delivered', ['practice' =>  $practice]) }}">{{ $practice->title }}</a></td>
+                                                        <td>{{ $practice->practice_date }}</td>
+                                                        <td>
+                                                            {{
+                                                                count($practice->delivereds->filter(function ($delivered) {
+                                                                    return $delivered->valutation === NULL;
+                                                                }))
+                                                            }}
+                                                        </td>
+                                                    </tr>
 
-                                            @foreach($practice->delivereds as $delivered)
-                                                @if($delivered->valutation == NULL)
-
-                                                    @if($practice->type == "Exam")
-                                                        <tr class="exame" onclick="window.location='{{ route('view-delivered', ['practice' =>  $practice ] ) }}'" style="cursor:pointer;">
-                                                            <td>{{ $practice->title }}</td>
-                                                            <td>{{ $practice->practice_date }}</td>
-                                                            <td>
-                                                                {{
-                                                                    count($practice->delivereds->filter(function ($delivered) {
-                                                                        return $delivered->valutation === NULL;
-                                                                    }))
-                                                                }}
-                                                            </td>
-                                                        </tr>
-                                                    @else
-                                                        <tr class="practice" onclick="window.location='{{ route('view-delivered', ['practice' =>  $practice ] ) }}'" style="cursor:pointer; display: none;">
-                                                            <td>{{ $practice->title }}e</td>
-                                                            <td>{{ $practice->practice_date }}</td>
-                                                            <td>
-                                                                {{
-                                                                    count($practice->delivereds->filter(function ($delivered) {
-                                                                        return $delivered->valutation === NULL;
-                                                                    }))
-                                                                }}
-                                                            </td>
-                                                        </tr>
-                                                    @endif
-                                                    @break
+                                                @else
+                                                    <tr class="practice" onclick="window.location='{{ route('view-delivered', ['practice' =>  $practice ] ) }}'" style="cursor:pointer; display: none;">
+                                                        <td>{{ $practice->title }}e</td>
+                                                        <td>{{ $practice->practice_date }}</td>
+                                                        <td>
+                                                            {{
+                                                                count($practice->delivereds->filter(function ($delivered) {
+                                                                    return $delivered->valutation === NULL;
+                                                                }))
+                                                            }}
+                                                        </td>
+                                                    </tr>
                                                 @endif
-                                            @endforeach
+                                            @endif
                                         @endforeach  
                                     </tbody>
                                 </table>

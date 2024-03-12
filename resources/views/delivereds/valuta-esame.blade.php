@@ -2,10 +2,10 @@
     <x-slot name="header">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="font-semibold text-xl leading-tight">
-                @if( Auth::user()->roles == "Teacher" &&  $delivered->practice->public == 0) {{ __('Correzione') }} @else {{ $delivered->practice->title }} @endif
+                @if( Auth::user()->roles == "Teacher" &&  $practice->public == 0) {{ __('Correzione') }} @else {{ $practice->title }} @endif
             </h4>
             <div>
-                <a href="{{ route('view-delivered', ['practice' => $delivered->practice]) }}" class="btn btn-info">{{ __('Torna Indietro') }}</a>
+                <a href="{{ route('view-delivered', ['practice' => $practice]) }}" class="btn btn-info">{{ __('Torna Indietro') }}</a>
                 <a href="{{ route('download-details-delivered', ['delivered' => $delivered]) }}" class="btn btn-sm btn-warning" title="{{ __('Stampa consegna') }}" style="height: 38px; width: 40px; text-align: center; padding: 0;">
                     <i class="fas fa-print" style="line-height: 38px;"></i>
                 </a>
@@ -56,14 +56,14 @@
                         <h5>{{ $exercises[0]->question }}</h5>
                         <h6 class="mb-3">{{ $response[$exercises[0]->id][0]["response"] }}</h6>
                         @if( $exercises[0]->type == "Risposta Aperta")
-                        <div class="form-group">
-                            <label for="valutation">{{ __('Valutazione', ['score' => $exercises[0]->score]) }} </label>
-                            <input type="number" class="form-control mb-2" id="valutation" name='correct[{{$response[$exercises[0]->id][0]["id"]}}]' min="0" max="{{ $exercises[0]->score }}" placeholder="{{ __('Assegna un punteggio') }}" value="{{ $response[$exercises[0]->id][0]['score_assign'] }}" >
-                        </div>
-                        <div class="form-group">
-                            <label for="note">{{ __('Note') }}</label>
-                            <textarea class="form-control mb-2" id="note" name='note[{{ $response[$exercises[0]->id][0]["id"] }}]' rows="2" placeholder="{{ __('Note') }}"> {{ $response[$exercises[0]->id][0]['note'] }} </textarea>
-                        </div>
+                            <div class="form-group">
+                                <label for="valutation">{{ __('Valutazione', ['score' => $exercises[0]->score]) }} </label>
+                                <input type="number" class="form-control mb-2" id="valutation" name='correct[{{$response[$exercises[0]->id][0]["id"]}}]' min="0" max="{{ $exercises[0]->score }}" placeholder="{{ __('Assegna un punteggio') }}" value="{{ $response[$exercises[0]->id][0]['score_assign'] }}" >
+                            </div>
+                            <div class="form-group">
+                                <label for="note">{{ __('Note') }}</label>
+                                <textarea class="form-control mb-2" id="note" name='note[{{ $response[$exercises[0]->id][0]["id"] }}]' rows="2" placeholder="{{ __('Note') }}"> {{ $response[$exercises[0]->id][0]['note'] }} </textarea>
+                            </div>
                         @else
                             <div class="form-check mb-2">
                                 <input class="form-check-input" type="radio" name='correct[{{ $response[$exercises[0]->id][0]["id"]}}]' id="correct-yes" value="{{ $exercises[0]->score }}" {{ isset($response[$exercises[0]->id][0]["score_assign"]) && $response[$exercises[0]->id][0]["score_assign"] == $exercises[0]->score ? 'checked' : '' }} >

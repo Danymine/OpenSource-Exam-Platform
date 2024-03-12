@@ -35,10 +35,11 @@ class DeliveredController extends Controller
      */
     public function save(Request $request, Delivered $delivered)
     {
+        $practice = Practice::withTrashed()->find($delivered->practice_id);
         $validateData = $request->validate([
-            'correct' => 'required|array|size:' . $delivered->practice->exercises()->count(),
+            'correct' => 'required|array|size:' . $practice->exercises()->count(),
             'correct.*' => 'numeric|min:0',
-            'note' => 'required|array|size:' . $delivered->practice->exercises()->count(),
+            'note' => 'required|array|size:' . $practice->exercises()->count(),
             'note.*' => 'string|max:255|nullable',
             'note_general' => 'nullable|string|max:255',
             'file-correct' => 'nullable|file|mimes:pdf,image/*',
@@ -80,7 +81,7 @@ class DeliveredController extends Controller
 
         $delivered->save();
 
-        return redirect()->route('view-delivered', ['practice' => $delivered->practice]);
+        return redirect()->route('view-delivered', ['practice' => $practice]);
         
     }
 
@@ -92,8 +93,9 @@ class DeliveredController extends Controller
         $response = Answer::where('delivered_id', $delivered->id)
         ->get()
         ->groupBy('exercise_id');
-        $exercises = Practice::find($delivered->practice_id)->exercises()->withTrashed()->get();
-        return view('delivereds.valuta-esame', ['delivered' => $delivered, 'response' => $response, 'exercises' => $exercises]);
+        $practice = Practice::withTrashed()->find($delivered->practice_id);
+        $exercises = $practice->exercises()->withTrashed()->get();
+        return view('delivereds.valuta-esame', ['delivered' => $delivered, 'practice' => $practice, 'response' => $response, 'exercises' => $exercises]);
     }
 
     public function print(Delivered $delivered){
@@ -103,9 +105,11 @@ class DeliveredController extends Controller
         $options->set('isHtml5ParserEnabled', true);
         $dompdf = new Dompdf();
 
+        $practice = Practice::withTrashed()->find($delivered->practice_id);
+
         // Dati da passare alla vista blade
         $data = [
-            'exercises' => $delivered->practice->exercises()->withTrashed()->get(),
+            'exercises' => $practice->exercises()->withTrashed()->get(),
             'response' => Answer::where('delivered_id', $delivered->id)->get()->groupBy('exercise_id'),
             'delivered' => $delivered
         ];
@@ -123,7 +127,7 @@ class DeliveredController extends Controller
         $dompdf->render();
 
         // Restituzione del PDF come stream per il download
-        return $dompdf->stream($delivered->practice->title . "_" . $delivered->user->name . '.pdf');
+        return $dompdf->stream($practice->title . "_" . $delivered->user->name . '.pdf');
     }
 
     public function printDeliveredWithCorrect(Delivered $delivered){
@@ -133,14 +137,15 @@ class DeliveredController extends Controller
         $options->set('isHtml5ParserEnabled', true);
         $dompdf = new Dompdf($options);
 
+        $practice = Practice::withTrashed()->find($delivered->practice_id);
         // Dati da passare alla vista blade
         $data = [
-            'exercises' => $delivered->practice->exercises()->withTrashed()->get(),
+            'exercises' => $practice->exercises()->withTrashed()->get(),
             'response' => Answer::where('delivered_id', $delivered->id)->get()->groupBy('exercise_id'),
             'notes' => $delivered->note,
             'valutation' => $delivered->valutation,
-            'type' => $delivered->practice->type,
-            'totalScore' => $delivered->practice->total_score,
+            'type' => $practice->type,
+            'totalScore' => $practice->total_score,
             'delivered' => $delivered
         ];
 
@@ -163,7 +168,8 @@ class DeliveredController extends Controller
 
     public function printCorrect( Delivered $delivered )
     {
-        $fileName = $delivered->practice->title . ".pdf";
+        $practice = Practice::withTrashed()->find($delivered->practice_id);
+        $fileName = $practice->title . ".pdf";
         return response()->download($delivered->path, $fileName);
     }
 
@@ -196,9 +202,11 @@ class DeliveredController extends Controller
         $response = Answer::where('delivered_id', $delivered->id)
         ->get()
         ->groupBy('exercise_id');
-        $exercises = Practice::find($delivered->practice_id)->exercises()->withTrashed()->get();
+        $practice = Practice::withTrashed()->find($delivered->practice_id);
+        $exercises = $practice->exercises()->withTrashed()->get();
 
-        return view('delivereds.delivered-show', ['delivered' => $delivered, 'response' => $response, 'exercises' => $exercises]);
+
+        return view('delivereds.delivered-show', ['delivered' => $delivered, 'practice' => $practice, 'response' => $response, 'exercises' => $exercises]);
 
     }
 }
