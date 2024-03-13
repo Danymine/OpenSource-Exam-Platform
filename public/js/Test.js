@@ -56,13 +56,10 @@ function sortTable(columnIndex) {
 function difficultyToNumber(difficulty) {
     switch (difficulty.toLowerCase()) {
         case translations['translate']["Bassa"].toLowerCase():
-        case "low":
             return 1;
         case translations['translate']["Media"].toLowerCase():
-        case "medium":
             return 2;
         case translations['translate']["Alta"].toLowerCase():
-        case "high":
             return 3;
         default:
             return 0;
@@ -111,45 +108,66 @@ function resetFilters() {
 }
 
 function applyFilters() {
+    
+    //Catturo il valore dai filtri 
     var materia = document.getElementById('materiaInput').value.toLowerCase();
+    var difficolta = document.getElementById('difficoltaInput').value.toLowerCase();
+    
     var punteggioMin = document.getElementById('punteggioMinInput').value;
     var punteggioMax = document.getElementById('punteggioMaxInput').value;
-    var difficolta = document.getElementById('difficoltaInput').value.toLowerCase();
+
+    //Catturo la tabella e le righe nella quale andremo ad applicare i filtri
     var table = document.getElementById('practice-table');
     var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    console.log(rows[0].getElementsByTagName('td'));
 
     for (var i = 0; i < rows.length; i++) {
-        var materiaCell = rows[i].getElementsByTagName('td')[3].textContent.toLowerCase(); // Assuming materia is at index 3
-        var tipoCell = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase(); // Assuming type is at index 1
-        var difficoltaCell = rows[i].getElementsByTagName('td')[2].textContent.toLowerCase(); // Assuming difficolta is at index 2
 
-        var showRow = true;
+        //Prendiamo i valori della Riga in posizione I.
+        var materiaCell = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
+        var difficoltaCell = rows[i].getElementsByTagName('td')[2].textContent.toLowerCase();
+        
+        //Utilizzeremo questa variabile come "Sentinella" che ci dirà SE mostrare la riga o meno.
+        var showRow = true; 
 
-        if (materia !== '' && !materiaCell.includes(materia)) {
+        //Controllo sulla Materia
+        if ( materia !== '' && !materiaCell.includes(materia) ) {
+
             showRow = false;
         }
 
-        if (punteggioMin !== '' && parseInt(punteggioMin) > 0) { // Check if punteggioMin is not empty and greater than 0
-            var punteggioCell = parseInt(rows[i].getElementsByTagName('td')[4].textContent); // Assuming punteggio is at index 4
+        //Controllo sul Punteggio Minimo
+        if ( punteggioMin !== '' && parseInt(punteggioMin) > 0 ) {
+
+            var punteggioCell = parseInt(rows[i].getElementsByTagName('td')[4].textContent);
             if (isNaN(punteggioCell) || punteggioCell < parseInt(punteggioMin)) {
+
                 showRow = false;
             }
         }
 
-        if (punteggioMax !== '' && parseInt(punteggioMax) > 0) { // Check if punteggioMax is not empty and greater than 0
-            var punteggioCell = parseInt(rows[i].getElementsByTagName('td')[4].textContent); // Assuming punteggio is at index 4
+        //Controllo sul Punteggio Massimo
+        if (punteggioMax !== '' && parseInt(punteggioMax) > 0) {
+
+            var punteggioCell = parseInt(rows[i].getElementsByTagName('td')[4].textContent);
             if (isNaN(punteggioCell) || punteggioCell > parseInt(punteggioMax)) {
+
                 showRow = false;
             }
         }
 
+        //Controllo sulla Difficoltà
         if (difficolta !== '' && difficolta !== 'tutte le difficoltà' && difficoltaCell !== difficolta) {
+
             showRow = false;
         }
 
         if (showRow) {
+
             rows[i].style.display = '';
-        } else {
+        } 
+        else {
+           
             rows[i].style.display = 'none';
         }
     }

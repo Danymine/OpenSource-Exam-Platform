@@ -63,9 +63,9 @@
                 <div class="col-md-3">
                     <select id="difficoltaInput" class="form-select w-100 filter-select" aria-label="Seleziona difficoltà" onchange="applyFilters()">
                         <option value="">{{ __('Tutte le difficoltà') }}</option>
-                        <option value="Bassa">{{ __('Bassa') }}</option>
-                        <option value="Media">{{ __('Media') }}</option>
-                        <option value="Alta">{{ __('Alta') }}</option>
+                        <option value="{{ __('Bassa') }}">{{ __('Bassa') }}</option>
+                        <option value="{{ __('Media') }}">{{ __('Media') }}</option>
+                        <option value="{{ __('Alta') }}">{{ __('Alta') }}</option>
                     </select>
                 </div>
             </div>
