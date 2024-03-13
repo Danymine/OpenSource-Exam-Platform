@@ -16,7 +16,9 @@ class Esercizi extends DuskTestCase
         {
             $this->browse(function (Browser $browser) {
                     $browser->loginAs(User::find(1))
-                            ->visit('/exercises')
+                            ->visit('/dashboard')
+                            ->click('.dropdown-toggle') // clicca sull'icona del menu hamburger
+                            ->clickLink('Biblioteca') // clicca sulla voce "Biblioteca"
                             ->press('Crea')
                             ->type('name', 'Test Exercise')
                             ->type('subject', 'Test Subject')
@@ -32,11 +34,13 @@ class Esercizi extends DuskTestCase
         }
 
 
-        public function testCreateMultipleChoiceExercise()
+       public function testCreateMultipleChoiceExercise()
         {
             $this->browse(function ($browser) {
                 $browser->loginAs(User::find(1))
-                        ->visit('/exercises')
+                        ->visit('/dashboard')
+                        ->click('.dropdown-toggle') // clicca sull'icona del menu hamburger
+                        ->clickLink('Biblioteca') // clicca sulla voce "Biblioteca"
                         ->press('Crea')
                         ->type('name', 'Test Exercise')
                         ->type('subject', 'Test Subject')
@@ -77,7 +81,9 @@ class Esercizi extends DuskTestCase
         {
             $this->browse(function (Browser $browser) {
                 $browser->loginAs(User::find(1))
-                    ->visit('/exercises')
+                    ->visit('/dashboard')
+                    ->click('.dropdown-toggle') // clicca sull'icona del menu hamburger
+                    ->clickLink('Biblioteca') // clicca sulla voce "Biblioteca"
                     ->press('Crea')
                     ->type('name', 'Test Exercise')
                     ->type('subject', 'Test Subject')
@@ -107,7 +113,9 @@ class Esercizi extends DuskTestCase
         {
             $this->browse(function (Browser $browser) {
                 $browser->loginAs(User::find(1))
-                    ->visit('/exercises')
+                    ->visit('/dashboard')
+                    ->click('.dropdown-toggle') // clicca sull'icona del menu hamburger
+                    ->clickLink('Biblioteca') // clicca sulla voce "Biblioteca"
                     ->press('Crea')
                     ->type('name', 'Test Exercise')
                     ->type('subject', 'Test Subject')
@@ -126,7 +134,9 @@ class Esercizi extends DuskTestCase
             {
                 $this->browse(function (Browser $browser) {
                     $browser->loginAs(User::find(1))
-                        ->visit('/exercises')
+                        ->visit('/dashboard')
+                        ->click('.dropdown-toggle') // clicca sull'icona del menu hamburger
+                        ->clickLink('Biblioteca') // clicca sulla voce "Biblioteca"
                         ->press('Crea')
                         ->type('name', '')
                         ->type('subject', 'Test Subject')
@@ -140,7 +150,9 @@ class Esercizi extends DuskTestCase
             {
                 $this->browse(function (Browser $browser) {
                     $browser->loginAs(User::find(1))
-                        ->visit('/exercises')
+                        ->visit('/dashboard')
+                        ->click('.dropdown-toggle') // clicca sull'icona del menu hamburger
+                        ->clickLink('Biblioteca') // clicca sulla voce "Biblioteca"
                         ->press('Crea')
                         ->type('name', 'Test Exercise')
                         ->type('subject', '')
@@ -154,7 +166,9 @@ class Esercizi extends DuskTestCase
             {
                 $this->browse(function (Browser $browser) {
                     $browser->loginAs(User::find(1))
-                        ->visit('/exercises')
+                        ->visit('/dashboard')
+                        ->click('.dropdown-toggle') // clicca sull'icona del menu hamburger
+                        ->clickLink('Biblioteca') // clicca sulla voce "Biblioteca"
                         ->press('Crea')
                         ->type('name', 'Test Exercise')
                         ->type('subject', 'Test Subject')
@@ -168,6 +182,24 @@ class Esercizi extends DuskTestCase
                 });
             } 
 
+            public function testGoBackAndKeepExerciseCreationData()
+            {
+                $this->browse(function (Browser $browser) {
+                    $browser->loginAs(User::find(1))
+                            ->visit('/dashboard')
+                            ->click('.dropdown-toggle') // clicca sull'icona del menu hamburger
+                            ->clickLink('Biblioteca') // clicca sulla voce "Biblioteca"
+                            ->press('Crea')
+                            ->type('name', 'Test Exercise')
+                            ->type('subject', 'Test Subject')
+                            ->radio('type', 'Risposta Aperta')
+                            ->press('Avanti')
+                            ->type('question', 'This is a test question?')
+                            ->clickLink('Indietro')
+                            ->assertInputValue('name', 'Test Exercise')
+                            ->assertInputValue('subject', 'Test Subject');
+                });
+            }
 }
 
 
