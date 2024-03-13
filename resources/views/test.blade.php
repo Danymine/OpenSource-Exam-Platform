@@ -125,40 +125,42 @@
     <script>
         route = "{!! route('status_test', ['practice' => $test]) !!}";
         routeDashboard = "{!! route('dashboard') !!}";
-        durata = "{!! $test->time  !!}";
+        durata = "{!! $test->time ?? null !!}";
         
-        /* Ora che ho l'orario di start e la durata della prova posso determinare l'orario di finish ora il timer deve essere determinato automaticamente dalla differenza 
-        fra la l'orario di finish meno l'ora attuale */
-        
-        dateStart = new Date("{!! $test->updated_at  !!}");
-        dateStart.setHours(dateStart.getHours() + 1); // Aggiungi un'ora
-        dateEnd = new Date(dateStart.getTime() + (durata * 60000));
+        // Verifica se durata è diverso da NULL prima di avviare il timer
+        if (durata !== null) {
+            // Aggiungi il codice del timer qui
+            dateStart = new Date("{!! $test->updated_at  !!}");
+            dateStart.setHours(dateStart.getHours() + 1); // Aggiungi un'ora
+            dateEnd = new Date(dateStart.getTime() + (durata * 60000));
 
-        function timer(){
+            function timer() {
+                // Ottieni l'orario attuale
+                const currentDate = new Date();
 
-            // Ottieni l'orario attuale
-            const currentDate = new Date();
+                // Calcola il tempo rimanente sottraendo l'orario attuale all'orario di fine
+                const remainingTime = dateEnd - currentDate;
 
-            // Calcola il tempo rimanente sottraendo l'orario attuale all'orario di fine
-            const remainingTime = dateEnd - currentDate;
+                if (remainingTime <= 0) {
+                    document.getElementById("countdown").textContent = "";
+                    document.getElementById("countdown").style.color = "red";
+                    return;
+                }
 
-            if (remainingTime <= 0) {
-                document.getElementById("countdown").textContent = "Tempo Scaduto";
-                document.getElementById("countdown").style.color = "red";
-                return;
+                // Converti il tempo rimanente in ore, minuti e secondi
+                const hoursRemaining = Math.floor(remainingTime / (1000 * 60 * 60));
+                const minutesRemaining = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                const secondsRemaining = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+                //Costruisci la parte grafica nell'elemento con id = countdown metti ORA-MINUTI-SECONDI 
+                // Costruisci la stringa dell'orario rimanente
+                const countdownString = `${hoursRemaining.toString().padStart(2, '0')}:${minutesRemaining.toString().padStart(2, '0')}:${secondsRemaining.toString().padStart(2, '0')}`;
+
+                // Aggiorna il contenuto dell'elemento con id "countdown"
+                document.getElementById("countdown").textContent = countdownString;
             }
 
-            // Converti il tempo rimanente in ore, minuti e secondi
-            const hoursRemaining = Math.floor(remainingTime / (1000 * 60 * 60));
-            const minutesRemaining = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-            const secondsRemaining = Math.floor((remainingTime % (1000 * 60)) / 1000);
-
-            //Costruisci la parte grafica nell'elemento con id = countdown metti ORA-MINUTI-SECONDI 
-            // Costruisci la stringa dell'orario rimanente
-            const countdownString = `${hoursRemaining.toString().padStart(2, '0')}:${minutesRemaining.toString().padStart(2, '0')}:${secondsRemaining.toString().padStart(2, '0')}`;
-
-            // Aggiorna il contenuto dell'elemento con id "countdown"
-            document.getElementById("countdown").textContent = countdownString;
+            setInterval(timer, 1000);
         }
 
         function fetchStatus() {

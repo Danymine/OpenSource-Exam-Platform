@@ -55,10 +55,10 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <input id="punteggioMinInput" type="number" class="form-control w-100 filter-select" aria-label="Inserisci punteggio minimo" onchange="applyFilters()" placeholder="{{ __('Minimo punteggio') }}">
+                    <input id="punteggioMinInput" type="number" class="form-control w-100 filter-select" aria-label="Inserisci punteggio minimo" oninput="applyFilters()" placeholder="{{ __('Minimo punteggio') }}">
                 </div>
                 <div class="col-md-3">
-                    <input id="punteggioMaxInput" type="number" class="form-control w-100 filter-select" aria-label="Inserisci punteggio massimo" onchange="applyFilters()" placeholder="{{ __('Massimo punteggio') }}">
+                    <input id="punteggioMaxInput" type="number" class="form-control w-100 filter-select" aria-label="Inserisci punteggio massimo" oninput="applyFilters()" placeholder="{{ __('Massimo punteggio') }}">
                 </div>
                 <div class="col-md-3">
                     <select id="difficoltaInput" class="form-select w-100 filter-select" aria-label="Seleziona difficoltà" onchange="applyFilters()">

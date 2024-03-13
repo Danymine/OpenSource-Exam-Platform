@@ -324,5 +324,6 @@
 
     "Genera una nuova chiave": "Generate new key",
 
-    "Gli studenti hanno iniziato la prova": "Students started the test"
+    "Gli studenti hanno iniziato la prova": "Students started the test",
+    "Questa prova è stata già utilizzata." : "This test has already been used."
 }

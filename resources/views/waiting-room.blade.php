@@ -58,7 +58,7 @@
                     <tbody id="students-table-body">
                     </tbody>
                 </table>
-                <a href="{{ route('terminate-test', ['practice' => $practice]) }}" class="btn btn-danger">{{ __('Termina') }}</a>
+                <a href="#" id="terminateTestModalBtn" class="btn btn-danger" data-toggle="modal" data-target="#terminateTestModal">{{ __('Termina') }}</a>
             @endif
         @else
             <div class="waiting-container">
@@ -109,6 +109,27 @@
                         <button type="submit" class="btn btn-primary">{{ __('Avvia') }}</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per terminare il test -->
+    <div class="modal fade" id="terminateTestModal" tabindex="-1" role="dialog" aria-labelledby="terminateTestModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="terminateTestModalLabel">{{ __('Conferma Terminazione') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p style="color: black;">{{ __('Sei sicuro di voler terminare il test? Questa azione non può essere annullata.') }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('Annulla') }}</button>
+                    <a href="{{ route('terminate-test', ['practice' => $practice]) }}" class="btn btn-danger">{{ __('Termina') }}</a>
+                </div>
             </div>
         </div>
     </div>

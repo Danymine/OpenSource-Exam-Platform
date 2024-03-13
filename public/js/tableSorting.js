@@ -53,11 +53,14 @@ function sortTable(columnIndex) {
 
 function difficultyToNumber(difficulty) {
     switch (difficulty.toLowerCase()) {
-        case "bassa":
+        case translations['translate']["Bassa"].toLowerCase():
+        case "low":
             return 1;
-        case "media":
+        case translations['translate']["Media"].toLowerCase():
+        case "medium":
             return 2;
-        case "alta":
+        case translations['translate']["Alta"].toLowerCase():
+        case "high":
             return 3;
         default:
             return 0;

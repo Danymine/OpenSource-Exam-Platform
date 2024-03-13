@@ -54,7 +54,7 @@
                     <!-- Key Content -->
                     <span id="generatedKey" class="text-black">{{ $practice->key }}</span>
                 @else
-                    <span id="generatedKey" class="text-black">{{ __('La chiave è stata eliminata.') }}</span>
+                    <span id="generatedKey" class="text-black">{{ __('Questa prova è stata già utilizzata.') }}</span>
                 @endif
                 
                 <!-- Condizione per mostrare sia il pulsante Copia che il pulsante Genera una nuova chiave -->

@@ -1,9 +1,92 @@
-function openModal() {
-    document.getElementById('myModal').style.display = 'block';
+var sortDirection = []; // Array per tenere traccia dell'ordinamento per ciascuna colonna
+var language = "translate";
+console.log(translations);
+
+function sortTable(columnIndex) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("practice-table");
+    switching = true;
+
+    if (!sortDirection[columnIndex]) {
+        sortDirection[columnIndex] = "asc";
+    } else {
+        sortDirection[columnIndex] = sortDirection[columnIndex] === "asc" ? "desc" : "asc";
+    }
+
+    while (switching) {
+        switching = false;
+        rows = table.rows;
+
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+
+            if (columnIndex === 4) { // Indice della colonna dello score
+                x = parseInt(rows[i].getElementsByTagName("td")[columnIndex].innerHTML);
+                y = parseInt(rows[i + 1].getElementsByTagName("td")[columnIndex].innerHTML);
+            } else if (columnIndex === 2) { // Indice della colonna della difficoltà
+                x = difficultyToNumber(rows[i].getElementsByTagName("td")[columnIndex].innerHTML);
+                y = difficultyToNumber(rows[i + 1].getElementsByTagName("td")[columnIndex].innerHTML);
+            } else {
+                x = rows[i].getElementsByTagName("td")[columnIndex].innerHTML.toLowerCase();
+                y = rows[i + 1].getElementsByTagName("td")[columnIndex].innerHTML.toLowerCase();
+            }
+
+            if (sortDirection[columnIndex] === "desc") {
+                if (x < y) {
+                    shouldSwitch = true;
+                    break;
+                }
+            } else {
+                if (x > y) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
+
+    updateSortIcons(columnIndex);
 }
 
-function closeModal() {
-    document.getElementById('myModal').style.display = 'none';
+function difficultyToNumber(difficulty) {
+    switch (difficulty.toLowerCase()) {
+        case translations['translate']["Bassa"].toLowerCase():
+        case "low":
+            return 1;
+        case translations['translate']["Media"].toLowerCase():
+        case "medium":
+            return 2;
+        case translations['translate']["Alta"].toLowerCase():
+        case "high":
+            return 3;
+        default:
+            return 0;
+    }
+}
+
+function updateSortIcons(columnIndex) {
+    var header = document.getElementById("practice-table").getElementsByTagName("th")[columnIndex];
+    var icon = header.getElementsByTagName("i")[0];
+    icon.classList.remove("fa-chevron-up", "fa-chevron-down");
+
+    if (columnIndex === 2) {
+        if (sortDirection[columnIndex] === "asc") {
+            icon.classList.add("fa-chevron-down"); // Ordine inverso per la difficoltà
+        } else {
+            icon.classList.add("fa-chevron-up"); // Ordine ascendente per la difficoltà
+        }
+    } else {
+        if (sortDirection[columnIndex] === "asc") {
+            icon.classList.add("fa-chevron-up");
+        } else {
+            icon.classList.add("fa-chevron-down");
+        }
+    }
 }
 
 function toggleFilterModal() {
@@ -24,21 +107,21 @@ function resetFilters() {
     document.getElementById('punteggioMinInput').value = '';
     document.getElementById('punteggioMaxInput').value = '';
     document.getElementById('difficoltaInput').value = '';
-    applyFilters(); // Applica i filtri resettati
+    applyFilters(); // Apply the reset filters
 }
 
 function applyFilters() {
     var materia = document.getElementById('materiaInput').value.toLowerCase();
-    var punteggioMin = document.getElementById('punteggioMinInput').value.trim();
-    var punteggioMax = document.getElementById('punteggioMaxInput').value.trim();
+    var punteggioMin = document.getElementById('punteggioMinInput').value;
+    var punteggioMax = document.getElementById('punteggioMaxInput').value;
     var difficolta = document.getElementById('difficoltaInput').value.toLowerCase();
     var table = document.getElementById('practice-table');
     var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 
     for (var i = 0; i < rows.length; i++) {
-        var materiaCell = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
-        var punteggioCell = parseInt(rows[i].getElementsByTagName('td')[4].textContent);
-        var difficoltaCell = rows[i].getElementsByTagName('td')[2].textContent.toLowerCase();
+        var materiaCell = rows[i].getElementsByTagName('td')[3].textContent.toLowerCase(); // Assuming materia is at index 3
+        var tipoCell = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase(); // Assuming type is at index 1
+        var difficoltaCell = rows[i].getElementsByTagName('td')[2].textContent.toLowerCase(); // Assuming difficolta is at index 2
 
         var showRow = true;
 
@@ -46,15 +129,21 @@ function applyFilters() {
             showRow = false;
         }
 
-        if (punteggioMin !== '' && (isNaN(punteggioCell) || punteggioCell < parseInt(punteggioMin))) {
-            showRow = false;
+        if (punteggioMin !== '' && parseInt(punteggioMin) > 0) { // Check if punteggioMin is not empty and greater than 0
+            var punteggioCell = parseInt(rows[i].getElementsByTagName('td')[4].textContent); // Assuming punteggio is at index 4
+            if (isNaN(punteggioCell) || punteggioCell < parseInt(punteggioMin)) {
+                showRow = false;
+            }
         }
 
-        if (punteggioMax !== '' && (isNaN(punteggioCell) || punteggioCell > parseInt(punteggioMax))) {
-            showRow = false;
+        if (punteggioMax !== '' && parseInt(punteggioMax) > 0) { // Check if punteggioMax is not empty and greater than 0
+            var punteggioCell = parseInt(rows[i].getElementsByTagName('td')[4].textContent); // Assuming punteggio is at index 4
+            if (isNaN(punteggioCell) || punteggioCell > parseInt(punteggioMax)) {
+                showRow = false;
+            }
         }
 
-        if (difficolta !== '' && difficoltaCell !== difficolta) {
+        if (difficolta !== '' && difficolta !== 'tutte le difficoltà' && difficoltaCell !== difficolta) {
             showRow = false;
         }
 
@@ -63,72 +152,5 @@ function applyFilters() {
         } else {
             rows[i].style.display = 'none';
         }
-    }
-}
-
-var currentSortColumn = -1;
-var currentSortDirection = 1; // 1 per ascendente, -1 per discendente
-
-function sortTable(columnIndex) {
-    var tbody = document.getElementById('table-body');
-    var rows = Array.from(tbody.getElementsByTagName('tr'));
-
-    // Imposta la direzione di ordinamento in base alla colonna cliccata
-    if (currentSortColumn === columnIndex) {
-        currentSortDirection *= -1; // Cambia la direzione di ordinamento se la stessa colonna viene cliccata di nuovo
-    } else {
-        currentSortColumn = columnIndex;
-        currentSortDirection = 1;
-    }
-
-    // Effettua l'ordinamento delle righe
-    rows.sort(function (a, b) {
-        var aValue = getValueFromCell(a.cells[columnIndex]);
-        var bValue = getValueFromCell(b.cells[columnIndex]);
-
-        if (aValue < bValue) return -1 * currentSortDirection;
-        if (aValue > bValue) return 1 * currentSortDirection;
-        return 0;
-    });
-
-    // Rimuovi le righe dalla tabella
-    while (tbody.firstChild) {
-        tbody.removeChild(tbody.firstChild);
-    }
-
-    // Riaggiungi le righe nella nuova sequenza ordinata
-    rows.forEach(function (row) {
-        tbody.appendChild(row);
-    });
-}
-
-function getValueFromCell(cell) {
-    // Ottiene il valore dalla cella della tabella
-    var value = cell.textContent.trim();
-
-    // Gestisce il caso delle colonne 'Punteggio' e 'Data' per ordinamento numerico
-    if (currentSortColumn === 3 || currentSortColumn === 4) {
-        return parseFloat(value.replace(',', '.'));
-    }
-
-    // Gestisce il caso della colonna 'Difficoltà' per ordinamento personalizzato
-    if (currentSortColumn === 2) {
-        return getDifficultyValue(value.toLowerCase());
-    }
-
-    return value;
-}
-
-function getDifficultyValue(difficulty) {
-    // Assegna un valore numerico alle difficoltà per poterle ordinare
-    switch (difficulty) {
-        case 'bassa':
-            return 1;
-        case 'media':
-            return 2;
-        case 'alta':
-            return 3;
-        default:
-            return 0;
     }
 }

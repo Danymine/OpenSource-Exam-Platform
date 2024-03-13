@@ -297,17 +297,18 @@ class PracticeController extends Controller
 
     public function story_exame(){
 
-        $practices = Practice::where('type', 'Exam')
+        $practices = Practice::withTrashed()->where('type', 'Exam')
             ->where('public', 1)
             ->where('user_id', Auth::user()->id)
             ->has('delivereds')
             ->get();
         
-        // Estrai tutte le materie univoche dalle pratiche
+        // Extract all unique subjects from practices
         $subjects = $practices->pluck('subject')->unique();
-
+    
         return view('practice_history', ['practices' => $practices,  'subjects' => $subjects]);
     }
+    
 
     /* NOTE: INIZIO AREA ESERCITAZIONI
     ///
@@ -444,7 +445,8 @@ class PracticeController extends Controller
 
     public function story_practice(){
 
-        $practices = Practice::where('type', 'Practice')
+
+        $practices = Practice::withTrashed()->where('type', 'Practice')
             ->where('public', 1)
             ->where('user_id', Auth::user()->id)
             ->has('delivereds')

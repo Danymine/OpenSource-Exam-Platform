@@ -128,15 +128,24 @@
         
         <script>
             events = {!! json_encode(Auth::user()->practices()->whereDoesntHave('delivereds')->get()->map(function ($practice) {
-                return [
-                    'title' => $practice->title,
-                    'start' => $practice->practice_date, // Assumendo che $practice->practice_date sia nel formato corretto
-                    'url' => route('waiting-room', ['key' => $practice->key]) // Aggiungi l'URL con la chiave corretta
-                ];
+                // Verifica se $practice->key non è null prima di aggiungere l'evento
+                if ($practice->key !== null) {
+                    return [
+                        'title' => $practice->title,
+                        'start' => $practice->practice_date, // Assumendo che $practice->practice_date sia nel formato corretto
+                        'url' => route('waiting-room', ['key' => $practice->key]) // Aggiungi l'URL con la chiave corretta
+                    ];
+                }
             })) !!};
+
+            // Filtra gli eventi per rimuovere eventuali valori null
+            events = events.filter(function(event) {
+                return event !== undefined;
+            });
 
             console.log(events);
         </script>
+
         <script src="/js/TeacherDashboard.js"></script>
 
     @elseif( Auth::user()->roles == "Student" )
