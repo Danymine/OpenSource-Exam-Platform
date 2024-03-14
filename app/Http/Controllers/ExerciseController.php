@@ -164,111 +164,52 @@ class ExerciseController extends Controller
         ]);
 
         $OldExercise = Exercise::findOrFail($validateFirst['id']);
-        $exerciseWithPractice = Exercise::whereHas('practices')->find($OldExercise->id);
+       
+        if( $OldExercise->user_id == Auth::user()->id )
+        {
+            $newExercise = new Exercise($validateFirst);
+            $validatedData = [];
+            if( $validateFirst["type"] === "Risposta Multipla" ){
 
-        if( $exerciseWithPractice == NULL ){
-
-            if( $OldExercise->user_id == Auth::user()->id )
-            {
-                $OldExercise->update([
-                    'name' => $validateFirst['name'],
-                    'question' => $validateFirst['question'],
-                    'score' => $validateFirst['score'],
-                    'difficulty' => $validateFirst['difficulty'],
-                    'subject' => $validateFirst['subject'],
-                    'type' => $validateFirst['type'],
+                $validatedData = $request->validate([
+                    'options' => 'required|array',
+                    'options.*' => 'required|string|max:255',
+                    'correct_option' => ['required', Rule::in(['a', 'b', 'c', 'd'])],
+                    'explanation' => 'nullable|string|max:255',
                 ]);
 
-                $validatedData = [];
-                if( $validateFirst["type"] === "Risposta Multipla" ){
+                $options = $validatedData['options'];
 
-                    $validatedData = $request->validate([
-                        'options' => 'required|array',
-                        'options.*' => 'required|string|max:255',
-                        'correct_option' => ['required', Rule::in(['a', 'b', 'c', 'd'])],
-                        'explanation' => 'nullable|string|max:255',
-                    ]);
+                $newExercise->option_1 = $options[0];
+                $newExercise->option_2 = $options[1];
+                $newExercise->option_3 = $options[2];
+                $newExercise->option_4 = $options[3];
 
-                    $options = $validatedData['options'];
-
-                    $OldExercise->option_1 = $options[0];
-                    $OldExercise->option_2 = $options[1];
-                    $OldExercise->option_3 = $options[2];
-                    $OldExercise->option_4 = $options[3];
-
-                    $OldExercise->correct_option = $validatedData['correct_option'];
-                    $OldExercise->explanation = $validatedData['explanation'];           
-                    
-                }
-                else if( $validateFirst["type"] === "Vero o Falso" ) {
-
-                    $validatedData = $request->validate([
-
-                        'correct_option' => ['required', Rule::in(['Vero', 'Falso'])],
-                        'explanation' => 'nullable|string|max:255',
-                    ]);
-
-                    $OldExercise->correct_option = $validatedData['correct_option'];
-                    $OldExercise->explanation = $validatedData['explanation'];
-                }
-
-                $OldExercise->save();
-
-                return redirect()->route('showAllExercises')->with('success', trans("L'esercizio è stato modificato con successo."));
+                $newExercise->correct_option = $validatedData['correct_option'];
+                $newExercise->explanation = $validatedData['explanation'];           
+                
             }
-            else{
+            else if( $validateFirst["type"] === "Vero o Falso" ) {
 
-                return back()->withErrors('Non hai il permesso.');
+                $validatedData = $request->validate([
+
+                    'correct_option' => ['required', Rule::in(['Vero', 'Falso'])],
+                    'explanation' => 'nullable|string|max:255',
+                ]);
+
+                $newExercise->correct_option = $validatedData['correct_option'];
+                $newExercise->explanation = $validatedData['explanation'];
             }
+
+            $OldExercise->delete();
+            $newExercise->user_id = Auth::user()->id;
+            $newExercise->save();
+
+            return redirect()->route('showAllExercises')->with('success', trans("L'esercizio è stato modificato con successo."));
         }
         else{
 
-            if( $OldExercise->user_id == Auth::user()->id )
-            {
-                $newExercise = new Exercise($validateFirst);
-                $validatedData = [];
-                if( $validateFirst["type"] === "Risposta Multipla" ){
-
-                    $validatedData = $request->validate([
-                        'options' => 'required|array',
-                        'options.*' => 'required|string|max:255',
-                        'correct_option' => ['required', Rule::in(['a', 'b', 'c', 'd'])],
-                        'explanation' => 'nullable|string|max:255',
-                    ]);
-
-                    $options = $validatedData['options'];
-
-                    $newExercise->option_1 = $options[0];
-                    $newExercise->option_2 = $options[1];
-                    $newExercise->option_3 = $options[2];
-                    $newExercise->option_4 = $options[3];
-
-                    $newExercise->correct_option = $validatedData['correct_option'];
-                    $newExercise->explanation = $validatedData['explanation'];           
-                    
-                }
-                else if( $validateFirst["type"] === "Vero o Falso" ) {
-
-                    $validatedData = $request->validate([
-
-                        'correct_option' => ['required', Rule::in(['Vero', 'Falso'])],
-                        'explanation' => 'nullable|string|max:255',
-                    ]);
-
-                    $newExercise->correct_option = $validatedData['correct_option'];
-                    $newExercise->explanation = $validatedData['explanation'];
-                }
-
-                $OldExercise->delete();
-                $newExercise->user_id = Auth::user()->id;
-                $newExercise->save();
-
-                return redirect()->route('showAllExercises')->with('success', trans("L'esercizio è stato modificato con successo."));
-            }
-            else{
-
-                return back()->withErrors(trans('Non hai il permesso.'));
-            }
+            return back()->withErrors(trans('Non hai il permesso.'));
         }
 
     }
