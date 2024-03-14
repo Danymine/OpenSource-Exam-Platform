@@ -60,9 +60,17 @@ class TestSeeder extends Seeder
     
             // Seleziona casualmente una materia tra quelle presenti nel database
             $subject = $subjects[array_rand($subjects)];
+            
+            $practiceType = $type[$typeIndex];
+
+            if ($practiceType === 'Exam') {
+                $titlePrefix = "Esame di ";
+            } elseif ($practiceType === 'Practice') {
+                $titlePrefix = "Esercitazione di ";
+            }
     
             $practice = new Practice([
-                'title' => 'Titolo prova', // Puoi inserire un titolo statico o generare casualmente un titolo
+                'title' => $titlePrefix . ucwords($subject),
                 'description' => $subject, // Imposta la descrizione come il nome della materia
                 'difficulty' => $difficulty,
                 'subject' => $subject,
@@ -73,9 +81,9 @@ class TestSeeder extends Seeder
                 'randomize_questions' => rand(0, 1),
                 'allowed' => 0,
                 'practice_date' => Carbon::now()->addDays(rand(1, 30)), // Aggiunge un numero variabile di giorni
-                'type' => $type[$typeIndex],
+                'type' => $practiceType,
                 'public' => 0,
-                'time' => rand(10,180)
+                'time' => rand(10, 180)
             ]);
             
             $practice->save();
