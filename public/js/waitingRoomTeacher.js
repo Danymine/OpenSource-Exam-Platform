@@ -39,18 +39,18 @@ function populateStudentsTable2(data) {
                     <td style="vertical-align: middle;">${student.first_name}</td>
                     <td style="vertical-align: middle; color:${color};">${stats}</td>
             `;
+            if( student.status !== "Consegnato" ){
+
+                row += ` <td>
+                            <button class="btn btn-danger" onclick="kickStudent('${student.id}')">${esp}</button>
+                        </td> `;
+            }
             if (student.status === "wait") {
                 row += `
                     <td>
                         <button class="btn btn-success" onclick="allowedStudent('${student.id}')">${apr}</button>
                     </td>
                 `;
-            }
-            if( student.status !== "Consegnato" ){
-
-                row += ` <td>
-                            <button class="btn btn-danger" onclick="kickStudent('${student.id}')">${esp}</button>
-                        </td> `;
             }
             row += `</tr>`;
             tableBody.innerHTML += row;

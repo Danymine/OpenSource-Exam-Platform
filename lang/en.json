@@ -325,5 +325,11 @@
     "Genera una nuova chiave": "Generate new key",
 
     "Gli studenti hanno iniziato la prova": "Students started the test",
-    "Questa prova è stata già utilizzata." : "This test has already been used."
+    "Questa prova è stata già utilizzata." : "This test has already been used.",
+
+    "Vuoi impostare la durata della prova?": "Do you want to set the duration of the test?",
+    "Durata della Prova": "Test Duration",
+    "Durata (in minuti)": "Duration (in minutes)",
+    "Sei sicuro di voler terminare il test? Questa azione non può essere annullata.": "Are you sure you want to end the test? This action cannot be undone.",
+    "Conferma Terminazione": "Confirm Termination"
 }

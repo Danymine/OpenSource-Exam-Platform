@@ -318,5 +318,11 @@
     "Genera una nuova chiave": "Genera una nuova chiave",
 
     "Gli studenti hanno iniziato la prova": "Gli studenti hanno iniziato la prova",
-    "Questa prova è stata già utilizzata." : "Questa prova è stata già utilizzata."
+    "Questa prova è stata già utilizzata." : "Questa prova è stata già utilizzata.",
+
+    "Vuoi impostare la durata della prova?": "Vuoi impostare la durata della prova?",
+    "Durata della Prova": "Durata della Prova",
+    "Durata (in minuti)": "Durata (in minuti)",
+    "Sei sicuro di voler terminare il test? Questa azione non può essere annullata.": "Sei sicuro di voler terminare il test? Questa azione non può essere annullata.",
+    "Conferma Terminazione": "Conferma Terminazione"
 }
