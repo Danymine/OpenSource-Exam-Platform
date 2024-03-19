@@ -22,7 +22,7 @@ class PasswordController extends Controller
                 'confirmed',
                 'string',
                 'min:8',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\W]+$/',
+                'regex:/^(?=.*[A-Z])(?=.*\d).{8,}$/',
             ],
         ]);
 
