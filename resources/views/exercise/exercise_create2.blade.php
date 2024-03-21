@@ -49,31 +49,37 @@
 
                     <div class="form-group">
                         <label for="domanda">{{ __('Domanda') }}:</label>
-                        <textarea class="form-control" id="domanda" name="question" rows="6" required minlength="5" maxlength="255" placeholder="{{ __('Inserisci qui la domanda dell\'esercizio') }}">{{ session()->has('exercise_step1') && array_key_exists('question', session('exercise_step1')) ? session('exercise_step1')['question'] : '' }}</textarea>
+                        <textarea class="form-control" id="domanda" name="question" rows="6" required minlength="5" maxlength="255" placeholder="{{ __('Inserisci qui la domanda') }}">{{ session()->has('exercise_step1') && array_key_exists('question', session('exercise_step1')) ? session('exercise_step1')['question'] : '' }}</textarea>
                     </div>
                 
                 @elseif ( $exerciseData["type"] == "Risposta Multipla" )
 
                     <div class="form-group mt-4">
                         <label for="domanda">{{ __('Domanda') }}:</label>
-                        <textarea class="form-control" id="domanda" name="question" rows="6" required minlength="5" maxlength="255" placeholder="{{ __('Inserisci qui la domanda dell\'esercizio') }}">{{ session()->has('exercise_step1') && array_key_exists('question', session('exercise_step1')) ? session('exercise_step1')['question'] : '' }}</textarea>
+                        <textarea class="form-control" id="domanda" name="question" rows="6" required minlength="5" maxlength="255" placeholder="{{ __('Inserisci qui la domanda') }}">{{ session()->has('exercise_step1') && array_key_exists('question', session('exercise_step1')) ? session('exercise_step1')['question'] : '' }}</textarea>
                     </div>
                     <!-- Opzioni di risposta -->
-                    <label>{{ __('Opzioni di risposta') }}:</label>
                     <div class="form-row">
                         <div class="col-md-6">
                             <div class="form-group m-0">
-                                <input type="text" class="form-control mb-2" id='option1' name="options[]" required maxlength="255"  placeholder="{{ __('Opzione A') }}" value="{{ session()->has('exercise_step1') && array_key_exists('option_a', session('exercise_step1')) ? session('exercise_step1')['option_a'] : '' }}">
-                                <input type="text" class="form-control mb-2" id='option2' name="options[]" required maxlength="255"  placeholder="{{ __('Opzione B') }}" value="{{ session()->has('exercise_step1') && array_key_exists('option_b', session('exercise_step1')) ? session('exercise_step1')['option_b'] : '' }}">
+                                <label for="option1">{{ __('Opzione A') }}</label>
+                                <input type="text" class="form-control mb-2" id="option1" name="options[]" required maxlength="255" placeholder="{{ __('Inserisci Opzione A') }}" value="{{ session()->has('exercise_step1') && array_key_exists('options', session('exercise_step1')) ? session('exercise_step1')['options'][0] : '' }}">
+                                
+                                <label for="option2">{{ __('Opzione B') }}</label>
+                                <input type="text" class="form-control mb-2" id="option2" name="options[]" required maxlength="255" placeholder="{{ __('Inserisci Opzione B') }}" value="{{ session()->has('exercise_step1') && array_key_exists('options', session('exercise_step1')) ? session('exercise_step1')['options'][1] : '' }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <input type="text" class="form-control mb-2" id='option3' name="options[]" required maxlength="255" placeholder="{{ __('Opzione C') }}" value="{{ session()->has('exercise_step1') && array_key_exists('option_c', session('exercise_step1')) ? session('exercise_step1')['option_c'] : '' }}">
-                                <input type="text" class="form-control mb-2" id='option4' name="options[]" required maxlength="255" placeholder="{{ __('Opzione D') }}" value="{{ session()->has('exercise_step1') && array_key_exists('option_d', session('exercise_step1')) ? session('exercise_step1')['option_d'] : '' }}">
+                                <label for="option3">{{ __('Opzione C') }}</label>
+                                <input type="text" class="form-control mb-2" id="option3" name="options[]" required maxlength="255" placeholder="{{ __('Inserisci Opzione C') }}" value="{{ session()->has('exercise_step1') && array_key_exists('options', session('exercise_step1')) ? session('exercise_step1')['options'][2] : '' }}">
+                                
+                                <label for="option4">{{ __('Opzione D') }}</label>
+                                <input type="text" class="form-control mb-2" id="option4" name="options[]" required maxlength="255" placeholder="{{ __('Inserisci Opzione D') }}" value="{{ session()->has('exercise_step1') && array_key_exists('options', session('exercise_step1')) ? session('exercise_step1')['options'][3] : '' }}">
                             </div>
                         </div>
                     </div>
+
                     <!-- Opzione corretta -->
                     <div class="form-group">
                         <label>{{ __('Opzione Corretta') }}:</label>
@@ -94,7 +100,7 @@
 
                     <div class="form-group mt-4">
                         <label for="domanda">{{ __('Domanda') }}:</label>
-                        <textarea class="form-control" id="domanda" name="question" rows="6" required minlength="5" maxlength="255" placeholder="{{ __('Inserisci qui la domanda dell\'esercizio') }}">{{ session()->has('exercise_step1') && array_key_exists('question', session('exercise_step1')) ? session('exercise_step1')['question'] : '' }}</textarea>
+                        <textarea class="form-control" id="domanda" name="question" rows="6" required minlength="5" maxlength="255" placeholder="{{ __('Inserisci qui la domanda') }}">{{ session()->has('exercise_step1') && array_key_exists('question', session('exercise_step1')) ? session('exercise_step1')['question'] : '' }}</textarea>
                     </div>
 
                     <!-- Opzione corretta -->

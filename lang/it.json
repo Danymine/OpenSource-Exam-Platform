@@ -324,5 +324,12 @@
     "Durata della Prova": "Durata della Prova",
     "Durata (in minuti)": "Durata (in minuti)",
     "Sei sicuro di voler terminare il test? Questa azione non può essere annullata.": "Sei sicuro di voler terminare il test? Questa azione non può essere annullata.",
-    "Conferma Terminazione": "Conferma Terminazione"
+    "Conferma Terminazione": "Conferma Terminazione",
+
+    "Inserisci Opzione D": "Inserisci Opzione D",
+    "Inserisci Opzione C": "Inserisci Opzione C",
+    "Inserisci Opzione B": "Inserisci Opzione B",
+    "Inserisci Opzione A": "Inserisci Opzione A",
+
+    "Inserisci qui la domanda": "Inserisci qui la domanda"
 }

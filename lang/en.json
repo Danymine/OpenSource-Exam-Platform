@@ -331,5 +331,13 @@
     "Durata della Prova": "Test Duration",
     "Durata (in minuti)": "Duration (in minutes)",
     "Sei sicuro di voler terminare il test? Questa azione non può essere annullata.": "Are you sure you want to end the test? This action cannot be undone.",
-    "Conferma Terminazione": "Confirm Termination"
+    "Conferma Terminazione": "Confirm Termination",
+
+    "Inserisci Opzione D": "Enter Option D",
+    "Inserisci Opzione C": "Enter Option C",
+    "Inserisci Opzione B": "Enter Option B",
+    "Inserisci Opzione A": "Enter Option A",
+
+    "Inserisci qui la domanda": "Enter the question here"
+
 }
