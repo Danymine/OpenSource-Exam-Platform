@@ -143,8 +143,7 @@
                 return event !== undefined;
             });
 
-            console.log(events);
-        </script>
+    </script>
 
         <script src="/js/TeacherDashboard.js"></script>
 
