@@ -16,6 +16,9 @@
     </x-slot>
 
     <div class="container p-4 rounded" style="background-color: #fff; box-shadow: 0.15rem 0.25rem 0 rgb(33 40 50 / 15%); border: 1px solid rgba(0,0,0,.125);">
+        <a href="{{ route('download-practice', ['practice' => $practice]) }}" class="btn btn-sm btn-warning" title="{{ __('Stampa pratica') }}" style="height: 38px; width: 40px; text-align: center; padding: 0; float: right;">
+            <i class="fas fa-print" style="line-height: 38px;"></i>
+        </a> 
         <h3 class="mb-4">{{ ucfirst($practice->title) }}</h3>
         <div class="practice-details">
             <!-- Description -->

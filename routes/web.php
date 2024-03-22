@@ -200,6 +200,8 @@ Route::middleware(Localization::class)
         Route::delete('/remove/{practice}/{exercise}', [PracticeController::class, 'remove'])->name('practices.remove_exercise'); //Togli Esercizi
         Route::post('/add-exercise/{practice}', [PracticeController::class, 'add'])->name('practices.add_exercises'); //Aggiungi esercizi.
 
+        Route::get('/download-practice/{practice}', [PracticeController::class, 'printPractice'])->name('download-practice'); 
+
         //Passiamo a gestire le consegne.
         //Pagina Iniziale
         Route::get('/view-delivered/{practice}', [DeliveredController::class, 'index'])->name('view-delivered')->withTrashed();

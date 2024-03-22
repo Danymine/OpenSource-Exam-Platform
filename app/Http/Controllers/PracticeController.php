@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\FeedbackEmail;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Storage;
 
 
 class PracticeController extends Controller
@@ -994,4 +998,40 @@ class PracticeController extends Controller
         
         abort('403', "Non autorizzato");
     }
+
+    public function printPractice(Practice $practice){
+
+        // Creazione di un nuovo oggetto Dompdf
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $dompdf = new Dompdf();
+    
+        // Caricare la pratica associata
+        $practice = Practice::withTrashed()->find($practice->id);
+    
+        // Caricare gli esercizi associati alla pratica
+        $exercises = $practice->exercises()->withTrashed()->get();
+    
+        // Dati da passare alla vista blade
+        $data = [
+            'practice' => $practice,
+            'exercises' => $exercises,
+        ];
+    
+        // Render della vista blade come HTML
+        $html = View::make('practice_pdf_view', $data)->render();
+    
+        // Caricamento dell'HTML nel Dompdf
+        $dompdf->loadHtml($html);
+    
+        // Impostazione delle dimensioni della pagina e del layout
+        $dompdf->setPaper('A4', 'portrait');
+    
+        // Rendering del PDF
+        $dompdf->render();
+    
+        // Restituzione del PDF come stream per il download
+        return $dompdf->stream($practice->title . ".pdf");
+    }
+
 }
