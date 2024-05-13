@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Piattaforma di Esami ed Esercitazioni Online</title>
-</head>
-<body>
+
 <header>
     <h1>OpenSource ExamSync</h1>
 </header>
