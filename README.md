@@ -1,7 +1,13 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piattaforma di Esami ed Esercitazioni Online</title>
+</head>
+<body>
 <header>
     <h1>OpenSource ExamSync</h1>
-    <img src="link_al_logo.png" alt="Logo del Progetto">
 </header>
 
 <main>
@@ -42,3 +48,4 @@
         <p>Per domande, segnalazioni di bug o suggerimenti, contattare il team di sviluppo al seguente linkedin www.linkedin.com/in/daniele-parisi-6118371aa .</p>
     </section>
 </main>
+</body>
